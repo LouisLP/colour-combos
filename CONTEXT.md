@@ -1,6 +1,6 @@
 # Context
 
-A browser for Sanzo Wada's *A Dictionary of Color Combinations* (~360 classic
+A browser for Sanzo Wada's *A Dictionary of Color Combinations* (348 classic
 combos). Selecting a combo re-themes the entire site through a contrast-safe
 semantic design system.
 
@@ -8,7 +8,7 @@ Stack: React 19, Vite, TypeScript, Antfu ESLint config.
 
 ## Glossary
 
-**Combo** — one of the ~360 classic Wada combinations: an ordered set of 2–4
+**Combo** — one of the 348 classic Wada combinations: an ordered set of 2–4
 colours. The unit of selection, sharing, and favouriting. "Seasons" and other
 non-classic Wada sets are out of scope.
 
@@ -23,6 +23,13 @@ always selected; a bare URL resolves to a random one. Distinct from a
 **Mode** — light or dark. Owned by the site's own toggle (defaulting to
 `prefers-color-scheme`), never by the combo. See
 [ADR 0001](docs/adr/0001-light-dark-and-combo-theming-semantics.md).
+
+**Favourite** — a combo the visitor has starred. Stored browser-locally as a
+bare numeric Wada id, never a copy of the combo's colours; there may be many, and
+favouriting is independent of selection. Note the identifier in code and in the
+URL is spelled `favorites` (the `/favorites` route, the
+`colour-combos:favorites` storage key). See
+[ADR 0003](docs/adr/0003-favorites-persistence.md).
 
 **Role** — a semantic slot the design system renders from (canvas, surface,
 ink, accent, on-accent, border, …). Roles are what components reference; they
@@ -60,3 +67,4 @@ the surface it happens to sit on in one component.
 
 - [ADR 0001 — Light/dark and combo theming semantics](docs/adr/0001-light-dark-and-combo-theming-semantics.md)
 - [ADR 0002 — Combo → design-system adaptation model](docs/adr/0002-combo-adaptation-model.md)
+- [ADR 0003 — Favourites persistence model](docs/adr/0003-favorites-persistence.md)

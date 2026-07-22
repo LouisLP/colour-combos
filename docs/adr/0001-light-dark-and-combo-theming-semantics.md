@@ -7,7 +7,7 @@
 
 ## Context
 
-Selecting one of the ~360 Wada combos re-themes the entire site. Before an
+Selecting one of the 348 Wada combos re-themes the entire site. Before an
 adaptation algorithm can be designed, the *semantics* everything else themes
 against have to be fixed: what light/dark means, how much of the page the raw
 combo colours touch, what contrast we promise, and what gives when a combo's own
@@ -20,7 +20,7 @@ colours can't keep that promise.
 The site has its own light/dark toggle, defaulting to `prefers-color-scheme`.
 It is the sole source of truth for mode.
 
-A combo is a **colour source**, never a mode. Every one of the 360 combos must
+A combo is a **colour source**, never a mode. Every one of the 348 combos must
 render in both light and dark. There is no combo-native mode and no way for a
 combo to override the user's choice.
 
@@ -100,7 +100,7 @@ names a combo that doesn't exist. They are never a resting state a user sits in.
 - Random-on-load constrains the still-open URL/routing decision: the URL must be
   writable before first paint settles, so combo identity has to resolve
   synchronously.
-- Accessibility validation across all ~360 combos is now a checkable claim
+- Accessibility validation across all 348 combos is now a checkable claim
   rather than an aspiration, since the floor and the adjustment rule are both
   fixed.
 
