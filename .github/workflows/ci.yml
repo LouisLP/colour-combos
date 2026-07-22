@@ -42,3 +42,9 @@ jobs:
       # output only. `build.cssTarget` prevents that; this proves it.
       - name: Assert light-dark() survives minification
         run: grep -q "light-dark(" dist/assets/*.css
+
+      # The SPA fallback (ADR 0004 §9): GitHub Pages has no rewrite rules, so
+      # `404.html` is the rewrite. Without it every deep link 404s on reload —
+      # a failure that only shows up on the deployed host, never in dev.
+      - name: Assert the SPA fallback shipped
+        run: cmp dist/index.html dist/404.html

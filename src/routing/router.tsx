@@ -69,7 +69,14 @@ const favoritesRoute = createRoute({
  */
 export const routeTree = rootRoute.addChildren([browseRoute, favoritesRoute])
 
-export const router = createRouter({ routeTree })
+/**
+ * `basepath` is Vite's `base`, so the app is mounted wherever it is served from
+ * — `/colour-combos/` on a GitHub project page, `/` anywhere else — and every
+ * `<Link>` and every match resolves against the same prefix the assets do
+ * (ADR 0004 §9). Tests mount `routeTree` on their own router at the root, which
+ * is why this is set here and not on the tree.
+ */
+export const router = createRouter({ routeTree, basepath: import.meta.env.BASE_URL })
 
 declare module '@tanstack/react-router' {
   interface Register {

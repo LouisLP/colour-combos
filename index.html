@@ -1,10 +1,30 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>colour-combos</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <title>Colour Combos — Sanzo Wada's A Dictionary of Color Combinations</title>
+    <meta
+      name="description"
+      content="Browse all 348 colour combinations from Sanzo Wada's 1933 A Dictionary of Color Combinations. Pick one and it re-themes the whole site, contrast-safe in light and dark."
+    />
+
+    <!--
+      No `og:image`: per-combo prerendering for OG/SEO was considered and
+      deferred (ADR 0004 consequences), and a single static card would advertise
+      one combo as though it were the page — which for a site whose entire
+      subject is *which* combo you are looking at is worse than none.
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Colour Combos" />
+    <meta
+      property="og:description"
+      content="All 348 of Sanzo Wada's colour combinations. Pick one and it re-themes the whole site."
+    />
+    <meta property="og:url" content="https://louislp.github.io/colour-combos/" />
+    <meta name="twitter:card" content="summary" />
     <!--
       Mode is the flash risk; the combo is not (ADR 0005 §5). The document has a
       background before React exists, so `color-scheme` is set here: blocking, no

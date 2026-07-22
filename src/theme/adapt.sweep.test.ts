@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest'
 import { COMBOS } from '../data/combos'
 import { adapt } from './adapt'
 import { auditPalette } from './audit'
-import { hexToOklch } from './colour'
+import { contrast, hexToOklch } from './colour'
 
 const MODES = ['light', 'dark'] as const
 
@@ -92,5 +92,31 @@ describe('role assignment', () => {
       const dark = adapt(combo, 'dark').assignment
       expect(light).toEqual(dark)
     }
+  })
+})
+
+describe('worst surface', () => {
+  // The clamps above only prove the assembled site is safe *because* every
+  // foreground is clamped against `--surface-muted` and `--surface-muted` is
+  // the lowest-contrast backdrop in the system. The second half of that is an
+  // assumption everywhere else: the audit never pairs a foreground with
+  // `--surface`, so a component that sits on a card — the footer, the
+  // not-found notice, every combo caption — is covered only if the assumption
+  // holds. Here it is, checked rather than reasoned about.
+  const FOREGROUNDS = ['ink', 'ink-muted', 'border-strong', 'accent', 'accent-text']
+  const OTHER_SURFACES = ['canvas', 'surface']
+
+  it('is surface-muted, in every rendering in the catalogue', () => {
+    const worse = RENDERINGS.flatMap(({ combo, mode, palette }) =>
+      FOREGROUNDS.flatMap((fg) => {
+        const floor = contrast(palette.roles[fg].hex, palette.roles['surface-muted'].hex)
+        return OTHER_SURFACES
+          .map(bg => ({ bg, ratio: contrast(palette.roles[fg].hex, palette.roles[bg].hex) }))
+          .filter(({ ratio }) => ratio < floor - 0.005)
+          .map(({ bg, ratio }) => `#${combo.id}/${mode} ${fg} on ${bg} ${ratio.toFixed(2)} < muted ${floor.toFixed(2)}`)
+      }),
+    )
+
+    expect(worse).toEqual([])
   })
 })
