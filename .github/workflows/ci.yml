@@ -35,3 +35,10 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      # `light-dark()` carries the whole neutral ramp across modes. Lightning
+      # CSS downlevels it for older targets, and its polyfill keys off
+      # `prefers-color-scheme` alone, which breaks the mode override in built
+      # output only. `build.cssTarget` prevents that; this proves it.
+      - name: Assert light-dark() survives minification
+        run: grep -q "light-dark(" dist/assets/*.css
