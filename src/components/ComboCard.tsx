@@ -1,6 +1,8 @@
 import type { Combo } from '../data/combos'
 import { Link } from '@tanstack/react-router'
 import { comboLabel } from '../data/combos'
+import { useIsFavorite } from '../hooks/useFavorites'
+import { toggle } from '../state/favorites'
 import { StarButton } from './StarButton'
 
 interface ComboCardProps {
@@ -17,6 +19,10 @@ interface ComboCardProps {
  * rather than as loose colours, which is the whole reason variant A won.
  */
 export function ComboCard({ combo, selected }: ComboCardProps) {
+  // A boolean snapshot, so starring re-renders this card and not the other 347
+  // (ADR 0005 §8).
+  const favorited = useIsFavorite(combo.id)
+
   return (
     <article className={selected ? 'combo-card is-selected' : 'combo-card'}>
       {/*
@@ -57,7 +63,7 @@ export function ComboCard({ combo, selected }: ComboCardProps) {
           <b>{`No. ${combo.id}`}</b>
           <span>{comboLabel(combo)}</span>
         </div>
-        <StarButton comboId={combo.id} pressed={false} onToggle={noop} />
+        <StarButton comboId={combo.id} pressed={favorited} onToggle={toggle} />
       </div>
 
       {/*
@@ -71,6 +77,3 @@ export function ComboCard({ combo, selected }: ComboCardProps) {
     </article>
   )
 }
-
-/** Favouriting lands with the store in #23; the affordance ships inert. */
-function noop() {}

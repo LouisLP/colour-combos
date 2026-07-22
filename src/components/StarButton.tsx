@@ -4,9 +4,9 @@
  * so the star sits in the caption row at all times — 348 permanent glyphs, which
  * the grid was measured with.
  *
- * It is inert until the favourites store lands (#23). The markup, the ARIA and
- * the two colour states ship now because they are what the grid's density and
- * contrast were decided against; only `pressed` and `onToggle` change hands.
+ * It stays presentational: the card subscribes to `useIsFavorite` and hands the
+ * answer down, so the store has exactly one consumer per card rather than one
+ * per glyph.
  */
 
 interface StarButtonProps {

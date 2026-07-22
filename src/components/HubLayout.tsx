@@ -1,5 +1,6 @@
 import { Link, Outlet } from '@tanstack/react-router'
 import { carryHubSearch } from '../routing/search'
+import { FavoritesLink } from './FavoritesLink'
 import { ModeToggle } from './ModeToggle'
 import { ThemeStyle } from './ThemeStyle'
 
@@ -15,7 +16,7 @@ export function HubLayout() {
       <header>
         <nav aria-label="Primary">
           <Link to="/" search={carryHubSearch}>Browse</Link>
-          <Link to="/favorites" search={carryHubSearch}>Favourites</Link>
+          <FavoritesLink />
         </nav>
         <ModeToggle />
       </header>
