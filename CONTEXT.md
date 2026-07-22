@@ -58,7 +58,7 @@ carries before hydration, and when a URL names a combo that doesn't exist.
 **Palette** — the concrete custom-property values one (combo, mode) pair
 derives to. Never stored: a pure function of the URL and the active mode,
 memoised in the adapter and rendered as a `<style>` element. See
-[ADR 0004](docs/adr/0004-app-state-architecture.md).
+[ADR 0005](docs/adr/0005-app-state-architecture.md).
 
 **Module store** — a module-level singleton owning exactly one fact, read
 through `useSyncExternalStore`. Favourites and mode are the only two; the app
@@ -77,4 +77,5 @@ the surface it happens to sit on in one component.
 - [ADR 0001 — Light/dark and combo theming semantics](docs/adr/0001-light-dark-and-combo-theming-semantics.md)
 - [ADR 0002 — Combo → design-system adaptation model](docs/adr/0002-combo-adaptation-model.md)
 - [ADR 0003 — Favourites persistence model](docs/adr/0003-favorites-persistence.md)
-- [ADR 0004 — App state architecture](docs/adr/0004-app-state-architecture.md)
+- [ADR 0004 — Shareable combo URL & routing scheme](docs/adr/0004-routing-and-url-state.md)
+- [ADR 0005 — App state architecture](docs/adr/0005-app-state-architecture.md)

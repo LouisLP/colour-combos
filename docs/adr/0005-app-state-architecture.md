@@ -1,4 +1,4 @@
-# 4. App state architecture
+# 5. App state architecture
 
 - **Status**: Accepted
 - **Date**: 2026-07-22
@@ -6,17 +6,18 @@
 - **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)
 - **Builds on**: [ADR 0001](0001-light-dark-and-combo-theming-semantics.md),
   [ADR 0002](0002-combo-adaptation-model.md),
-  [ADR 0003](0003-favorites-persistence.md), and the routing decision recorded
-  on [#5](https://github.com/LouisLP/colour-combos/issues/5) (ADR pending,
-  [#14](https://github.com/LouisLP/colour-combos/issues/14))
+  [ADR 0003](0003-favorites-persistence.md),
+  [ADR 0004](0004-routing-and-url-state.md)
 
 ## Context
 
 Four decisions already constrain how this app holds state, and each was taken
 without reference to the others:
 
-- **The URL owns the active combo** (#5) — `?c=153` alongside `q` and `size`,
-  typed search params via TanStack Router. Selecting a combo is a navigation.
+- **The URL owns the active combo** (ADR 0004 §1, §3) — `?c=153` alongside `q`
+  and `size`, typed search params via TanStack Router. Selecting a combo is a
+  navigation, and mirroring `c` into client state is called out there as a bug
+  rather than an optimisation.
 - **Combo identity resolves synchronously** (ADR 0001 §6) — a bare `/` picks a
   random combo and `replaceState`s it in before first paint settles.
 - **Favourites are a module-level store read through `useSyncExternalStore`**
@@ -79,7 +80,7 @@ buys four things:
   the wrong palette.
 - **No imperative mirror of derived state** — the pattern React 19 explicitly
   steers away from.
-- **It survives prerendering.** Routing deferred per-combo prerendering for
+- **It survives prerendering.** ADR 0004 deferred per-combo prerendering for
   OG/SEO but did not rule it out; a rendered `<style>` needs nothing added to
   work server-side, while a layout effect needs a parallel implementation.
 - **One writer.** `ThemeStyle` is the only code in the app that calls `adapt`.
@@ -190,10 +191,9 @@ old accents sit on a new canvas.
 
 ### 6. Resolving `c` must be idempotent within a document
 
-The routing decision puts random-combo resolution in the search-param
-validator. Validators are not called once: React StrictMode double-invokes
-them in development, and TanStack re-validates whenever *any* search param
-changes. A bare `Math.random()` in there would hand back a different combo on
+ADR 0004 §8 puts random-combo resolution in the search-param validator.
+Validators are not called once: React StrictMode double-invokes them in
+development, and TanStack re-validates whenever *any* search param changes. A bare `Math.random()` in there would hand back a different combo on
 each call — the site would re-theme itself as the user typed in the search box.
 
 The random pick is therefore a per-document one-shot:
@@ -210,10 +210,10 @@ combo; a re-validation cannot.
 
 ### 7. The "not found" notice rides in router location state
 
-Routing specifies that `?c=999` resolves to a random combo, `replaceState`s it,
-**and** shows a dismissible *"Combo 999 not found — showing 71"* notice. After
-the replace, the rejected value is gone from the URL, so something has to carry
-it.
+ADR 0004 §8 specifies that `?c=999` resolves to a random combo,
+`replaceState`s it, **and** shows a dismissible *"Combo 999 not found —
+showing 71"* notice. After the replace, the rejected value is gone from the
+URL, so something has to carry it.
 
 It goes in TanStack Router's typed location state — not serialised into the
 URL, and not a fourth store. The layout reads it and a local `useState` handles
@@ -288,13 +288,14 @@ a boolean, so starring a combo re-renders one card, not a grid of 348.
 - **`useMemo` in `ThemeStyle`** — per-mount, and invisible to the AA sweep. The
   cache belongs where the pure function does.
 - **A combo store mirroring the URL** — familiar, but creates a second truth
-  that has to be reconciled with the back button. Routing already settled that
-  the URL is the source of truth; a mirror quietly reopens it.
+  that has to be reconciled with the back button. ADR 0004 §1 already settled
+  that the URL is the source of truth, and its consequences name this
+  duplication explicitly; a mirror quietly reopens a closed decision.
 - **Computing the palette in a router loader** — puts combo resolution and
   theming in one place, but adds an async boundary around a sub-millisecond
   synchronous function, and moves colour maths into the routing layer.
-- **Mode in the URL** — already rejected by routing: a shared link should adopt
-  the recipient's mode, not impose the sender's.
+- **Mode in the URL** — already rejected by ADR 0004 §6: a shared link should
+  adopt the recipient's mode, not impose the sender's.
 - **Three-state mode toggle (system / light / dark)** — keeps "follow system"
   reachable forever, which the chosen design gives up. Rejected because it
   spends a third visual state, and a third of the toggle's affordance, on a
