@@ -125,7 +125,10 @@ header nav {
 
 main {
   flex: 1;
-  padding: 1.75rem 1.5rem;
+  inline-size: 100%;
+  max-inline-size: 78rem;
+  margin-inline: auto;
+  padding: 1.75rem 1.5rem 7rem;
 }
 
 h1 {
@@ -152,4 +155,143 @@ h1 {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* The browse surface (ADR 0006). Variant A: framed cards, equal-split bands,
+   always-present caption, selection marked in --ink. */
+
+.combo-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+
+  /* 5 columns at 1440px, 2 at 390px, and never a card so narrow that the
+     caption ellipsises on the first word (ADR 0006 §5). */
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+}
+
+@media (width >= 100rem) {
+  .combo-grid {
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  }
+}
+
+/* Not an optimisation to be tidied away: this more than halves the *worst*
+   filter keystroke on a 4×-throttled phone — 32 ms against 77 ms (ADR 0006 §6).
+   Its price is a document height estimated rather than measured, so the
+   scrollbar thumb drifts ~8% as skipped content renders for real. Accepted. */
+.combo-grid > li {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 11rem;
+}
+
+.combo-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+
+  /* Supplies the swatch block's corner radius, so no --canvas shows through
+     between the colours (ADR 0006 §2). */
+  overflow: hidden;
+}
+
+/* --ink, not --accent: the accent is already spread across the page chrome, so
+   an accent ring reads as "more chrome" rather than as *this one* (§4). */
+.combo-card.is-selected {
+  outline: 2px solid var(--ink);
+  outline-offset: -1px;
+}
+
+.combo-hit {
+  display: block;
+  inline-size: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.combo-swatches {
+  display: flex;
+  block-size: 6.5rem;
+}
+
+/* Equal split, full bleed. Proportional weighting reduces a 4-colour combo's
+   minor colours to unreadable slivers (§2). */
+.combo-swatches i {
+  flex: 1;
+}
+
+.combo-caption {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.55rem 0.4rem 0.6rem 0.7rem;
+  border-block-start: 1px solid var(--border);
+}
+
+.combo-caption-text {
+  min-inline-size: 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.combo-caption-text b {
+  display: block;
+  font-weight: 600;
+}
+
+/* One line, ellipsised. Hex values are the one piece of metadata the grid
+   cannot afford (§3) — they live on each swatch's title. */
+.combo-caption-text span {
+  display: block;
+  color: var(--ink-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Always visible, never hover-revealed: hover-only fails on touch outright (§8).
+   It reads as chrome rather than colour because it sits outside the swatches. */
+.combo-star {
+  flex: none;
+  border: 0;
+  background: none;
+  padding: 0.35rem;
+  border-radius: 0.35rem;
+  line-height: 0;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.combo-star[aria-pressed='true'] {
+  color: var(--accent-text);
+}
+
+.combo-pill {
+  margin: 0;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--surface);
+}
+
+.combo-empty {
+  padding: 5rem 1rem;
+  text-align: center;
+}
+
+.combo-empty p {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--ink-muted);
+}
+
+.combo-empty p.combo-empty-heading {
+  font-size: 1.1rem;
+  margin-block-end: 0.4rem;
+  color: var(--ink);
 }

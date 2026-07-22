@@ -35,3 +35,14 @@ export function requireCombo(id: number): Combo {
     throw new Error(`Combo ${id} passed validation but is not in the catalogue`)
   return combo
 }
+
+/**
+ * A combo's colour names, joined — the closest thing it has to a name.
+ *
+ * A Wada combo carries no name of its own; only its colours do (ADR 0006 §3).
+ * So every surface that labels a combo pairs `No. N` with this, and the two are
+ * always the same string.
+ */
+export function comboLabel(combo: Combo): string {
+  return combo.colours.map(colour => colour.name).join(' · ')
+}
