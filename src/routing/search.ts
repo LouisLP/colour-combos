@@ -1,11 +1,5 @@
-import { COMBO_COUNT } from '../data/combos'
-
-/**
- * Combo sizes the catalogue actually contains — 120 pairs, 120 triples,
- * 108 quads (ADR 0004 §4).
- */
-export const COMBO_SIZES = [2, 3, 4] as const
-export type ComboSize = typeof COMBO_SIZES[number]
+import type { ComboSize } from '../data/combos'
+import { COMBO_COUNT, COMBO_SIZES } from '../data/combos'
 
 /**
  * The search params every route carries. They are route-agnostic on purpose:
@@ -71,7 +65,17 @@ function resolveSize(raw: unknown): ComboSize | undefined {
   return COMBO_SIZES.find(size => size === n)
 }
 
+/**
+ * A search is always a string, but it does not always arrive as one: TanStack
+ * parses search params structurally, so `?q=13` hands this a `number`.
+ *
+ * Rejecting that would drop the param silently — and `13` is not an odd query,
+ * it is the `No. 13` a card is captioned with (ADR 0006 §3), so it is one of
+ * the few searches a user can be certain will match something.
+ */
 function resolveQuery(raw: unknown): string | undefined {
+  if (typeof raw === 'number' && Number.isFinite(raw))
+    return String(raw)
   return typeof raw === 'string' && raw !== '' ? raw : undefined
 }
 
