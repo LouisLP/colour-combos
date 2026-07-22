@@ -40,7 +40,7 @@ design (ADR 0001 §4).
 **Question:** what does the browse surface look like — the grid of 348 combos,
 the combo card, and how filter/search render into it?
 
-**Answer:** [ADR 0004](../docs/adr/0004-browse-surface-and-grid.md) — variant A,
+**Answer:** [ADR 0006](../docs/adr/0006-browse-surface-and-grid.md) — variant A,
 the framed card grid, with facet counts taken from C. No virtualisation.
 
 ```bash

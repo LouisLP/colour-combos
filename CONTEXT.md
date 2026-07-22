@@ -49,7 +49,7 @@ canvas and surfaces. Its chroma is heavily reduced; it is not shown raw.
 and focus rings, lightness-clamped where necessary to clear AA. Reserved for
 *interactive state* only — never identity or decoration, so that on a page
 already saturated with combo colour the accent means exactly one thing. See
-[ADR 0004](docs/adr/0004-browse-surface-and-grid.md).
+[ADR 0006](docs/adr/0006-browse-surface-and-grid.md).
 
 **Raw vs role use** — showing a colour *as itself* (swatch, hex readout) uses
 the exact Wada value and is never altered; using it *as a role* permits
@@ -57,6 +57,15 @@ lightness adjustment with hue and chroma preserved.
 
 **Token baseline** — the achromatic zero-chroma fallback values every role
 carries before hydration, and when a URL names a combo that doesn't exist.
+
+**Palette** — the concrete custom-property values one (combo, mode) pair
+derives to. Never stored: a pure function of the URL and the active mode,
+memoised in the adapter and rendered as a `<style>` element. See
+[ADR 0005](docs/adr/0005-app-state-architecture.md).
+
+**Module store** — a module-level singleton owning exactly one fact, read
+through `useSyncExternalStore`. Favourites and mode are the only two; the app
+ships no context providers.
 
 **Drift budget** — the lightness a role colour is permitted to move to clear its
 contrast floor. Hue and chroma are held; only lightness pays. Bounded at ΔL 0.36
@@ -71,4 +80,6 @@ the surface it happens to sit on in one component.
 - [ADR 0001 — Light/dark and combo theming semantics](docs/adr/0001-light-dark-and-combo-theming-semantics.md)
 - [ADR 0002 — Combo → design-system adaptation model](docs/adr/0002-combo-adaptation-model.md)
 - [ADR 0003 — Favourites persistence model](docs/adr/0003-favorites-persistence.md)
-- [ADR 0004 — Browse surface and combo card](docs/adr/0004-browse-surface-and-grid.md)
+- [ADR 0004 — Shareable combo URL & routing scheme](docs/adr/0004-routing-and-url-state.md)
+- [ADR 0005 — App state architecture](docs/adr/0005-app-state-architecture.md)
+- [ADR 0006 — Browse surface and combo card](docs/adr/0006-browse-surface-and-grid.md)

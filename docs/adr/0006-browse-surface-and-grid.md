@@ -1,4 +1,4 @@
-# 4. Browse surface and combo card
+# 6. Browse surface and combo card
 
 - **Status**: Accepted
 - **Date**: 2026-07-22
@@ -6,7 +6,9 @@
 - **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)
 - **Builds on**: [ADR 0001](0001-light-dark-and-combo-theming-semantics.md),
   [ADR 0002](0002-combo-adaptation-model.md) §5,
-  [ADR 0003](0003-favorites-persistence.md) §3
+  [ADR 0003](0003-favorites-persistence.md) §3,
+  [ADR 0004](0004-routing-and-url-state.md),
+  [ADR 0005](0005-app-state-architecture.md)
 - **Prototype**: `prototypes/browse-grid/` (three variants, `?variant=A|B|C`)
 
 ## Context
@@ -138,7 +140,8 @@ chips, and a live count. Chips carry their **facet counts** — `Any (348)`,
 made it obvious that a count is what turns a filter into a fact about the
 catalogue. Search matches colour names, hex values, and the combo number.
 
-The history semantics from the routing decision hold up in use: `replace` on
+The history semantics from [ADR 0004](0004-routing-and-url-state.md) hold up
+in use, verified in a browser rather than asserted: `replace` on
 typing (250 ms debounce) with a local echo so the field never lags a keystroke,
 `push` on chip toggles. Back after a search returns to the pre-search grid in
 one step instead of unwinding letter by letter, and back after a chip toggle
