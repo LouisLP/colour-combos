@@ -1,12 +1,13 @@
-# ADR-0001: Favorites persistence model
+# 3. Favorites persistence model
 
 - **Status**: Accepted
 - **Date**: 2026-07-22
-- **Issue**: [#6](https://github.com/LouisLP/colour-combos/issues/6) (part of [#1](https://github.com/LouisLP/colour-combos/issues/1))
+- **Ticket**: [Favorites persistence model](https://github.com/LouisLP/colour-combos/issues/6)
+- **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)
 
 ## Context
 
-v1 of the colour-combinations hub lets a visitor mark any of the ~360 Wada
+v1 of the colour-combinations hub lets a visitor mark any of the 348 Wada
 combos as a favorite. The combo dataset ships with the app as committed static
 JSON, so a favorite never needs to carry colour data of its own — it only needs
 to point into data we already ship. There is no account system and no server;
@@ -28,10 +29,11 @@ No timestamps, no denormalized combo record. The favorite is a pointer; the
 combo data is the bundle's job. This keeps storage tiny and means a corrected
 hex or a reworded combo name can never leave a stale copy behind.
 
-The id is the **numeric Wada id (1–360)**, not the URL slug. The source's own
-identifier is the stable one — a slug-keyed favorite would break the moment a
-display name is corrected, while a numeric one survives. The URL may still be
-pretty (`/combo/12-hydrangea-blue`); the number is the truth.
+The id is the **numeric Wada id (1–348)**, not a name-derived slug. The source's
+own identifier is the stable one — a slug-keyed favorite would break the moment a
+display name is corrected, while a numeric one survives. This is the same id the
+URL carries as `?c=12` ([#5](https://github.com/LouisLP/colour-combos/issues/5)),
+so a starred combo and a shared combo are keyed identically.
 
 ### 2. Key and read discipline
 
@@ -78,7 +80,7 @@ feedback that a star toggle registered. The empty state is not a dead end:
 ```
 ★ No favorites yet
 Star any combo to save it here.
-[ Browse all 360 → ]
+[ Browse all 348 → ]
 ```
 
 ### 4. Runtime model
@@ -99,7 +101,7 @@ every card's star stays consistent because they all read one snapshot.
 
 The ordered array and the derived `Set` are kept in step deliberately — a bare
 `Set` cannot express "prepend", and a bare array makes membership checks O(n)
-on a grid of 360 cards.
+on a grid of 348 cards.
 
 ### 5. Multi-tab: adopt wholesale
 
