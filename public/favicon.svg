@@ -1,0 +1,21 @@
+<!--
+  Combination No. 241 — Red Orange, Pale Lemon Yellow, Isabella Color, Dark
+  Medici Blue — as the card the whole site is built from: equal-split bands,
+  full bleed, corners cut by the frame (ADR 0006 §1–2).
+
+  Four bands rather than a single mark because the product's unit is the
+  *combination*, and a real one from the catalogue beats an invented palette.
+  Raw Wada hex, never a role (ADR 0001 §4), so this is fixed and does not
+  follow the selected combo.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <clipPath id="frame">
+    <rect width="32" height="32" rx="7" />
+  </clipPath>
+  <g clip-path="url(#frame)">
+    <rect width="8" height="32" x="0" fill="#dd4027" />
+    <rect width="8" height="32" x="8" fill="#ffefae" />
+    <rect width="8" height="32" x="16" fill="#c5a56e" />
+    <rect width="8" height="32" x="24" fill="#547076" />
+  </g>
+</svg>
