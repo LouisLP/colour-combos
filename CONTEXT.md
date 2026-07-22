@@ -68,3 +68,4 @@ the surface it happens to sit on in one component.
 - [ADR 0001 — Light/dark and combo theming semantics](docs/adr/0001-light-dark-and-combo-theming-semantics.md)
 - [ADR 0002 — Combo → design-system adaptation model](docs/adr/0002-combo-adaptation-model.md)
 - [ADR 0003 — Favourites persistence model](docs/adr/0003-favorites-persistence.md)
+- [ADR 0004 — Shareable combo URL & routing scheme](docs/adr/0004-routing-and-url-state.md)
