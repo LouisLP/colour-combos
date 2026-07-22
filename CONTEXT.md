@@ -48,6 +48,15 @@ lightness adjustment with hue and chroma preserved.
 **Token baseline** — the achromatic zero-chroma fallback values every role
 carries before hydration, and when a URL names a combo that doesn't exist.
 
+**Drift budget** — the lightness a role colour is permitted to move to clear its
+contrast floor. Hue and chroma are held; only lightness pays. Bounded at ΔL 0.36
+across the catalogue. See [ADR 0002](docs/adr/0002-combo-adaptation-model.md).
+
+**Worst surface** — the lowest-contrast backdrop a foreground token can legally
+land on (`--surface-muted`). Every foreground is clamped against it, not against
+the surface it happens to sit on in one component.
+
 ## Decisions
 
 - [ADR 0001 — Light/dark and combo theming semantics](docs/adr/0001-light-dark-and-combo-theming-semantics.md)
+- [ADR 0002 — Combo → design-system adaptation model](docs/adr/0002-combo-adaptation-model.md)
