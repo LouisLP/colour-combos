@@ -46,7 +46,10 @@ assignment.
 canvas and surfaces. Its chroma is heavily reduced; it is not shown raw.
 
 **Accent** — the combo colour used at full strength for buttons, links, borders
-and focus rings, lightness-clamped where necessary to clear AA.
+and focus rings, lightness-clamped where necessary to clear AA. Reserved for
+*interactive state* only — never identity or decoration, so that on a page
+already saturated with combo colour the accent means exactly one thing. See
+[ADR 0006](docs/adr/0006-browse-surface-and-grid.md).
 
 **Raw vs role use** — showing a colour *as itself* (swatch, hex readout) uses
 the exact Wada value and is never altered; using it *as a role* permits
@@ -79,3 +82,4 @@ the surface it happens to sit on in one component.
 - [ADR 0003 — Favourites persistence model](docs/adr/0003-favorites-persistence.md)
 - [ADR 0004 — Shareable combo URL & routing scheme](docs/adr/0004-routing-and-url-state.md)
 - [ADR 0005 — App state architecture](docs/adr/0005-app-state-architecture.md)
+- [ADR 0006 — Browse surface and combo card](docs/adr/0006-browse-surface-and-grid.md)

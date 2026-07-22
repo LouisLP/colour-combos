@@ -34,3 +34,38 @@ design (ADR 0001 §4).
 | `adapt.ts` | the three assignment algorithms + the shared derivation stage |
 | `sweep.ts` | headless validation over the whole catalogue |
 | `combos.json` | 348 combos inverted from `mattdesl/dictionary-of-colour-combinations` (MIT) |
+
+## `browse-grid/` — issue #13
+
+**Question:** what does the browse surface look like — the grid of 348 combos,
+the combo card, and how filter/search render into it?
+
+**Answer:** [ADR 0006](../docs/adr/0006-browse-surface-and-grid.md) — variant A,
+the framed card grid, with facet counts taken from C. No virtualisation.
+
+```bash
+npm run prototype:browse   # http://localhost:5173/prototypes/browse-grid/
+```
+
+Three browse surfaces on one route, switchable via `?variant=A|B|C` or `←`/`→`.
+The page is themed by `?c=` through the real ADR 0002 adaptation model, so the
+recursion problem — a page wearing one combo while displaying 347 others — is
+live rather than simulated. Also `?q=`, `?size=2|3|4`, `?fav=1`,
+`?mode=light|dark`, and `?cv=0` to disable `content-visibility`.
+
+The `?c`/`?q`/`?size` params implement the real routing contract, including its
+push-on-select / replace-on-type history semantics. Favourites use the ADR 0003
+store shape but are **memory-only** — persistence is settled elsewhere and a
+prototype should not depend on it.
+
+The dark pill at the bottom and the `ⓘ` panel behind it are prototype chrome:
+live commit time, time-to-paint, DOM node count, a `content-visibility` toggle
+and a 12-pass filter stress test. The measurements in ADR 0004 §6 are
+reproducible from it.
+
+| File | |
+|---|---|
+| `App.tsx` | theming, param contract, variant switcher, measurement chrome |
+| `VariantA/B/C.tsx` | the three surfaces — no shared layout, by design |
+| `state.ts` | params + history semantics, filtering, favourites store, paint meter |
+| `shared.tsx` | the star glyph and the accent-ranked band split. Nothing else. |

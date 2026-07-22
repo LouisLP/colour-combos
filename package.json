@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prototype:adaptation": "vite --open /prototypes/adaptation-model/"
+    "prototype:adaptation": "vite --open /prototypes/adaptation-model/",
+    "prototype:browse": "vite --open /prototypes/browse-grid/"
   },
   "dependencies": {
     "react": "^19.2.7",
