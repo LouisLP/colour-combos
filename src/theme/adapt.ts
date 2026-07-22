@@ -28,10 +28,26 @@ const DRIFT_PENALTY_SPAN = 0.5
 const DRIFT_PENALTY_WEIGHT = 0.6
 
 /**
+ * Mode-invariant, so one entry per combo. Bounded at 348 by the catalogue, whose
+ * inputs are committed static data — no eviction policy, nothing to invalidate
+ * (ADR 0005 §3).
+ */
+const assignmentCache = new Map<number, Assignment>()
+
+/**
  * Which colour plays which role. Computed once per combo and invariant across
  * modes, so it is safe to cache by combo id.
  */
 export function assignRoles(combo: Combo): Assignment {
+  const hit = assignmentCache.get(combo.id)
+  if (hit)
+    return hit
+  const computed = computeAssignment(combo)
+  assignmentCache.set(combo.id, computed)
+  return computed
+}
+
+function computeAssignment(combo: Combo): Assignment {
   const cols = combo.colours.map((c, i) => ({ i, ...hexToOklch(c.hex) }))
 
   // Quietest colour tints the paper — it loses the least when chroma is cut
@@ -62,15 +78,15 @@ export function assignRoles(combo: Combo): Assignment {
 // ---------------------------------------------------------------------------
 
 /** Lightness ladder per mode. Neutrals are derived, never raw. */
-const LADDER = {
+export const LADDER = {
   light: { canvas: 0.985, surface: 1.0, muted: 0.945, ink: 0.24, inkMuted: 0.52, border: 0.88, dir: -1 as const },
   dark: { canvas: 0.18, surface: 0.225, muted: 0.28, ink: 0.94, inkMuted: 0.72, border: 0.35, dir: 1 as const },
 }
 
 /** Chroma retained by the near-neutrals, as a fraction of the hue source's. */
-const TINT = { canvas: 0.08, surface: 0.06, muted: 0.14, ink: 0.16, border: 0.3 }
+export const TINT = { canvas: 0.08, surface: 0.06, muted: 0.14, ink: 0.16, border: 0.3 }
 /** Hard ceiling so a vivid hue source can't make the "neutral" actually colourful. */
-const TINT_CAP = { canvas: 0.012, surface: 0.012, muted: 0.02, ink: 0.03, border: 0.035 }
+export const TINT_CAP = { canvas: 0.012, surface: 0.012, muted: 0.02, ink: 0.03, border: 0.035 }
 /**
  * Floor, as a fraction of the cap. Without it, tint strength tracks the hue
  * source's own chroma, so combos whose quietest colour is near-grey render an
@@ -78,7 +94,7 @@ const TINT_CAP = { canvas: 0.012, surface: 0.012, muted: 0.02, ink: 0.03, border
  * reading as two different products. The floor makes tint strength constant
  * and lets the hue source be chosen purely on hue quality.
  */
-const TINT_FLOOR = 0.55
+export const TINT_FLOOR = 0.55
 
 function tint(src: Oklch, l: number, frac: number, cap: number) {
   // An all-grey combo gets a genuinely grey site rather than an arbitrary tint.
@@ -102,6 +118,13 @@ export interface Palette {
   assignment: Assignment
   hueSourceColour: ComboColour
   accentColours: ComboColour[]
+  /**
+   * False when no colour in the combo cleared `HUE_SOURCE_MIN_CHROMA`, so the
+   * neutrals are genuinely achromatic rather than tinted (ADR 0002 §2). The
+   * stylesheet's relative-colour ramp reads this as `--tint-scale`, which is how
+   * a declarative ramp reproduces the branch `tint()` takes here.
+   */
+  tinted: boolean
 }
 
 export function derivePalette(combo: Combo, mode: Mode): Palette {
@@ -149,7 +172,31 @@ export function derivePalette(combo: Combo, mode: Mode): Palette {
     roles[`on-accent${suffix}`] = { hex: onColour(fill.hex) }
   })
 
-  return { roles, assignment: a, hueSourceColour: combo.colours[a.hueSource], accentColours }
+  return {
+    roles,
+    assignment: a,
+    hueSourceColour: combo.colours[a.hueSource],
+    accentColours,
+    tinted: src.c >= HUE_SOURCE_MIN_CHROMA,
+  }
+}
+
+/** Bounded at 348 x 2 for the whole catalogue (ADR 0005 §3). */
+const paletteCache = new Map<string, Palette>()
+
+/**
+ * The palette for a combo in a mode. The app's single entry point to the
+ * adapter, and cached here rather than in a `useMemo` so the AA sweep exercises
+ * exactly the code the site renders from (ADR 0005 §3).
+ */
+export function adapt(combo: Combo, mode: Mode): Palette {
+  const key = `${combo.id}:${mode}`
+  const hit = paletteCache.get(key)
+  if (hit)
+    return hit
+  const computed = derivePalette(combo, mode)
+  paletteCache.set(key, computed)
+  return computed
 }
 
 /** How far a palette drifted from the raw combo — the "recognisability" cost. */

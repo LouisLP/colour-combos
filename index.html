@@ -5,6 +5,22 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>colour-combos</title>
+    <!--
+      Mode is the flash risk; the combo is not (ADR 0005 §5). The document has a
+      background before React exists, so `color-scheme` is set here: blocking, no
+      network, sub-millisecond.
+
+      DUPLICATED IN `src/state/mode.ts`. The key and the resolution rule live in
+      both files by necessity; a change to either must be made twice.
+    -->
+    <script>
+      (function () {
+        var m = localStorage.getItem('colour-combos:mode')
+        if (m !== 'light' && m !== 'dark')
+          m = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.style.colorScheme = m
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

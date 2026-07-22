@@ -9,7 +9,7 @@
 
 import { describe, expect, it } from 'vitest'
 import { COMBOS } from '../data/combos'
-import { derivePalette } from './adapt'
+import { adapt } from './adapt'
 import { auditPalette } from './audit'
 import { hexToOklch } from './colour'
 
@@ -17,7 +17,7 @@ const MODES = ['light', 'dark'] as const
 
 /** Every (combo, mode) rendering in the catalogue, derived once. */
 const RENDERINGS = COMBOS.flatMap(combo =>
-  MODES.map(mode => ({ combo, mode, palette: derivePalette(combo, mode) })),
+  MODES.map(mode => ({ combo, mode, palette: adapt(combo, mode) })),
 )
 
 describe('aA gate — WCAG 2.2 across the whole catalogue', () => {
@@ -88,8 +88,8 @@ describe('role assignment', () => {
 
   it('is invariant across modes', () => {
     for (const combo of COMBOS) {
-      const light = derivePalette(combo, 'light').assignment
-      const dark = derivePalette(combo, 'dark').assignment
+      const light = adapt(combo, 'light').assignment
+      const dark = adapt(combo, 'dark').assignment
       expect(light).toEqual(dark)
     }
   })

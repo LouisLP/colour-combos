@@ -1,111 +1,155 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+/* The design system's declarative half (ADR 0002 §5–6).
+ *
+ * `--hue-source`, `--tint-scale`, `--border-strong` and the accent family are
+ * written by `ThemeStyle` at runtime, because each is either the combo itself or
+ * the result of a contrast search CSS cannot perform. Everything else — the
+ * whole neutral ramp — is derived here as relative colour off `--hue-source`,
+ * and the numbers below MUST match the adapter's ladder: `theme/ramp.test.ts`
+ * fails if they drift, because the AA sweep audits the adapter's values while
+ * the browser renders these.
+ *
+ * What is declared here is also the token baseline (ADR 0001 §6): with the
+ * fallback `--hue-source` and `--tint-scale: 0`, the ramp resolves to achromatic
+ * greys. That is what the document shows before React's first commit.
+ */
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+:root {
+  /* Overwritten by ThemeStyle. Grey + zero tint = the achromatic baseline. */
+  --hue-source: #808080;
+  --tint-scale: 0;
+
+  --canvas: light-dark(
+    oklch(from var(--hue-source) 98.5% clamp(calc(0.0066 * var(--tint-scale)), calc(c * 0.08 * var(--tint-scale)), calc(0.012 * var(--tint-scale))) h),
+    oklch(from var(--hue-source) 18% clamp(calc(0.0066 * var(--tint-scale)), calc(c * 0.08 * var(--tint-scale)), calc(0.012 * var(--tint-scale))) h)
+  );
+  --surface: light-dark(
+    oklch(from var(--hue-source) 100% clamp(calc(0.0066 * var(--tint-scale)), calc(c * 0.06 * var(--tint-scale)), calc(0.012 * var(--tint-scale))) h),
+    oklch(from var(--hue-source) 22.5% clamp(calc(0.0066 * var(--tint-scale)), calc(c * 0.06 * var(--tint-scale)), calc(0.012 * var(--tint-scale))) h)
+  );
+  --surface-muted: light-dark(
+    oklch(from var(--hue-source) 94.5% clamp(calc(0.011 * var(--tint-scale)), calc(c * 0.14 * var(--tint-scale)), calc(0.02 * var(--tint-scale))) h),
+    oklch(from var(--hue-source) 28% clamp(calc(0.011 * var(--tint-scale)), calc(c * 0.14 * var(--tint-scale)), calc(0.02 * var(--tint-scale))) h)
+  );
+
+  /* Ink carries no chroma floor: it is the one step allowed to go fully grey. */
+  --ink: light-dark(
+    oklch(from var(--hue-source) 24% clamp(calc(0 * var(--tint-scale)), calc(c * 0.16 * var(--tint-scale)), calc(0.03 * var(--tint-scale))) h),
+    oklch(from var(--hue-source) 94% clamp(calc(0 * var(--tint-scale)), calc(c * 0.16 * var(--tint-scale)), calc(0.03 * var(--tint-scale))) h)
+  );
+  --ink-muted: light-dark(
+    oklch(from var(--hue-source) 52% clamp(calc(0 * var(--tint-scale)), calc(c * 0.16 * var(--tint-scale)), calc(0.03 * var(--tint-scale))) h),
+    oklch(from var(--hue-source) 72% clamp(calc(0 * var(--tint-scale)), calc(c * 0.16 * var(--tint-scale)), calc(0.03 * var(--tint-scale))) h)
+  );
+
+  /* Decorative hairline, no contrast promise — that is `--border-strong`. */
+  --border: light-dark(
+    oklch(from var(--hue-source) 88% clamp(calc(0.01925 * var(--tint-scale)), calc(c * 0.3 * var(--tint-scale)), calc(0.035 * var(--tint-scale))) h),
+    oklch(from var(--hue-source) 35% clamp(calc(0.01925 * var(--tint-scale)), calc(c * 0.3 * var(--tint-scale)), calc(0.035 * var(--tint-scale))) h)
+  );
+
+  /* Baselines for the runtime-written half. Achromatic, and each clears its
+     contract against the achromatic canvas, so the pre-hydration frame is a
+     legible design system rather than a placeholder. */
+  --border-strong: light-dark(oklch(65.5% 0 0), oklch(49.4% 0 0));
+  --accent: light-dark(oklch(45% 0 0), oklch(75% 0 0));
+  --accent-text: light-dark(oklch(40% 0 0), oklch(80% 0 0));
+  --on-accent: light-dark(#fff, #000);
+  --accent-2: var(--accent);
+  --accent-2-text: var(--accent-text);
+  --on-accent-2: var(--on-accent);
+  --accent-3: var(--accent);
+  --accent-3-text: var(--accent-text);
+  --on-accent-3: var(--on-accent);
+
+  --sans: ui-sans-serif, system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
+  /* The head script writes `color-scheme` inline on <html>, which wins over
+     this. This is the no-JS fallback that keeps `light-dark()` resolving. */
   color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  font: 17px/1.5 var(--sans);
+  background: var(--canvas);
+  color: var(--ink);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+#root {
+  min-block-size: 100svh;
+  display: flex;
+  flex-direction: column;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+a {
+  color: var(--accent-text);
 }
 
 code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  font-family: var(--mono);
+  font-size: 0.85em;
+  background: var(--surface-muted);
+  border-radius: 0.25rem;
+  padding: 0.1em 0.35em;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1.5rem;
+  background: var(--surface);
+  border-block-end: 1px solid var(--border);
+}
+
+header nav {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+}
+
+main {
+  flex: 1;
+  padding: 1.75rem 1.5rem;
+}
+
+h1 {
+  font-size: 1.6rem;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.75rem;
+}
+
+.mode-toggle {
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.4rem 0.65rem;
+  border-radius: 0.45rem;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.sr-only {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
