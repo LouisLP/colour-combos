@@ -157,6 +157,84 @@ h1 {
   white-space: nowrap;
 }
 
+/* Filters and search (ADR 0006 §7): a sticky bar directly under the header,
+   holding the field, the size chips with their facet counts, and a live count.
+   It bleeds to main's padding edges so the grid scrolls under it rather than
+   past its sides. */
+
+.filter-bar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-inline: -1.5rem;
+  margin-block-end: 1.25rem;
+  padding: 0.85rem 1.5rem;
+  background: var(--canvas);
+  border-block-end: 1px solid var(--border);
+}
+
+.filter-field {
+  flex: 1 1 16rem;
+  min-inline-size: 0;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: 0.45rem;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.filter-chip {
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  line-height: 1;
+  white-space: nowrap;
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* --accent is spent only on interactive state (ADR 0006 §4), and an engaged
+   filter is exactly that. */
+.filter-chip[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.filter-count {
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.filter-clear {
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0.45rem 0.9rem;
+  border-radius: 0.45rem;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+}
+
 /* The browse surface (ADR 0006). Variant A: framed cards, equal-split bands,
    always-present caption, selection marked in --ink. */
 

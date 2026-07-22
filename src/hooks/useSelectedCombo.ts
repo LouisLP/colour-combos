@@ -1,6 +1,6 @@
 import type { Combo } from '../data/combos'
-import { rootRouteId, useSearch } from '@tanstack/react-router'
 import { requireCombo } from '../data/combos'
+import { useHubSearch } from './useHubSearch'
 
 /**
  * The combo currently theming the site. Read from the URL, which is its only
@@ -10,5 +10,5 @@ import { requireCombo } from '../data/combos'
  * holds no logic and makes no decisions (ADR 0005 §8).
  */
 export function useSelectedCombo(): Combo {
-  return requireCombo(useSearch({ from: rootRouteId }).c)
+  return requireCombo(useHubSearch().c)
 }

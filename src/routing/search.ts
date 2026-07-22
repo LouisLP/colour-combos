@@ -1,11 +1,5 @@
-import { COMBO_COUNT } from '../data/combos'
-
-/**
- * Combo sizes the catalogue actually contains — 120 pairs, 120 triples,
- * 108 quads (ADR 0004 §4).
- */
-export const COMBO_SIZES = [2, 3, 4] as const
-export type ComboSize = typeof COMBO_SIZES[number]
+import type { ComboSize } from '../data/combos'
+import { COMBO_COUNT, COMBO_SIZES } from '../data/combos'
 
 /**
  * The search params every route carries. They are route-agnostic on purpose:

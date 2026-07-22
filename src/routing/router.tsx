@@ -61,7 +61,13 @@ const favoritesRoute = createRoute({
   component: FavoritesPage,
 })
 
-const routeTree = rootRoute.addChildren([browseRoute, favoritesRoute])
+/**
+ * Exported so a test can mount the real tree on a memory history. The history
+ * semantics in ADR 0004 §5 are a property of the routes and the components
+ * together, so a test that rebuilt an approximation of this would be proving
+ * them about code that is not the code.
+ */
+export const routeTree = rootRoute.addChildren([browseRoute, favoritesRoute])
 
 export const router = createRouter({ routeTree })
 

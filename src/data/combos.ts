@@ -22,6 +22,16 @@ export const COMBOS: Combo[] = raw
 /** The classic catalogue: ids are contiguous `1–348` (#2). */
 export const COMBO_COUNT = COMBOS.length
 
+/**
+ * The sizes the catalogue actually contains — 120 pairs, 120 triples, 108 quads.
+ *
+ * A fact about the data, so it lives with the data: both the `size` search-param
+ * validator (ADR 0004 §4) and the filter chips' facet counts read it from here
+ * rather than each carrying their own list.
+ */
+export const COMBO_SIZES = [2, 3, 4] as const
+export type ComboSize = typeof COMBO_SIZES[number]
+
 export const getCombo = (id: number) => COMBOS.find(c => c.id === id)
 
 /**
