@@ -43,6 +43,14 @@ describe('validateHubSearch', () => {
     expect(validateHubSearch({ c: '1', q: 'blue' }).q).toBe('blue')
   })
 
+  // TanStack parses search params structurally, so `?q=13` arrives as a number.
+  // Dropping it would lose the `No. 13` search — the one query a user can be
+  // certain matches something, because it is printed on the card.
+  it('keeps a numeric query, which the router hands over as a number', () => {
+    expect(validateHubSearch({ c: '1', q: 13 }).q).toBe('13')
+    expect(validateHubSearch({ c: '1', q: 0 }).q).toBe('0')
+  })
+
   it('accepts only the sizes the catalogue contains', () => {
     expect(validateHubSearch({ c: '1', size: '3' }).size).toBe(3)
     expect(validateHubSearch({ c: '1', size: '5' }).size).toBeUndefined()

@@ -13,6 +13,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { COMBOS } from '../data/combos'
 import { filterCombos } from '../data/filter'
 import { routeTree } from '../routing/router'
+import { getSnapshot as favorites, toggle as toggleFavorite } from '../state/favorites'
 
 // jsdom ships no `matchMedia`, and the mode store attaches its listener at
 // import time (ADR 0005 §4). `vi.hoisted` runs before the module graph is
@@ -86,6 +87,9 @@ beforeEach(() => {
 afterEach(() => {
   vi.useRealTimers()
   document.body.replaceChildren()
+  // The favourites store is a module singleton, so it outlives a test.
+  for (const id of [...favorites()])
+    toggleFavorite(id)
 })
 
 describe('a shared link', () => {
@@ -170,6 +174,22 @@ describe('typing in the search field', () => {
     await view.unmount()
   })
 
+  // The URL round-trips a numeric query through a `number`, so the value the
+  // field gets back is not the one it wrote unless the validator restores it.
+  // If it does not, the field sees a foreign `q` and resets itself mid-word.
+  it('survives typing a combo number', async () => {
+    const view = await mount('/?c=1')
+
+    await type(view.field(), '13')
+    await settleDebounce()
+
+    expect(view.search().q).toBe('13')
+    expect(view.field().value).toBe('13')
+    expect(view.cards()).toBe(1)
+
+    await view.unmount()
+  })
+
   it('adopts a `q` the URL moved to under it', async () => {
     const view = await mount('/?c=1&q=blue')
 
@@ -209,6 +229,57 @@ describe('toggling a size chip', () => {
     expect(view.search().q).toBe('blue')
     expect(view.cards()).toBe(filterCombos(COMBOS, { q: 'blue', size: 3 }).length)
     expect(view.cards()).toBeLessThan(before)
+
+    await view.unmount()
+  })
+})
+
+// The issue's "same contract, no route-specific branching". `/favorites`
+// supplies a different source list and nothing else changes.
+describe('/favorites', () => {
+  it('narrows its own list through the same params', async () => {
+    for (const id of [12, 13, 14])
+      toggleFavorite(id)
+
+    const view = await mount('/favorites?c=1&q=13')
+
+    expect(view.cards()).toBe(1)
+    expect(view.field().value).toBe('13')
+
+    await view.unmount()
+  })
+
+  it('counts facets over the favourites, not the catalogue', async () => {
+    for (const id of [12, 13, 14])
+      toggleFavorite(id)
+
+    const view = await mount('/favorites?c=1')
+
+    expect(view.chip('Any').textContent).toBe('Any (3)')
+
+    await view.unmount()
+  })
+
+  it('offers no filter bar when there is nothing to narrow', async () => {
+    const view = await mount('/favorites?c=1')
+
+    expect(view.container.querySelector('.filter-bar')).toBeNull()
+    expect(view.container.textContent).toContain('No favourites yet')
+
+    await view.unmount()
+  })
+
+  // Telling someone with favourites that they have none would read as the
+  // feature being broken rather than as a filter excluding everything.
+  it('distinguishes an excluding filter from an empty list', async () => {
+    for (const id of [12, 13, 14])
+      toggleFavorite(id)
+
+    const view = await mount('/favorites?c=1&q=zzzznotacolour')
+
+    expect(view.cards()).toBe(0)
+    expect(view.container.textContent).toContain('No favourites match that.')
+    expect(view.container.textContent).not.toContain('No favourites yet')
 
     await view.unmount()
   })

@@ -65,7 +65,17 @@ function resolveSize(raw: unknown): ComboSize | undefined {
   return COMBO_SIZES.find(size => size === n)
 }
 
+/**
+ * A search is always a string, but it does not always arrive as one: TanStack
+ * parses search params structurally, so `?q=13` hands this a `number`.
+ *
+ * Rejecting that would drop the param silently — and `13` is not an odd query,
+ * it is the `No. 13` a card is captioned with (ADR 0006 §3), so it is one of
+ * the few searches a user can be certain will match something.
+ */
 function resolveQuery(raw: unknown): string | undefined {
+  if (typeof raw === 'number' && Number.isFinite(raw))
+    return String(raw)
   return typeof raw === 'string' && raw !== '' ? raw : undefined
 }
 

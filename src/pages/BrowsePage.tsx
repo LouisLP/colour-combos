@@ -10,8 +10,8 @@ import { useHubSearch } from '../hooks/useHubSearch'
  *
  * The route supplies the source list and the grid renders whatever it is given
  * (ADR 0006 consequences), so `/favorites` narrows its own list through this
- * same call when it lands in #23. The params are route-agnostic and nothing
- * here branches on the route.
+ * same call. The params are route-agnostic and nothing here branches on the
+ * route — the two pages differ only in the list they hand over.
  */
 export function BrowsePage() {
   const { q, size } = useHubSearch()
