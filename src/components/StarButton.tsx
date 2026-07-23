@@ -1,8 +1,12 @@
 /**
  * The favourite affordance, always visible (ADR 0006 §8). Hover-only dies on
  * touch and focus-only hides the feature from everyone not driving by keyboard,
- * so the star sits in the caption row at all times — 348 permanent glyphs, which
- * the grid was measured with.
+ * so the star is present on every card — 348 permanent glyphs, which the grid
+ * was measured with.
+ *
+ * It is positioned absolutely over the swatch block by the card, so it lands in
+ * the same top-right spot regardless of caption length (ADR 0007); the CSS gives
+ * it a `--surface` backdrop so it stays legible over any raw Wada colour.
  *
  * It stays presentational: the card subscribes to `useIsFavorite` and hands the
  * answer down, so the store has exactly one consumer per card rather than one

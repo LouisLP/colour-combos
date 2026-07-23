@@ -302,14 +302,15 @@ h1 {
   display: grid;
   gap: 1rem;
 
-  /* 5 columns at 1440px, 2 at 390px, and never a card so narrow that the
-     caption ellipsises on the first word (ADR 0006 §5). */
-  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  /* Tightened from 13rem so more cards fit per row (ADR 0007), while staying wide
+     enough that the caption never ellipsises on its first word (ADR 0006 §5).
+     6 columns at 1440px, 2 at 390px. */
+  grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
 }
 
 @media (width >= 100rem) {
   .combo-grid {
-    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
   }
 }
 
@@ -319,7 +320,7 @@ h1 {
    scrollbar thumb drifts ~8% as skipped content renders for real. Accepted. */
 .combo-grid > li {
   content-visibility: auto;
-  contain-intrinsic-size: auto 11rem;
+  contain-intrinsic-size: auto 7.5rem;
 }
 
 .combo-card {
@@ -340,6 +341,12 @@ h1 {
   outline-offset: -1px;
 }
 
+/* The swatch block and its two overlays (star, copy chips) share one relative
+   box so both overlays can be positioned against it (ADR 0007). */
+.combo-media {
+  position: relative;
+}
+
 .combo-hit {
   display: block;
   inline-size: 100%;
@@ -347,9 +354,10 @@ h1 {
   text-decoration: none;
 }
 
+/* Shorter than the original 6.5rem so the card is visibly tighter (ADR 0007). */
 .combo-swatches {
   display: flex;
-  block-size: 6.5rem;
+  block-size: 5rem;
 }
 
 /* Equal split, full bleed. Proportional weighting reduces a 4-colour combo's
@@ -358,28 +366,79 @@ h1 {
   flex: 1;
 }
 
-.combo-caption {
+/* The copy overlay mirrors the swatch flex so each cell lines up with its
+   colour. The layer itself passes clicks through to the selection link beneath;
+   only the chips catch them, so tapping the colour still selects the combo. */
+.combo-copy-layer {
+  position: absolute;
+  inset: 0;
   display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  padding: 0.55rem 0.4rem 0.6rem 0.7rem;
-  border-block-start: 1px solid var(--border);
+  pointer-events: none;
 }
 
-.combo-caption-text {
+.combo-copy-cell {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-block-end: 0.3rem;
+}
+
+/* A --surface backdrop keeps the glyph legible over any raw Wada colour, the
+   same guarantee the caption gave the star before it moved (ADR 0002 §5). The
+   32px box clears the WCAG 2.2 §2.5.8 target minimum. */
+.combo-copy {
+  pointer-events: auto;
+  inline-size: 2rem;
+  block-size: 2rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  background: var(--surface);
+  color: var(--ink-muted);
+  line-height: 0;
+  cursor: pointer;
+
+  /* Hover-revealed on fine pointers; focus overrides below so keyboard users
+     always see the chip they are on. */
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+@media (hover: hover) {
+  .combo-media:hover .combo-copy {
+    opacity: 1;
+  }
+}
+
+/* No hover to reveal them on touch, so the chips stay visible (ADR 0007). */
+@media (hover: none) {
+  .combo-copy {
+    opacity: 1;
+  }
+}
+
+.combo-copy:focus-visible {
+  opacity: 1;
+}
+
+.combo-caption {
+  padding: 0.45rem 0.6rem 0.5rem;
   min-inline-size: 0;
   font-size: 0.78rem;
   line-height: 1.35;
+  border-block-start: 1px solid var(--border);
 }
 
-.combo-caption-text b {
+.combo-caption b {
   display: block;
   font-weight: 600;
 }
 
 /* One line, ellipsised. Hex values are the one piece of metadata the grid
-   cannot afford (§3) — they live on each swatch's title. */
-.combo-caption-text span {
+   cannot afford (§3) — they now copy from each swatch's chip instead. */
+.combo-caption span {
   display: block;
   color: var(--ink-muted);
   overflow: hidden;
@@ -388,13 +447,19 @@ h1 {
 }
 
 /* Always visible, never hover-revealed: hover-only fails on touch outright (§8).
-   It reads as chrome rather than colour because it sits outside the swatches. */
+   Absolute top-right over the swatch block, in the same spot on every card
+   (ADR 0007), with a --surface backdrop so it stays legible over any colour. */
 .combo-star {
-  flex: none;
-  border: 0;
-  background: none;
-  padding: 0.35rem;
+  position: absolute;
+  inset-block-start: 0.3rem;
+  inset-inline-end: 0.3rem;
+  inline-size: 2rem;
+  block-size: 2rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
   border-radius: 0.35rem;
+  background: var(--surface);
   line-height: 0;
   color: var(--ink-muted);
   cursor: pointer;
