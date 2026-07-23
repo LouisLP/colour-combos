@@ -1,6 +1,6 @@
 import { Link, Outlet } from '@tanstack/react-router'
 import { carryHubSearch } from '../routing/search'
-import { ComboHero } from './ComboHero'
+import { ComboIdentity } from './ComboIdentity'
 import { FavoritesLink } from './FavoritesLink'
 import { NotFoundNotice } from './NotFoundNotice'
 import { SiteFooter } from './SiteFooter'
@@ -11,9 +11,9 @@ import { ThemeStyle } from './ThemeStyle'
  * params across, so the selected combo, query and filter survive the move
  * between `/` and `/favorites`.
  *
- * Order top to bottom: the wordmark chrome, the combo identity band, then the
- * page. The band sits above the outlet, not inside a page, because both routes
- * wear the same combo and it survives the move between them (T4).
+ * The header carries the site identity — a wordmark in `--ink` and the nav — over
+ * T2's 4px accent rule (ADR 0009). The identity band sits just below, inside
+ * `main` so it can butt flush under that rule (ADR 0010).
  */
 export function HubLayout() {
   return (
@@ -21,8 +21,8 @@ export function HubLayout() {
       <ThemeStyle />
       <header className="site-header">
         <div className="site-header-inner">
-          {/* Identity in `--ink`, home link. The serif mark is the one editorial
-              voice; the sub is a quiet provenance line. */}
+          {/* Identity, in `--ink`: the serif mark plus a quiet provenance line.
+              Links home, carrying the search params like every other link. */}
           <Link to="/" search={carryHubSearch} className="wordmark">
             <span className="wordmark-mark">Colour Combos</span>
             <span className="wordmark-sub">Sanzo Wada · 1933</span>
@@ -33,8 +33,11 @@ export function HubLayout() {
           </nav>
         </div>
       </header>
-      <ComboHero />
       <main>
+        {/* The active combo, shown large and raw (ADR 0009, refined in ADR 0010).
+            Shared chrome, so it lives here above both routes rather than inside a
+            page, and reads the combo from the URL like everything else. */}
+        <ComboIdentity />
         {/* Above the outlet, not inside a page: the resolution it explains
             happened in the root route, and it has to survive the move between
             `/` and `/favorites` that a bad link's recipient might make. */}
