@@ -64,8 +64,9 @@
   --sans: ui-sans-serif, system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  /* The head script writes `color-scheme` inline on <html>, which wins over
-     this. This is the no-JS fallback that keeps `light-dark()` resolving. */
+  /* `ThemeStyle` emits the combo's chosen `color-scheme` in its own `:root`
+     block, which wins over this by source order (ADR 0008). This is the
+     pre-hydration and no-JS fallback that keeps `light-dark()` resolving. */
   color-scheme: light dark;
 
   font: 17px/1.5 var(--sans);
@@ -135,17 +136,6 @@ h1 {
   font-size: 1.6rem;
   letter-spacing: -0.02em;
   margin: 0 0 0.75rem;
-}
-
-.mode-toggle {
-  font: inherit;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0.4rem 0.65rem;
-  border-radius: 0.45rem;
-  border: 1px solid var(--border-strong);
-  background: var(--surface);
-  color: var(--ink);
 }
 
 /* The "combo not found" notice (ADR 0004 §8). Framed in --border-strong rather

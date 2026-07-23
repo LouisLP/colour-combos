@@ -9,6 +9,29 @@ import { clampToContrast, hexToOklch, oklchToHex, onColour } from './colour'
 
 export type Mode = 'light' | 'dark'
 
+/**
+ * The lightness a combo must average, in OKLab L, to render light rather than
+ * dark. 0.60 is the OKLab lightness of neutral mid-grey (`#808080`): a combo
+ * whose colours are, on average, lighter than mid-grey reads as a light palette
+ * and gets a near-white canvas; darker reads as a dark palette and gets a
+ * near-black one (ADR 0008).
+ */
+export const MODE_L_THRESHOLD = 0.6
+
+/**
+ * The mode a combo renders in — combo-owned, not user-chosen (ADR 0008). Mean
+ * OKLab lightness across the combo's raw colours, thresholded at mid-grey.
+ *
+ * Equal-weight and lightness-only on purpose: no area information exists to
+ * weight by, and lightness is the single axis the near-neutral canvas swings
+ * along. Chroma and hue decide *which* colour tints the canvas (`assignRoles`),
+ * never how bright the room is.
+ */
+export function comboMode(combo: Combo): Mode {
+  const meanL = combo.colours.reduce((sum, c) => sum + hexToOklch(c.hex).l, 0) / combo.colours.length
+  return meanL >= MODE_L_THRESHOLD ? 'light' : 'dark'
+}
+
 export interface Assignment {
   /** Index into combo.colours whose hue tints the neutrals. */
   hueSource: number

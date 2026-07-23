@@ -1,5 +1,6 @@
-// Favourites, as a module singleton (ADR 0003 §4, ADR 0005 §4) — the same shape
-// as `state/mode.ts`, one pattern learned once.
+// Favourites, as a module singleton (ADR 0003 §4, ADR 0005 §4). It is now the
+// app's only module store — mode used to share the shape until it became
+// combo-derived (ADR 0008).
 //
 // Memory is the truth for the session; localStorage is the durable mirror,
 // written through on every mutation. A favourite is a bare numeric Wada id and

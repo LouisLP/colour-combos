@@ -9,21 +9,12 @@
 import { createMemoryHistory, createRouter, RouterProvider } from '@tanstack/react-router'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { routeTree } from '../routing/router'
 
-// jsdom ships no `matchMedia`, and the mode store attaches its listener at
-// import time (ADR 0005 §4). `vi.hoisted` runs before the module graph is
-// evaluated, which is the only window in which this can be provided.
-vi.hoisted(() => {
-  globalThis.matchMedia ??= (() => ({
-    matches: false,
-    addEventListener: () => {},
-    removeEventListener: () => {},
-  })) as unknown as typeof matchMedia
-})
+;
 
-;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
+(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
 const mounted: (() => Promise<void>)[] = []
 

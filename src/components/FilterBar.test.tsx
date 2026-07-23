@@ -15,20 +15,11 @@ import { filterCombos } from '../data/filter'
 import { routeTree } from '../routing/router'
 import { getSnapshot as favorites, toggle as toggleFavorite } from '../state/favorites'
 
-// jsdom ships no `matchMedia`, and the mode store attaches its listener at
-// import time (ADR 0005 §4). `vi.hoisted` runs before the module graph is
-// evaluated, which is the only window in which this can be provided.
-vi.hoisted(() => {
-  globalThis.matchMedia ??= (() => ({
-    matches: false,
-    addEventListener: () => {},
-    removeEventListener: () => {},
-  })) as unknown as typeof matchMedia
-})
-
 // Tells React that `act` is being driven deliberately, so effects and the
 // router's own state updates flush inside it rather than warning.
-;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
+;
+
+(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
 async function mount(initial: string) {
   const history = createMemoryHistory({ initialEntries: [initial] })

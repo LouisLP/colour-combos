@@ -20,9 +20,12 @@ appearing in two combos is two colours.
 always selected; a bare URL resolves to a random one. Distinct from a
 *favourited* combo, of which there may be many.
 
-**Mode** — light or dark. Owned by the site's own toggle (defaulting to
-`prefers-color-scheme`), never by the combo. See
-[ADR 0001](docs/adr/0001-light-dark-and-combo-theming-semantics.md).
+**Mode** — light or dark. A pure function of the selected combo, not a user
+control: the combo renders light when its colours average lighter than neutral
+mid-grey (mean OKLab L ≥ 0.60), dark otherwise. One combo → one canonical
+rendering; there is no toggle and no `prefers-color-scheme` default. See
+[ADR 0008](docs/adr/0008-combo-owned-mode.md), superseding
+[ADR 0001](docs/adr/0001-light-dark-and-combo-theming-semantics.md) §1.
 
 **Favourite** — a combo the visitor has starred. Stored browser-locally as a
 bare numeric Wada id, never a copy of the combo's colours; there may be many, and
@@ -59,13 +62,15 @@ lightness adjustment with hue and chroma preserved.
 carries before hydration, and when a URL names a combo that doesn't exist.
 
 **Palette** — the concrete custom-property values one (combo, mode) pair
-derives to. Never stored: a pure function of the URL and the active mode,
-memoised in the adapter and rendered as a `<style>` element. See
+derives to. Never stored: a pure function of the URL — the URL fixes the combo,
+and the combo fixes the mode (see **Mode**) — memoised in the adapter and
+rendered as a `<style>` element. See
 [ADR 0005](docs/adr/0005-app-state-architecture.md).
 
 **Module store** — a module-level singleton owning exactly one fact, read
-through `useSyncExternalStore`. Favourites and mode are the only two; the app
-ships no context providers.
+through `useSyncExternalStore`. Favourites is now the only one; the app ships no
+context providers. (Mode was the second until it became combo-derived —
+[ADR 0008](docs/adr/0008-combo-owned-mode.md).)
 
 **Drift budget** — the lightness a role colour is permitted to move to clear its
 contrast floor. Hue and chroma are held; only lightness pays. Bounded at ΔL 0.36
@@ -84,3 +89,4 @@ the surface it happens to sit on in one component.
 - [ADR 0005 — App state architecture](docs/adr/0005-app-state-architecture.md)
 - [ADR 0006 — Browse surface and combo card](docs/adr/0006-browse-surface-and-grid.md)
 - [ADR 0007 — Combo card refinements](docs/adr/0007-combo-card-refinements.md)
+- [ADR 0008 — Combo-owned light/dark mode](docs/adr/0008-combo-owned-mode.md)

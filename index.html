@@ -26,21 +26,12 @@
     <meta property="og:url" content="https://louislp.github.io/colour-combos/" />
     <meta name="twitter:card" content="summary" />
     <!--
-      Mode is the flash risk; the combo is not (ADR 0005 §5). The document has a
-      background before React exists, so `color-scheme` is set here: blocking, no
-      network, sub-millisecond.
-
-      DUPLICATED IN `src/state/mode.ts`. The key and the resolution rule live in
-      both files by necessity; a change to either must be made twice.
+      No mode-priming script: mode is combo-owned (ADR 0008), and the bare `/`
+      picks its combo at random in JS, so no combo — and no mode — is knowable
+      before hydration. The pre-hydration frame is the achromatic token baseline
+      (`index.css`), which reads fine under the `color-scheme: light dark`
+      fallback until `ThemeStyle` renders the combo's chosen scheme.
     -->
-    <script>
-      (function () {
-        var m = localStorage.getItem('colour-combos:mode')
-        if (m !== 'light' && m !== 'dark')
-          m = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-        document.documentElement.style.colorScheme = m
-      })()
-    </script>
   </head>
   <body>
     <div id="root"></div>

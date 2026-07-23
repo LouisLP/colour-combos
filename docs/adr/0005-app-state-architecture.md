@@ -119,6 +119,12 @@ the code.
 
 ### 4. Mode is a module singleton, and stores only an override
 
+> **Superseded by [ADR 0008](0008-combo-owned-mode.md).** Mode is no longer
+> stored at all: it is a pure function of the selected combo, so `state/mode.ts`,
+> the `colour-combos:mode` key, and the `matchMedia`/`storage` wiring below are
+> gone. Favourites is now the only module store; the "two stores, one pattern"
+> note in §7 collapses to one.
+
 Mode takes the same shape as favourites — one pattern, learned once:
 
 ```
@@ -152,6 +158,12 @@ Multi-tab and storage failure inherit ADR 0003 wholesale — adopt wholesale on
 for the session. Two stores, one set of rules.
 
 ### 5. Mode is the flash risk. The combo is not.
+
+> **Superseded by [ADR 0008](0008-combo-owned-mode.md).** With mode
+> combo-derived and the bare `/` combo picked in JS, no mode is knowable before
+> hydration, so the priming head script below is gone. Mode and combo now arrive
+> together at the first commit; the pre-hydration frame is the achromatic token
+> baseline under the `color-scheme: light dark` fallback.
 
 These are usually discussed as one problem. They are not.
 

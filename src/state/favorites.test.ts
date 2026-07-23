@@ -206,7 +206,7 @@ describe('another tab', () => {
     stubStorage(stored([12]))
     const { getSnapshot } = await load()
 
-    window.dispatchEvent(new StorageEvent('storage', { key: 'colour-combos:mode', newValue: 'dark' }))
+    window.dispatchEvent(new StorageEvent('storage', { key: 'some-other-app:setting', newValue: 'x' }))
 
     expect(getSnapshot()).toEqual([12])
   })

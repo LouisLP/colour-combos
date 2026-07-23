@@ -1,7 +1,8 @@
 // The AA guarantee, locked in. Ported from `prototypes/adaptation-model/sweep.ts`
-// per ADR 0002 — the prototype proved 0 failures over 348 combos x 2 modes x 13
-// pairings, and this runs the same proof against the shipping adapter so a tweak
-// to the derivation ladder cannot silently regress contrast.
+// per ADR 0002, and restated to one mode per combo by ADR 0008: mode is now
+// combo-owned, so each combo has exactly one canonical rendering, and the sweep
+// is 348 combos x 1 mode, not x2. This runs the AA proof against the shipping
+// adapter so a tweak to the derivation ladder cannot silently regress contrast.
 //
 // The pairing set is wider than the prototype's 13: `auditPalette` also checks
 // the accent fills against `surface-muted`, without which the sweep cannot see
@@ -9,21 +10,23 @@
 
 import { describe, expect, it } from 'vitest'
 import { COMBOS } from '../data/combos'
-import { adapt } from './adapt'
+import { adapt, comboMode } from './adapt'
 import { auditPalette } from './audit'
 import { contrast, hexToOklch } from './colour'
 
-const MODES = ['light', 'dark'] as const
-
-/** Every (combo, mode) rendering in the catalogue, derived once. */
-const RENDERINGS = COMBOS.flatMap(combo =>
-  MODES.map(mode => ({ combo, mode, palette: adapt(combo, mode) })),
-)
+/**
+ * Every combo's canonical rendering — the one mode its own colours select
+ * (ADR 0008) — derived once. This is exactly what the site ever shows.
+ */
+const RENDERINGS = COMBOS.map((combo) => {
+  const mode = comboMode(combo)
+  return { combo, mode, palette: adapt(combo, mode) }
+})
 
 describe('aA gate — WCAG 2.2 across the whole catalogue', () => {
-  it('sweeps the full catalogue in both modes', () => {
+  it('sweeps the full catalogue, one canonical mode per combo', () => {
     expect(COMBOS).toHaveLength(348)
-    expect(RENDERINGS).toHaveLength(696)
+    expect(RENDERINGS).toHaveLength(348)
   })
 
   it('has no failing pairing in any rendering', () => {
@@ -50,29 +53,32 @@ describe('aA gate — WCAG 2.2 across the whole catalogue', () => {
 })
 
 describe('drift budget — regression signal, not a gate', () => {
-  // ADR 0002 measured these on variant C. The bounds below sit deliberately
-  // clear of the measured values: they are meant to catch a derivation change
-  // that makes the catalogue visibly duller or draggier, not to freeze the
-  // numbers. Moving a bound is a legitimate edit — silently blowing past one
-  // is what this is here to prevent.
+  // Remeasured on the canonical renderings (ADR 0008). Drift runs higher than
+  // the old 348x2 average: each combo now renders in its native-lightness mode,
+  // so a light palette's light accents sit on a light canvas and must drag
+  // darker to clear AA (and vice versa) — the direction the x2 average diluted.
+  // The bounds sit deliberately clear of the measured values: they catch a
+  // derivation change that makes the catalogue visibly duller or draggier, not
+  // freeze the numbers. Moving a bound is a legitimate edit — silently blowing
+  // past one is what this is here to prevent.
   const accents = RENDERINGS.map(r => r.palette.roles.accent)
 
-  it('keeps mean accent lightness drift low (measured 0.052)', () => {
+  it('keeps mean accent lightness drift low (measured 0.077)', () => {
     const mean = accents.reduce((s, a) => s + (a.shifted ?? 0), 0) / accents.length
-    expect(mean).toBeLessThan(0.07)
+    expect(mean).toBeLessThan(0.10)
   })
 
-  it('rarely drags the accent far enough to lose its identity (measured 8.5%)', () => {
+  it('rarely drags the accent far enough to lose its identity (measured 13.8%)', () => {
     const dragged = accents.filter(a => (a.shifted ?? 0) > 0.2).length
-    expect(dragged / accents.length).toBeLessThan(0.12)
+    expect(dragged / accents.length).toBeLessThan(0.18)
   })
 
-  it('leaves most accents at their published Wada lightness (measured 62%)', () => {
+  it('leaves most accents at their published Wada lightness (measured 47.7%)', () => {
     const untouched = accents.filter(a => (a.shifted ?? 1) === 0).length
-    expect(untouched / accents.length).toBeGreaterThan(0.55)
+    expect(untouched / accents.length).toBeGreaterThan(0.42)
   })
 
-  it('yields a colourful UI (mean accent chroma, measured 0.138)', () => {
+  it('yields a colourful UI (mean accent chroma, measured 0.136)', () => {
     const mean = accents.reduce((s, a) => s + hexToOklch(a.hex).c, 0) / accents.length
     expect(mean).toBeGreaterThan(0.12)
   })
