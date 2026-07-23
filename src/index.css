@@ -109,12 +109,17 @@ code {
   padding: 0.1em 0.35em;
 }
 
+/* A bold accent rule across the very top edge carries the combo's colour into
+   the chrome before any content is read (T2, ADR 0009). It is a boundary, not
+   text, and `--accent` clears 3:1 on `--surface` by contract, so it stays a
+   legal decorative edge in every rendering. */
 header {
   display: flex;
   align-items: center;
   gap: 1rem;
   padding: 0.9rem 1.5rem;
   background: var(--surface);
+  border-block-start: 4px solid var(--accent);
   border-block-end: 1px solid var(--border);
 }
 
@@ -124,12 +129,88 @@ header nav {
   flex: 1;
 }
 
+/* The active route wears the accent as an underline. `--accent-text` clears
+   4.5:1 on `--surface` by contract, and the underline is an accent boundary, so
+   both halves of the marked link are AA-safe in every combo. */
+header nav a {
+  text-decoration: none;
+  padding-block: 0.15rem;
+  border-block-end: 2px solid transparent;
+}
+
+header nav a[aria-current='page'] {
+  border-block-end-color: var(--accent);
+}
+
 main {
   flex: 1;
   inline-size: 100%;
   max-inline-size: 78rem;
   margin-inline: auto;
   padding: 1.75rem 1.5rem 7rem;
+}
+
+/* The active-combo identity band (ADR 0009). It bleeds to main's padding edges
+   and butts flush under the header — the negative block-start cancels main's top
+   padding — so the header rule and this strip read as one continuous piece of
+   combo-coloured chrome. `overflow: hidden` clips the raw swatch strip to the
+   band's rounded-nothing corners so no `--canvas` shows through. */
+.combo-hero {
+  margin-block-start: -1.75rem;
+  margin-inline: -1.5rem;
+  margin-block-end: 1.25rem;
+  overflow: hidden;
+  background: var(--surface);
+  border-block-end: 1px solid var(--border);
+}
+
+/* Raw Wada colours, shown as themselves (ADR 0001 §4) — equal split and full
+   bleed, the large-format echo of a combo card's swatch block. Tall enough to
+   dominate the fold. */
+.combo-hero-swatches {
+  display: flex;
+  block-size: 5.5rem;
+}
+
+.combo-hero-swatches i {
+  flex: 1;
+}
+
+.combo-hero-meta {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.9rem;
+  padding: 0.85rem 1.5rem;
+}
+
+/* The one vivid role in the band: `--on-accent` on `--accent`, the pairing the
+   AA sweep proves at 4.5:1 for every combo (ADR 0002 §5). */
+.combo-hero-eyebrow {
+  margin: 0;
+  align-self: center;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.combo-hero-id {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.combo-hero-names {
+  margin: 0;
+  min-inline-size: 0;
+  font-size: 0.85rem;
+  color: var(--ink-muted);
 }
 
 h1 {
