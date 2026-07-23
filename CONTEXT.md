@@ -83,3 +83,4 @@ the surface it happens to sit on in one component.
 - [ADR 0004 — Shareable combo URL & routing scheme](docs/adr/0004-routing-and-url-state.md)
 - [ADR 0005 — App state architecture](docs/adr/0005-app-state-architecture.md)
 - [ADR 0006 — Browse surface and combo card](docs/adr/0006-browse-surface-and-grid.md)
+- [ADR 0007 — Combo card refinements](docs/adr/0007-combo-card-refinements.md)
