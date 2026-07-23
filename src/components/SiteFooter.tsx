@@ -10,23 +10,25 @@
 export function SiteFooter() {
   return (
     <footer className="site-footer">
-      <p>
-        Colours from Sanzo Wada's
-        {' '}
-        <cite>A Dictionary of Color Combinations</cite>
-        {' '}
-        (1933–1937), public domain. Source volumes digitised by the National
-        Diet Library.
-      </p>
-      <p>
-        Data via
-        {' '}
-        <a href="https://github.com/mattdesl/dictionary-of-colour-combinations">
-          dictionary-of-colour-combinations
-        </a>
-        {' '}
-        by Matt DesLauriers (MIT).
-      </p>
+      <div className="site-footer-inner">
+        <p>
+          Colours from Sanzo Wada's
+          {' '}
+          <cite>A Dictionary of Color Combinations</cite>
+          {' '}
+          (1933–1937), public domain. Source volumes digitised by the National
+          Diet Library.
+        </p>
+        <p>
+          Data via
+          {' '}
+          <a href="https://github.com/mattdesl/dictionary-of-colour-combinations">
+            dictionary-of-colour-combinations
+          </a>
+          {' '}
+          by Matt DesLauriers (MIT).
+        </p>
+      </div>
     </footer>
   )
 }

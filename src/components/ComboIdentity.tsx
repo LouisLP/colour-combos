@@ -16,10 +16,17 @@ import { useSelectedCombo } from '../hooks/useSelectedCombo'
  * The one vivid role — the accent eyebrow — is an `--on-accent` on `--accent`
  * pill, a pairing the AA sweep proves at 4.5:1 across the whole catalogue.
  *
+ * T4 finishes the band (ADR 0010): a row of per-colour **hex** aligned under the
+ * strip — the datum the grid card has no room for (ADR 0006 §3) — and the number
+ * set in the editorial serif. The `--ink`-muted hex sits on `--surface`, so it
+ * keeps the same contrast guarantee as the rest of the meta. The strip and hex
+ * are `aria-hidden`; the combo's spoken identity is the number and names.
+ *
  * Shared chrome, so it lives in `HubLayout` above both routes and reads the
  * combo from the URL like everything else. It is identity, not document
  * structure: the number is a `<p>`, not a heading, so it never competes with a
- * page's own `<h1>`.
+ * page's own `<h1>`. The meta is keyed by combo id so its entry animation
+ * replays on each pick (and no-ops under reduced motion).
  */
 export function ComboIdentity() {
   const combo = useSelectedCombo()
@@ -32,7 +39,15 @@ export function ComboIdentity() {
         ))}
       </span>
 
-      <div className="combo-hero-meta">
+      {/* Aligned one-per-cell under the strip. Decorative detail for sighted
+          users; the spoken identity is the number and names below. */}
+      <ul className="combo-hero-hexes" aria-hidden="true">
+        {combo.colours.map(colour => (
+          <li key={colour.index}>{colour.hex}</li>
+        ))}
+      </ul>
+
+      <div key={combo.id} className="combo-hero-meta">
         <p className="combo-hero-eyebrow">Now theming</p>
         <p className="combo-hero-id">{`Combination No. ${combo.id}`}</p>
         <p className="combo-hero-names">{comboLabel(combo)}</p>
