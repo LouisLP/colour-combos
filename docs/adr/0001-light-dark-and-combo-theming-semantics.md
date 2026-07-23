@@ -1,6 +1,7 @@
 # 1. Light/dark and combo theming semantics
 
-- **Status**: Accepted
+- **Status**: Accepted; §1 and the two-rendering framing of §5 superseded by
+  [ADR 0008](0008-combo-owned-mode.md)
 - **Date**: 2026-07-22
 - **Ticket**: [Light/dark & combo theming semantics](https://github.com/LouisLP/colour-combos/issues/3)
 - **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)
@@ -16,6 +17,11 @@ colours can't keep that promise.
 ## Decision
 
 ### 1. Mode is site-owned, not combo-derived
+
+> **Superseded by [ADR 0008](0008-combo-owned-mode.md).** Mode is now a pure
+> function of the selected combo: no toggle, no `prefers-color-scheme` default,
+> and one rendering per combo rather than two. The rest of this ADR — the
+> derived canvas, the AA contract, the raw-vs-role split — stands.
 
 The site has its own light/dark toggle, defaulting to `prefers-color-scheme`.
 It is the sole source of truth for mode.
@@ -68,6 +74,11 @@ The combo stays recognisable, the UI always passes, and the two contracts never
 collide because they never apply to the same pixel.
 
 ### 5. Role assignment is mode-invariant
+
+> **Partly superseded by [ADR 0008](0008-combo-owned-mode.md).** The invariant
+> below still holds — assignment is computed once per combo and derivation is
+> mode-dependent — but a combo now only ever renders in *one* mode, so there is
+> no toggle to flip and no two-ways-lit reading to preserve.
 
 Which colour is the hue source and which is the accent is computed **once per
 combo** and holds in both modes. Only the *derivation* is mode-dependent:

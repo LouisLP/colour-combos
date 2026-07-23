@@ -1,7 +1,6 @@
 import { Link, Outlet } from '@tanstack/react-router'
 import { carryHubSearch } from '../routing/search'
 import { FavoritesLink } from './FavoritesLink'
-import { ModeToggle } from './ModeToggle'
 import { NotFoundNotice } from './NotFoundNotice'
 import { SiteFooter } from './SiteFooter'
 import { ThemeStyle } from './ThemeStyle'
@@ -20,7 +19,6 @@ export function HubLayout() {
           <Link to="/" search={carryHubSearch}>Browse</Link>
           <FavoritesLink />
         </nav>
-        <ModeToggle />
       </header>
       <main>
         {/* Above the outlet, not inside a page: the resolution it explains

@@ -1,6 +1,5 @@
-import { useMode } from '../hooks/useMode'
 import { useSelectedCombo } from '../hooks/useSelectedCombo'
-import { adapt } from '../theme/adapt'
+import { adapt, comboMode } from '../theme/adapt'
 import { paletteToCss } from '../theme/tokens'
 
 /**
@@ -12,12 +11,17 @@ import { paletteToCss } from '../theme/tokens'
  * memoises by `id:mode`, so after the first render for a pair this is a map
  * lookup (ADR 0005 §3).
  *
- * `color-scheme` is deliberately absent — the mode store owns it, because it has
- * to be set before React exists (ADR 0005 §4, §5).
+ * Mode is combo-owned (ADR 0008): the selected combo decides light or dark, so
+ * `color-scheme` is emitted here alongside the palette rather than primed by a
+ * head script. It rides in the same `:root` block, wins over the
+ * `color-scheme: light dark` baseline in `index.css` by source order, and feeds
+ * every `light-dark()` in the ramp. Nothing is knowable before this style
+ * exists — the bare `/` picks its random combo in JS — so the achromatic token
+ * baseline renders under that mode-agnostic scheme until the first commit.
  */
 export function ThemeStyle() {
   const combo = useSelectedCombo()
-  const mode = useMode()
+  const mode = comboMode(combo)
 
-  return <style>{`:root{${paletteToCss(adapt(combo, mode))}}`}</style>
+  return <style>{`:root{color-scheme:${mode};${paletteToCss(adapt(combo, mode))}}`}</style>
 }
