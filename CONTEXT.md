@@ -48,11 +48,13 @@ assignment.
 **Hue source** — the combo colour whose hue tints the derived near-neutral
 canvas and surfaces. Its chroma is heavily reduced; it is not shown raw.
 
-**Accent** — the combo colour used at full strength for buttons, links, borders
-and focus rings, lightness-clamped where necessary to clear AA. Reserved for
-*interactive state* only — never identity or decoration, so that on a page
-already saturated with combo colour the accent means exactly one thing. See
-[ADR 0006](docs/adr/0006-browse-surface-and-grid.md).
+**Accent** — the combo colour used at full strength for buttons, links, borders,
+focus rings and now the chrome (header rule, active-route underline, the identity
+band's eyebrow), lightness-clamped where necessary to clear AA. ADR 0006 §4 once
+reserved it for *interactive state* only; [ADR 0009](docs/adr/0009-bolder-combo-colour-across-chrome.md)
+spreads it across the chrome to make the selected combo obvious at a glance.
+Identity is now disambiguated by the neutral marker, not accent scarcity — the
+selected combo is marked in `--ink`, not `--accent` (ADR 0009 §4).
 
 **Raw vs role use** — showing a colour *as itself* (swatch, hex readout) uses
 the exact Wada value and is never altered; using it *as a role* permits
@@ -90,3 +92,4 @@ the surface it happens to sit on in one component.
 - [ADR 0006 — Browse surface and combo card](docs/adr/0006-browse-surface-and-grid.md)
 - [ADR 0007 — Combo card refinements](docs/adr/0007-combo-card-refinements.md)
 - [ADR 0008 — Combo-owned light/dark mode](docs/adr/0008-combo-owned-mode.md)
+- [ADR 0009 — Bolder combo colour across the chrome](docs/adr/0009-bolder-combo-colour-across-chrome.md)

@@ -76,6 +76,12 @@ the card's `title` and on the detail surface.
 
 ### 4. Recursion: the grid participates, and *selected* is marked in `--ink`
 
+> **The `--ink` marker is upheld; the accent reservation below is superseded by
+> [ADR 0009](0009-bolder-combo-colour-across-chrome.md) §2, §4.** T2 spreads the
+> accent family across the chrome on purpose, so "accent reserved for interactive
+> state" no longer holds. The `--ink` selected-card marker survives — its
+> reasoning *strengthens* once the accent is everywhere (ADR 0009 §4).
+
 The page wears the selected combo while showing 347 rivals, so the marker for
 "this is the one you're wearing" cannot be `--accent` — the accent is already
 on the filter chips, the focus rings and the buttons, and a fourth accented
