@@ -91,6 +91,11 @@ colour's hex, so a colour has the same ramp and anchor in every combo.
 with the combo's canonical mode marked. Exact adapter values, not references to
 steps; the site's re-theming is a live preview of it.
 
+**Emitter** — a pure function from a scale to one export format's text (CSS,
+Tailwind, SCSS, design tokens, TS/JS). The single source of that text: the
+package's files and the site's code blocks both come from it. See
+[ADR 0013](docs/adr/0013-export-formats-and-package.md).
+
 **Module store** — a module-level singleton owning exactly one fact, held in a
 `shallowRef` and read through a composable ([ADR 0011](docs/adr/0011-vue-migration.md)).
 Favourites is now the only one; the app ships no provide/inject and no Pinia. (Mode was the second until it became combo-derived —
@@ -118,3 +123,4 @@ the surface it happens to sit on in one component.
 - [ADR 0010 — Visual language](docs/adr/0010-visual-language.md)
 - [ADR 0011 — Port the site to Vue 3](docs/adr/0011-vue-migration.md)
 - [ADR 0012 — Combo scale model](docs/adr/0012-combo-scale-model.md)
+- [ADR 0013 — Export formats and the importable package](docs/adr/0013-export-formats-and-package.md)

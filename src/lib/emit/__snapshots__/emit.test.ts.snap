@@ -1,0 +1,758 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`snapshots — so a format change is visible in review > css 1`] = `
+"/* colour-combos · Wada No. 1 — English Red · Cerulian Blue. Canonical mode: light. */
+:root {
+  /* English Red: the exact Wada hex is step 400 */
+  --cc-english-red-50: #fffcfb;
+  --cc-english-red-100: #ffe5d9;
+  --cc-english-red-200: #fdb899;
+  --cc-english-red-300: #ee9268;
+  --cc-english-red-400: #d96629;
+  --cc-english-red-500: #bf571e;
+  --cc-english-red-600: #9e4410;
+  --cc-english-red-700: #7f3202;
+  --cc-english-red-800: #5c2200;
+  --cc-english-red-900: #320f00;
+  --cc-english-red-950: #0b0100;
+  --cc-english-red: var(--cc-english-red-400);
+
+  /* Cerulian Blue: the exact Wada hex is step 400 */
+  --cc-cerulian-blue-50: #f8feff;
+  --cc-cerulian-blue-100: #d1f0f5;
+  --cc-cerulian-blue-200: #99d1db;
+  --cc-cerulian-blue-300: #65b5c3;
+  --cc-cerulian-blue-400: #0093a5;
+  --cc-cerulian-blue-500: #008292;
+  --cc-cerulian-blue-600: #006976;
+  --cc-cerulian-blue-700: #00525c;
+  --cc-cerulian-blue-800: #003a42;
+  --cc-cerulian-blue-900: #001e22;
+  --cc-cerulian-blue-950: #000405;
+  --cc-cerulian-blue: var(--cc-cerulian-blue-400);
+
+  /* Neutral, tinted from the combo */
+  --cc-neutral-50: #f8feff;
+  --cc-neutral-100: #e2eced;
+  --cc-neutral-200: #bfcacc;
+  --cc-neutral-300: #9fabae;
+  --cc-neutral-400: #839093;
+  --cc-neutral-500: #6b787a;
+  --cc-neutral-600: #566163;
+  --cc-neutral-700: #414b4d;
+  --cc-neutral-800: #2d3537;
+  --cc-neutral-900: #151b1c;
+  --cc-neutral-950: #020404;
+
+  /* accent: English Red */
+  --cc-accent-50: var(--cc-english-red-50);
+  --cc-accent-100: var(--cc-english-red-100);
+  --cc-accent-200: var(--cc-english-red-200);
+  --cc-accent-300: var(--cc-english-red-300);
+  --cc-accent-400: var(--cc-english-red-400);
+  --cc-accent-500: var(--cc-english-red-500);
+  --cc-accent-600: var(--cc-english-red-600);
+  --cc-accent-700: var(--cc-english-red-700);
+  --cc-accent-800: var(--cc-english-red-800);
+  --cc-accent-900: var(--cc-english-red-900);
+  --cc-accent-950: var(--cc-english-red-950);
+
+  /* accent-2: Cerulian Blue */
+  --cc-accent-2-50: var(--cc-cerulian-blue-50);
+  --cc-accent-2-100: var(--cc-cerulian-blue-100);
+  --cc-accent-2-200: var(--cc-cerulian-blue-200);
+  --cc-accent-2-300: var(--cc-cerulian-blue-300);
+  --cc-accent-2-400: var(--cc-cerulian-blue-400);
+  --cc-accent-2-500: var(--cc-cerulian-blue-500);
+  --cc-accent-2-600: var(--cc-cerulian-blue-600);
+  --cc-accent-2-700: var(--cc-cerulian-blue-700);
+  --cc-accent-2-800: var(--cc-cerulian-blue-800);
+  --cc-accent-2-900: var(--cc-cerulian-blue-900);
+  --cc-accent-2-950: var(--cc-cerulian-blue-950);
+
+  /* Semantic roles: light-dark(light, dark) */
+  --cc-canvas: light-dark(#f4fcfd, #0d1314);
+  --cc-surface: light-dark(#ffffff, #181d1d);
+  --cc-surface-muted: light-dark(#e2f0f2, #212b2d);
+  --cc-ink: light-dark(#162224, #dfeff1);
+  --cc-ink-muted: light-dark(#5e6c6e, #99a8aa);
+  --cc-border: light-dark(#c1dee3, #263f44);
+  --cc-border-strong: light-dark(#7a959a, #4c666c);
+  --cc-accent: light-dark(#d96629, #d96629);
+  --cc-accent-text: light-dark(#b64a00, #e36f34);
+  --cc-on-accent: light-dark(#000000, #000000);
+  --cc-accent-2: light-dark(#0093a5, #0093a5);
+  --cc-accent-2-text: light-dark(#007786, #1f9eb0);
+  --cc-on-accent-2: light-dark(#000000, #000000);
+}
+
+[data-theme='light'] { color-scheme: light; }
+[data-theme='dark'] { color-scheme: dark; }
+"
+`;
+
+exports[`snapshots — so a format change is visible in review > scss 1`] = `
+"// colour-combos · Wada No. 1 — English Red · Cerulian Blue. Canonical mode: light.
+
+$cc-canonical-mode: light;
+
+// English Red: the exact Wada hex is step 400
+$cc-english-red-50: #fffcfb;
+$cc-english-red-100: #ffe5d9;
+$cc-english-red-200: #fdb899;
+$cc-english-red-300: #ee9268;
+$cc-english-red-400: #d96629;
+$cc-english-red-500: #bf571e;
+$cc-english-red-600: #9e4410;
+$cc-english-red-700: #7f3202;
+$cc-english-red-800: #5c2200;
+$cc-english-red-900: #320f00;
+$cc-english-red-950: #0b0100;
+$cc-english-red: $cc-english-red-400;
+
+// Cerulian Blue: the exact Wada hex is step 400
+$cc-cerulian-blue-50: #f8feff;
+$cc-cerulian-blue-100: #d1f0f5;
+$cc-cerulian-blue-200: #99d1db;
+$cc-cerulian-blue-300: #65b5c3;
+$cc-cerulian-blue-400: #0093a5;
+$cc-cerulian-blue-500: #008292;
+$cc-cerulian-blue-600: #006976;
+$cc-cerulian-blue-700: #00525c;
+$cc-cerulian-blue-800: #003a42;
+$cc-cerulian-blue-900: #001e22;
+$cc-cerulian-blue-950: #000405;
+$cc-cerulian-blue: $cc-cerulian-blue-400;
+
+// Neutral, tinted from the combo
+$cc-neutral-50: #f8feff;
+$cc-neutral-100: #e2eced;
+$cc-neutral-200: #bfcacc;
+$cc-neutral-300: #9fabae;
+$cc-neutral-400: #839093;
+$cc-neutral-500: #6b787a;
+$cc-neutral-600: #566163;
+$cc-neutral-700: #414b4d;
+$cc-neutral-800: #2d3537;
+$cc-neutral-900: #151b1c;
+$cc-neutral-950: #020404;
+
+// accent: English Red
+$cc-accent-50: $cc-english-red-50;
+$cc-accent-100: $cc-english-red-100;
+$cc-accent-200: $cc-english-red-200;
+$cc-accent-300: $cc-english-red-300;
+$cc-accent-400: $cc-english-red-400;
+$cc-accent-500: $cc-english-red-500;
+$cc-accent-600: $cc-english-red-600;
+$cc-accent-700: $cc-english-red-700;
+$cc-accent-800: $cc-english-red-800;
+$cc-accent-900: $cc-english-red-900;
+$cc-accent-950: $cc-english-red-950;
+
+// accent-2: Cerulian Blue
+$cc-accent-2-50: $cc-cerulian-blue-50;
+$cc-accent-2-100: $cc-cerulian-blue-100;
+$cc-accent-2-200: $cc-cerulian-blue-200;
+$cc-accent-2-300: $cc-cerulian-blue-300;
+$cc-accent-2-400: $cc-cerulian-blue-400;
+$cc-accent-2-500: $cc-cerulian-blue-500;
+$cc-accent-2-600: $cc-cerulian-blue-600;
+$cc-accent-2-700: $cc-cerulian-blue-700;
+$cc-accent-2-800: $cc-cerulian-blue-800;
+$cc-accent-2-900: $cc-cerulian-blue-900;
+$cc-accent-2-950: $cc-cerulian-blue-950;
+
+// Semantic roles: light-dark(light, dark)
+$cc-canvas: light-dark(#f4fcfd, #0d1314);
+$cc-surface: light-dark(#ffffff, #181d1d);
+$cc-surface-muted: light-dark(#e2f0f2, #212b2d);
+$cc-ink: light-dark(#162224, #dfeff1);
+$cc-ink-muted: light-dark(#5e6c6e, #99a8aa);
+$cc-border: light-dark(#c1dee3, #263f44);
+$cc-border-strong: light-dark(#7a959a, #4c666c);
+$cc-accent: light-dark(#d96629, #d96629);
+$cc-accent-text: light-dark(#b64a00, #e36f34);
+$cc-on-accent: light-dark(#000000, #000000);
+$cc-accent-2: light-dark(#0093a5, #0093a5);
+$cc-accent-2-text: light-dark(#007786, #1f9eb0);
+$cc-on-accent-2: light-dark(#000000, #000000);
+
+$cc-ramps: (
+  'english-red': (
+    50: $cc-english-red-50,
+    100: $cc-english-red-100,
+    200: $cc-english-red-200,
+    300: $cc-english-red-300,
+    400: $cc-english-red-400,
+    500: $cc-english-red-500,
+    600: $cc-english-red-600,
+    700: $cc-english-red-700,
+    800: $cc-english-red-800,
+    900: $cc-english-red-900,
+    950: $cc-english-red-950,
+  ),
+  'cerulian-blue': (
+    50: $cc-cerulian-blue-50,
+    100: $cc-cerulian-blue-100,
+    200: $cc-cerulian-blue-200,
+    300: $cc-cerulian-blue-300,
+    400: $cc-cerulian-blue-400,
+    500: $cc-cerulian-blue-500,
+    600: $cc-cerulian-blue-600,
+    700: $cc-cerulian-blue-700,
+    800: $cc-cerulian-blue-800,
+    900: $cc-cerulian-blue-900,
+    950: $cc-cerulian-blue-950,
+  ),
+  'neutral': (
+    50: $cc-neutral-50,
+    100: $cc-neutral-100,
+    200: $cc-neutral-200,
+    300: $cc-neutral-300,
+    400: $cc-neutral-400,
+    500: $cc-neutral-500,
+    600: $cc-neutral-600,
+    700: $cc-neutral-700,
+    800: $cc-neutral-800,
+    900: $cc-neutral-900,
+    950: $cc-neutral-950,
+  ),
+  'accent': (
+    50: $cc-accent-50,
+    100: $cc-accent-100,
+    200: $cc-accent-200,
+    300: $cc-accent-300,
+    400: $cc-accent-400,
+    500: $cc-accent-500,
+    600: $cc-accent-600,
+    700: $cc-accent-700,
+    800: $cc-accent-800,
+    900: $cc-accent-900,
+    950: $cc-accent-950,
+  ),
+  'accent-2': (
+    50: $cc-accent-2-50,
+    100: $cc-accent-2-100,
+    200: $cc-accent-2-200,
+    300: $cc-accent-2-300,
+    400: $cc-accent-2-400,
+    500: $cc-accent-2-500,
+    600: $cc-accent-2-600,
+    700: $cc-accent-2-700,
+    800: $cc-accent-2-800,
+    900: $cc-accent-2-900,
+    950: $cc-accent-2-950,
+  ),
+);
+
+$cc-semantic: (
+  light: (
+    'canvas': #f4fcfd,
+    'surface': #ffffff,
+    'surface-muted': #e2f0f2,
+    'ink': #162224,
+    'ink-muted': #5e6c6e,
+    'border': #c1dee3,
+    'border-strong': #7a959a,
+    'accent': #d96629,
+    'accent-text': #b64a00,
+    'on-accent': #000000,
+    'accent-2': #0093a5,
+    'accent-2-text': #007786,
+    'on-accent-2': #000000,
+  ),
+  dark: (
+    'canvas': #0d1314,
+    'surface': #181d1d,
+    'surface-muted': #212b2d,
+    'ink': #dfeff1,
+    'ink-muted': #99a8aa,
+    'border': #263f44,
+    'border-strong': #4c666c,
+    'accent': #d96629,
+    'accent-text': #e36f34,
+    'on-accent': #000000,
+    'accent-2': #0093a5,
+    'accent-2-text': #1f9eb0,
+    'on-accent-2': #000000,
+  ),
+);
+"
+`;
+
+exports[`snapshots — so a format change is visible in review > tailwind 1`] = `
+"/* colour-combos · Wada No. 1 — English Red · Cerulian Blue. Canonical mode: light. */
+@theme {
+  /* English Red: the exact Wada hex is step 400 */
+  --color-cc-english-red-50: #fffcfb;
+  --color-cc-english-red-100: #ffe5d9;
+  --color-cc-english-red-200: #fdb899;
+  --color-cc-english-red-300: #ee9268;
+  --color-cc-english-red-400: #d96629;
+  --color-cc-english-red-500: #bf571e;
+  --color-cc-english-red-600: #9e4410;
+  --color-cc-english-red-700: #7f3202;
+  --color-cc-english-red-800: #5c2200;
+  --color-cc-english-red-900: #320f00;
+  --color-cc-english-red-950: #0b0100;
+  --color-cc-english-red: #d96629;
+
+  /* Cerulian Blue: the exact Wada hex is step 400 */
+  --color-cc-cerulian-blue-50: #f8feff;
+  --color-cc-cerulian-blue-100: #d1f0f5;
+  --color-cc-cerulian-blue-200: #99d1db;
+  --color-cc-cerulian-blue-300: #65b5c3;
+  --color-cc-cerulian-blue-400: #0093a5;
+  --color-cc-cerulian-blue-500: #008292;
+  --color-cc-cerulian-blue-600: #006976;
+  --color-cc-cerulian-blue-700: #00525c;
+  --color-cc-cerulian-blue-800: #003a42;
+  --color-cc-cerulian-blue-900: #001e22;
+  --color-cc-cerulian-blue-950: #000405;
+  --color-cc-cerulian-blue: #0093a5;
+
+  /* Neutral, tinted from the combo */
+  --color-cc-neutral-50: #f8feff;
+  --color-cc-neutral-100: #e2eced;
+  --color-cc-neutral-200: #bfcacc;
+  --color-cc-neutral-300: #9fabae;
+  --color-cc-neutral-400: #839093;
+  --color-cc-neutral-500: #6b787a;
+  --color-cc-neutral-600: #566163;
+  --color-cc-neutral-700: #414b4d;
+  --color-cc-neutral-800: #2d3537;
+  --color-cc-neutral-900: #151b1c;
+  --color-cc-neutral-950: #020404;
+
+  /* accent: English Red */
+  --color-cc-accent-50: #fffcfb;
+  --color-cc-accent-100: #ffe5d9;
+  --color-cc-accent-200: #fdb899;
+  --color-cc-accent-300: #ee9268;
+  --color-cc-accent-400: #d96629;
+  --color-cc-accent-500: #bf571e;
+  --color-cc-accent-600: #9e4410;
+  --color-cc-accent-700: #7f3202;
+  --color-cc-accent-800: #5c2200;
+  --color-cc-accent-900: #320f00;
+  --color-cc-accent-950: #0b0100;
+
+  /* accent-2: Cerulian Blue */
+  --color-cc-accent-2-50: #f8feff;
+  --color-cc-accent-2-100: #d1f0f5;
+  --color-cc-accent-2-200: #99d1db;
+  --color-cc-accent-2-300: #65b5c3;
+  --color-cc-accent-2-400: #0093a5;
+  --color-cc-accent-2-500: #008292;
+  --color-cc-accent-2-600: #006976;
+  --color-cc-accent-2-700: #00525c;
+  --color-cc-accent-2-800: #003a42;
+  --color-cc-accent-2-900: #001e22;
+  --color-cc-accent-2-950: #000405;
+
+  /* Semantic roles: light-dark(light, dark) */
+  --color-cc-canvas: light-dark(#f4fcfd, #0d1314);
+  --color-cc-surface: light-dark(#ffffff, #181d1d);
+  --color-cc-surface-muted: light-dark(#e2f0f2, #212b2d);
+  --color-cc-ink: light-dark(#162224, #dfeff1);
+  --color-cc-ink-muted: light-dark(#5e6c6e, #99a8aa);
+  --color-cc-border: light-dark(#c1dee3, #263f44);
+  --color-cc-border-strong: light-dark(#7a959a, #4c666c);
+  --color-cc-accent: light-dark(#d96629, #d96629);
+  --color-cc-accent-text: light-dark(#b64a00, #e36f34);
+  --color-cc-on-accent: light-dark(#000000, #000000);
+  --color-cc-accent-2: light-dark(#0093a5, #0093a5);
+  --color-cc-accent-2-text: light-dark(#007786, #1f9eb0);
+  --color-cc-on-accent-2: light-dark(#000000, #000000);
+}
+"
+`;
+
+exports[`snapshots — so a format change is visible in review > tokens 1`] = `
+"{
+  "$description": "colour-combos · Wada No. 1 — English Red · Cerulian Blue. Canonical mode: light.",
+  "$extensions": {
+    "io.github.louislp.colour-combos": {
+      "id": 1,
+      "canonicalMode": "light"
+    }
+  },
+  "cc": {
+    "$type": "color",
+    "english-red": {
+      "50": {
+        "$value": "#fffcfb"
+      },
+      "100": {
+        "$value": "#ffe5d9"
+      },
+      "200": {
+        "$value": "#fdb899"
+      },
+      "300": {
+        "$value": "#ee9268"
+      },
+      "400": {
+        "$value": "#d96629"
+      },
+      "500": {
+        "$value": "#bf571e"
+      },
+      "600": {
+        "$value": "#9e4410"
+      },
+      "700": {
+        "$value": "#7f3202"
+      },
+      "800": {
+        "$value": "#5c2200"
+      },
+      "900": {
+        "$value": "#320f00"
+      },
+      "950": {
+        "$value": "#0b0100"
+      },
+      "$extensions": {
+        "io.github.louislp.colour-combos": {
+          "name": "English Red",
+          "anchor": 400
+        }
+      }
+    },
+    "cerulian-blue": {
+      "50": {
+        "$value": "#f8feff"
+      },
+      "100": {
+        "$value": "#d1f0f5"
+      },
+      "200": {
+        "$value": "#99d1db"
+      },
+      "300": {
+        "$value": "#65b5c3"
+      },
+      "400": {
+        "$value": "#0093a5"
+      },
+      "500": {
+        "$value": "#008292"
+      },
+      "600": {
+        "$value": "#006976"
+      },
+      "700": {
+        "$value": "#00525c"
+      },
+      "800": {
+        "$value": "#003a42"
+      },
+      "900": {
+        "$value": "#001e22"
+      },
+      "950": {
+        "$value": "#000405"
+      },
+      "$extensions": {
+        "io.github.louislp.colour-combos": {
+          "name": "Cerulian Blue",
+          "anchor": 400
+        }
+      }
+    },
+    "neutral": {
+      "50": {
+        "$value": "#f8feff"
+      },
+      "100": {
+        "$value": "#e2eced"
+      },
+      "200": {
+        "$value": "#bfcacc"
+      },
+      "300": {
+        "$value": "#9fabae"
+      },
+      "400": {
+        "$value": "#839093"
+      },
+      "500": {
+        "$value": "#6b787a"
+      },
+      "600": {
+        "$value": "#566163"
+      },
+      "700": {
+        "$value": "#414b4d"
+      },
+      "800": {
+        "$value": "#2d3537"
+      },
+      "900": {
+        "$value": "#151b1c"
+      },
+      "950": {
+        "$value": "#020404"
+      }
+    },
+    "accent": {
+      "50": {
+        "$value": "{cc.english-red.50}"
+      },
+      "100": {
+        "$value": "{cc.english-red.100}"
+      },
+      "200": {
+        "$value": "{cc.english-red.200}"
+      },
+      "300": {
+        "$value": "{cc.english-red.300}"
+      },
+      "400": {
+        "$value": "{cc.english-red.400}"
+      },
+      "500": {
+        "$value": "{cc.english-red.500}"
+      },
+      "600": {
+        "$value": "{cc.english-red.600}"
+      },
+      "700": {
+        "$value": "{cc.english-red.700}"
+      },
+      "800": {
+        "$value": "{cc.english-red.800}"
+      },
+      "900": {
+        "$value": "{cc.english-red.900}"
+      },
+      "950": {
+        "$value": "{cc.english-red.950}"
+      }
+    },
+    "accent-2": {
+      "50": {
+        "$value": "{cc.cerulian-blue.50}"
+      },
+      "100": {
+        "$value": "{cc.cerulian-blue.100}"
+      },
+      "200": {
+        "$value": "{cc.cerulian-blue.200}"
+      },
+      "300": {
+        "$value": "{cc.cerulian-blue.300}"
+      },
+      "400": {
+        "$value": "{cc.cerulian-blue.400}"
+      },
+      "500": {
+        "$value": "{cc.cerulian-blue.500}"
+      },
+      "600": {
+        "$value": "{cc.cerulian-blue.600}"
+      },
+      "700": {
+        "$value": "{cc.cerulian-blue.700}"
+      },
+      "800": {
+        "$value": "{cc.cerulian-blue.800}"
+      },
+      "900": {
+        "$value": "{cc.cerulian-blue.900}"
+      },
+      "950": {
+        "$value": "{cc.cerulian-blue.950}"
+      }
+    },
+    "semantic": {
+      "light": {
+        "canvas": {
+          "$value": "#f4fcfd"
+        },
+        "surface": {
+          "$value": "#ffffff"
+        },
+        "surface-muted": {
+          "$value": "#e2f0f2"
+        },
+        "ink": {
+          "$value": "#162224"
+        },
+        "ink-muted": {
+          "$value": "#5e6c6e"
+        },
+        "border": {
+          "$value": "#c1dee3"
+        },
+        "border-strong": {
+          "$value": "#7a959a"
+        },
+        "accent": {
+          "$value": "#d96629"
+        },
+        "accent-text": {
+          "$value": "#b64a00"
+        },
+        "on-accent": {
+          "$value": "#000000"
+        },
+        "accent-2": {
+          "$value": "#0093a5"
+        },
+        "accent-2-text": {
+          "$value": "#007786"
+        },
+        "on-accent-2": {
+          "$value": "#000000"
+        }
+      },
+      "dark": {
+        "canvas": {
+          "$value": "#0d1314"
+        },
+        "surface": {
+          "$value": "#181d1d"
+        },
+        "surface-muted": {
+          "$value": "#212b2d"
+        },
+        "ink": {
+          "$value": "#dfeff1"
+        },
+        "ink-muted": {
+          "$value": "#99a8aa"
+        },
+        "border": {
+          "$value": "#263f44"
+        },
+        "border-strong": {
+          "$value": "#4c666c"
+        },
+        "accent": {
+          "$value": "#d96629"
+        },
+        "accent-text": {
+          "$value": "#e36f34"
+        },
+        "on-accent": {
+          "$value": "#000000"
+        },
+        "accent-2": {
+          "$value": "#0093a5"
+        },
+        "accent-2-text": {
+          "$value": "#1f9eb0"
+        },
+        "on-accent-2": {
+          "$value": "#000000"
+        }
+      }
+    }
+  }
+}
+"
+`;
+
+exports[`snapshots — so a format change is visible in review > ts 1`] = `
+"// colour-combos · Wada No. 1 — English Red · Cerulian Blue. Canonical mode: light.
+import type { ComboScale } from 'colour-combos'
+
+const scale: ComboScale = {
+  id: 1,
+  canonicalMode: 'light',
+  ramps: [
+    {
+      name: 'English Red',
+      slug: 'english-red',
+      anchor: 400,
+      steps: {
+        50: { hex: '#fffcfb', oklch: [0.9931, 0.0035, 39.49], rgb: [255, 252, 251] },
+        100: { hex: '#ffe5d9', oklch: [0.9398, 0.0329, 46.4], rgb: [255, 229, 217] },
+        200: { hex: '#fdb899', oklch: [0.8393, 0.0909, 45.18], rgb: [253, 184, 153] },
+        300: { hex: '#ee9268', oklch: [0.7467, 0.1252, 44.9], rgb: [238, 146, 104] },
+        400: { hex: '#d96629', oklch: [0.6406, 0.1612, 45.11], rgb: [217, 102, 41] },
+        500: { hex: '#bf571e', oklch: [0.579, 0.1493, 45.2], rgb: [191, 87, 30] },
+        600: { hex: '#9e4410', oklch: [0.4985, 0.1337, 45.13], rgb: [158, 68, 16] },
+        700: { hex: '#7f3202', oklch: [0.4199, 0.1186, 44.99], rgb: [127, 50, 2] },
+        800: { hex: '#5c2200', oklch: [0.3339, 0.0949, 45.37], rgb: [92, 34, 0] },
+        900: { hex: '#320f00', oklch: [0.2231, 0.0633, 45.41], rgb: [50, 15, 0] },
+        950: { hex: '#0b0100', oklch: [0.1011, 0.0325, 38.79], rgb: [11, 1, 0] },
+      },
+    },
+    {
+      name: 'Cerulian Blue',
+      slug: 'cerulian-blue',
+      anchor: 400,
+      steps: {
+        50: { hex: '#f8feff', oklch: [0.9928, 0.0065, 208.78], rgb: [248, 254, 255] },
+        100: { hex: '#d1f0f5', oklch: [0.9343, 0.0331, 208.37], rgb: [209, 240, 245] },
+        200: { hex: '#99d1db', oklch: [0.8255, 0.0592, 209.76], rgb: [153, 209, 219] },
+        300: { hex: '#65b5c3', oklch: [0.7273, 0.081, 210.07], rgb: [101, 181, 195] },
+        400: { hex: '#0093a5', oklch: [0.6076, 0.1051, 209.91], rgb: [0, 147, 165] },
+        500: { hex: '#008292', oklch: [0.5557, 0.0961, 209.82], rgb: [0, 130, 146] },
+        600: { hex: '#006976', oklch: [0.477, 0.0824, 209.58], rgb: [0, 105, 118] },
+        700: { hex: '#00525c', oklch: [0.4015, 0.0692, 208.91], rgb: [0, 82, 92] },
+        800: { hex: '#003a42', oklch: [0.3192, 0.0552, 209.82], rgb: [0, 58, 66] },
+        900: { hex: '#001e22', oklch: [0.2148, 0.0368, 207.16], rgb: [0, 30, 34] },
+        950: { hex: '#000405', oklch: [0.0976, 0.0168, 208.03], rgb: [0, 4, 5] },
+      },
+    },
+  ],
+  accents: [0, 1],
+  neutral: {
+    name: 'Neutral',
+    slug: 'neutral',
+    steps: {
+      50: { hex: '#f8feff', oklch: [0.9928, 0.0065, 208.78], rgb: [248, 254, 255] },
+      100: { hex: '#e2eced', oklch: [0.9358, 0.0108, 204.12], rgb: [226, 236, 237] },
+      200: { hex: '#bfcacc', oklch: [0.8311, 0.0124, 209.8], rgb: [191, 202, 204] },
+      300: { hex: '#9fabae', oklch: [0.7327, 0.0142, 214.38], rgb: [159, 171, 174] },
+      400: { hex: '#839093', oklch: [0.6438, 0.0157, 213.13], rgb: [131, 144, 147] },
+      500: { hex: '#6b787a', oklch: [0.5626, 0.0158, 207.84], rgb: [107, 120, 122] },
+      600: { hex: '#566163', oklch: [0.4838, 0.014, 209.8], rgb: [86, 97, 99] },
+      700: { hex: '#414b4d', oklch: [0.4046, 0.0133, 211.07], rgb: [65, 75, 77] },
+      800: { hex: '#2d3537', oklch: [0.3222, 0.0115, 214.48], rgb: [45, 53, 55] },
+      900: { hex: '#151b1c', oklch: [0.2164, 0.0092, 208.75], rgb: [21, 27, 28] },
+      950: { hex: '#020404', oklch: [0.1019, 0.0071, 196.09], rgb: [2, 4, 4] },
+    },
+  },
+  semantic: {
+    light: {
+      canvas: { hex: '#f4fcfd', oklch: [0.9854, 0.0086, 205.9], rgb: [244, 252, 253] },
+      surface: { hex: '#ffffff', oklch: [1, 0, 0], rgb: [255, 255, 255] },
+      'surface-muted': { hex: '#e2f0f2', oklch: [0.9453, 0.0151, 207.11], rgb: [226, 240, 242] },
+      ink: { hex: '#162224', oklch: [0.2416, 0.0172, 208.87], rgb: [22, 34, 36] },
+      'ink-muted': { hex: '#5e6c6e', oklch: [0.5203, 0.0172, 207.06], rgb: [94, 108, 110] },
+      border: { hex: '#c1dee3', oklch: [0.8809, 0.0315, 209.15], rgb: [193, 222, 227] },
+      'border-strong': { hex: '#7a959a', oklch: [0.6508, 0.0313, 210.09], rgb: [122, 149, 154] },
+      accent: { hex: '#d96629', oklch: [0.6406, 0.1612, 45.11], rgb: [217, 102, 41] },
+      'accent-text': { hex: '#b64a00', oklch: [0.5449, 0.1557, 45.02], rgb: [182, 74, 0] },
+      'on-accent': { hex: '#000000', oklch: [0, 0, 0], rgb: [0, 0, 0] },
+      'accent-2': { hex: '#0093a5', oklch: [0.6076, 0.1051, 209.91], rgb: [0, 147, 165] },
+      'accent-2-text': { hex: '#007786', oklch: [0.5216, 0.0902, 210.04], rgb: [0, 119, 134] },
+      'on-accent-2': { hex: '#000000', oklch: [0, 0, 0], rgb: [0, 0, 0] },
+    },
+    dark: {
+      canvas: { hex: '#0d1314', oklch: [0.1809, 0.0095, 208.78], rgb: [13, 19, 20] },
+      surface: { hex: '#181d1d', oklch: [0.2256, 0.0075, 196.64], rgb: [24, 29, 29] },
+      'surface-muted': { hex: '#212b2d', oklch: [0.2805, 0.0143, 211.15], rgb: [33, 43, 45] },
+      ink: { hex: '#dfeff1', oklch: [0.9408, 0.0172, 205.84], rgb: [223, 239, 241] },
+      'ink-muted': { hex: '#99a8aa', oklch: [0.7204, 0.0172, 206.41], rgb: [153, 168, 170] },
+      border: { hex: '#263f44', oklch: [0.3495, 0.032, 211.59], rgb: [38, 63, 68] },
+      'border-strong': { hex: '#4c666c', oklch: [0.4918, 0.0322, 213.44], rgb: [76, 102, 108] },
+      accent: { hex: '#d96629', oklch: [0.6406, 0.1612, 45.11], rgb: [217, 102, 41] },
+      'accent-text': { hex: '#e36f34', oklch: [0.6693, 0.1611, 45], rgb: [227, 111, 52] },
+      'on-accent': { hex: '#000000', oklch: [0, 0, 0], rgb: [0, 0, 0] },
+      'accent-2': { hex: '#0093a5', oklch: [0.6076, 0.1051, 209.91], rgb: [0, 147, 165] },
+      'accent-2-text': { hex: '#1f9eb0', oklch: [0.643, 0.105, 209.81], rgb: [31, 158, 176] },
+      'on-accent-2': { hex: '#000000', oklch: [0, 0, 0], rgb: [0, 0, 0] },
+    },
+  },
+}
+
+export default scale
+"
+`;
