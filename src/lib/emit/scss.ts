@@ -1,6 +1,8 @@
 // Scale -> SCSS variables and maps.
 
-import type { ComboScale } from '../scale'
+import type { EmitOptions } from '../format'
+import type { ColourValue, ComboScale } from '../scale'
+import { formatColour } from '../format'
 import { STEPS } from '../scale'
 import { banner, MODES, roleRamps, semanticPairs } from './shared'
 
@@ -12,17 +14,18 @@ import { banner, MODES, roleRamps, semanticPairs } from './shared'
  * `$cc-<role>` is a `light-dark()` pair, which Sass passes through as plain
  * CSS. For a value fixed at compile time, read `$cc-semantic` instead.
  */
-export function emitScss(scale: ComboScale): string {
+export function emitScss(scale: ComboScale, { format = 'hex' }: EmitOptions = {}): string {
+  const v = (value: ColourValue) => formatColour(value, format)
   const lines: string[] = [`// ${banner(scale)}`, '', `$cc-canonical-mode: ${scale.canonicalMode};`, '']
   for (const ramp of scale.ramps) {
     lines.push(`// ${ramp.name}: the exact Wada hex is step ${ramp.anchor}`)
     for (const step of STEPS)
-      lines.push(`$cc-${ramp.slug}-${step}: ${ramp.steps[step].hex};`)
+      lines.push(`$cc-${ramp.slug}-${step}: ${v(ramp.steps[step])};`)
     lines.push(`$cc-${ramp.slug}: $cc-${ramp.slug}-${ramp.anchor};`, '')
   }
   lines.push('// Neutral, tinted from the combo')
   for (const step of STEPS)
-    lines.push(`$cc-neutral-${step}: ${scale.neutral.steps[step].hex};`)
+    lines.push(`$cc-neutral-${step}: ${v(scale.neutral.steps[step])};`)
   const roles = roleRamps(scale)
   for (const { name, ramp } of roles) {
     lines.push('', `// ${name}: ${ramp.name}`)
@@ -32,7 +35,7 @@ export function emitScss(scale: ComboScale): string {
   const pairs = semanticPairs(scale)
   lines.push('', '// Semantic roles: light-dark(light, dark)')
   for (const { role, light, dark } of pairs)
-    lines.push(`$cc-${role}: light-dark(${light.hex}, ${dark.hex});`)
+    lines.push(`$cc-${role}: light-dark(${v(light)}, ${v(dark)});`)
 
   const map = (name: string, entries: [key: string, value: string][]) =>
     [`  ${name}: (`, ...entries.map(([k, v]) => `    ${k}: ${v},`), '  ),']
@@ -44,7 +47,7 @@ export function emitScss(scale: ComboScale): string {
     ');',
     '',
     '$cc-semantic: (',
-    ...MODES.flatMap(mode => map(mode, pairs.map(p => [`'${p.role}'`, p[mode].hex]))),
+    ...MODES.flatMap(mode => map(mode, pairs.map(p => [`'${p.role}'`, v(p[mode])]))),
     ');',
     '',
   )

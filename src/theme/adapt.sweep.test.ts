@@ -41,6 +41,19 @@ describe('aA gate — WCAG 2.2 across the whole catalogue', () => {
     expect(failures).toEqual([])
   })
 
+  // The combo page previews the semantic layer in *both* modes side by side
+  // (T6), so the other mode is on screen too and holds the same contract.
+  it('has no failing pairing in the non-canonical mode either', () => {
+    const failures = COMBOS.flatMap((combo) => {
+      const mode = comboMode(combo) === 'light' ? 'dark' : 'light'
+      return auditPalette(adapt(combo, mode))
+        .filter(row => !row.pass)
+        .map(row => `#${combo.id}/${mode} ${row.pair} ${row.ratio.toFixed(2)} < ${row.target}`)
+    })
+
+    expect(failures).toEqual([])
+  })
+
   it('never hits the lightness rail without reaching its target', () => {
     const unreached = RENDERINGS.flatMap(({ combo, mode, palette }) =>
       Object.entries(palette.roles)

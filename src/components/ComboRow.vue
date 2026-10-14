@@ -4,7 +4,7 @@ import { useTemplateRef } from 'vue'
 import { useIsFavorite } from '../composables/useFavorites'
 import { useHubSearch } from '../composables/useHubSearch'
 import { comboHexes, comboLabel } from '../data/combos'
-import { toHubQuery } from '../routing/search'
+import { comboPage, toHubQuery } from '../routing/search'
 import { toggle } from '../state/favorites'
 import { onColour } from '../theme/colour'
 import { handleComboShortcut } from '../ui/comboShortcuts'
@@ -91,6 +91,18 @@ function confirmAll() {
     >
       <CopyIcon :copied="copied" />
     </CopyButton>
+
+    <!-- The combo's page: its full scale and code (T6). -->
+    <RouterLink
+      :to="comboPage(combo.id, search)"
+      class="combo-row-action"
+      :aria-label="`Open combination ${combo.id}`"
+      :title="`Open No. ${combo.id}`"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true" width="14" height="14">
+        <path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </RouterLink>
 
     <StarButton :combo-id="combo.id" :pressed="favorited" @toggle="toggle" />
   </article>

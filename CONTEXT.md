@@ -98,7 +98,7 @@ package's files and the site's code blocks both come from it. See
 
 **Module store** — a module-level singleton owning exactly one fact, held in a
 `shallowRef` and read through a composable ([ADR 0011](docs/adr/0011-vue-migration.md)).
-There are two: favourites and density. The app ships no provide/inject and no
+There are three: favourites, density and colour format. The app ships no provide/inject and no
 Pinia. (Mode was a store until it became combo-derived —
 [ADR 0008](docs/adr/0008-combo-owned-mode.md).)
 
@@ -106,6 +106,17 @@ Pinia. (Mode was a store until it became combo-derived —
 compact *list*, one ruled row per combo with hexes inline. A per-viewer
 preference kept in localStorage, never in the URL, so a shared link opens in
 the recipient's layout. See [ADR 0014](docs/adr/0014-faster-browse.md).
+
+**Colour format** — the notation the combo page spells a value in: hex,
+`oklch()` or `rgb()`. Applies to the scale chips, the role values and the
+code blocks whose emitter takes a format (CSS, Tailwind, SCSS); the package
+itself ships hex. Per viewer, in localStorage, never in the URL, like
+**Density**.
+
+**Combo page** — `/combo/:id`: one combo's raw swatches, full scale, semantic
+roles previewed in both modes, and code blocks that are emitter output byte for
+byte. The path names the combo; there is no `c` there. See
+[ADR 0004](docs/adr/0004-routing-and-url-state.md) §10.
 
 **Hue family** — one of red, orange, yellow, green, blue, purple or neutral,
 assigned to each colour by its OKLCH hue (neutral below the hue-source chroma

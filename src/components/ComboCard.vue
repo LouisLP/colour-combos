@@ -4,7 +4,7 @@ import { useTemplateRef } from 'vue'
 import { useIsFavorite } from '../composables/useFavorites'
 import { useHubSearch } from '../composables/useHubSearch'
 import { comboLabel } from '../data/combos'
-import { toHubQuery } from '../routing/search'
+import { comboPage, toHubQuery } from '../routing/search'
 import { toggle } from '../state/favorites'
 import { handleComboShortcut } from '../ui/comboShortcuts'
 import { ROVING_ATTR } from '../ui/keyboard'
@@ -109,7 +109,12 @@ function confirmAll() {
 
     <div class="combo-caption">
       <!-- A Wada combo carries no name of its own — only its colours do. -->
-      <b>{{ `No. ${combo.id}` }}</b>
+      <!-- The number opens the combo's page: its full scale and code (T6). -->
+      <b>
+        <RouterLink :to="comboPage(combo.id, search)" class="combo-open" :aria-label="`Open combination ${combo.id}`">
+          {{ `No. ${combo.id}` }}<span aria-hidden="true"> →</span>
+        </RouterLink>
+      </b>
       <span :title="comboLabel(combo)"><MatchNames :combo="combo" :q="search.q" /></span>
     </div>
 
@@ -289,6 +294,11 @@ function confirmAll() {
   font-weight: 600;
   letter-spacing: 0.01em;
   font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* `--ink` like the caption it sits in; the underline says it is a link. */
+.combo-open {
+  color: inherit;
 }
 
 /* One line, ellipsised. Hex values are the one piece of metadata the grid

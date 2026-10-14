@@ -56,6 +56,9 @@ and dropping the theme on navigation. **As a search param the combo is
 orthogonal to the route** — it composes with `/favorites`, and with any page
 added later, for free.
 
+> Amended by §10: the combo *page* (T6) does get a path segment,
+> `/combo/153`. `c` stays the selection param on `/` and `/favorites`.
+
 ### 4. Filters and search live in the URL too
 
 ```
@@ -128,6 +131,36 @@ The only constraint routing places on the host:
 
 Available on Netlify, Vercel, Cloudflare Pages, and GitHub Pages (via a
 `404.html` copy). No hash routing.
+
+### 10. Amendment (T6): the combo page is `/combo/:id`
+
+[T6](https://github.com/LouisLP/colour-combos/issues/47) adds a page per
+combo — its full scale, its semantic roles and its code. That is a *place*,
+not a selection, so it gets a path:
+
+```
+/              browse         ?c= selects (themes in place), as before
+/favorites     favourites     ?c= selects, as before
+/combo/153     combo page     the path names the combo; there is no c
+```
+
+- **The path wins.** On `/combo/:id` the selected combo *is* the path id:
+  `useHubSearch` reads `c` from it, so the theme, the identity and the page
+  can never disagree. A `c` in the query there is dropped with a `replace`.
+- **Only `c` is replaced.** `q`, `size`, `hue` and `mode` ride along on the
+  page and on prev/next, so the trip back to browse finds the same results.
+  Leaving the page for browse writes `c` from the path, so the theme carries.
+- **Bad ids resolve as §8 does:** `/combo/999` `replace`s to a random combo's
+  page with the not-found notice.
+- **Legacy `?combo=153`** on any route `replace`s to `/combo/153`, keeping
+  the other params. It is redirected, never written.
+- **Prev/next is a `push`** (`←`/`→` on the page), like any other selection.
+- **Click selects, `Enter` opens.** A result's selection link still themes the
+  site in place on click; `Enter` on it (the roving-focus target, ADR 0014 §4)
+  opens the page. Each card's `No. N` and each row's `→` link to it too.
+
+The §3 objection to a path segment — a combinatorial route tree — does not
+arise: the page is one route beside the other two, not a variant of them.
 
 ## Consequences
 

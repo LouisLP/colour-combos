@@ -2,6 +2,7 @@ import type { ComboScale } from '../scale'
 import { describe, expect, it } from 'vitest'
 import { emitCss, emitJs, emitScss, emitTailwind, emitTokens, emitTs, TOKENS_EXTENSION } from '.'
 import { COMBOS, requireCombo } from '../../data/combos'
+import { COLOUR_FORMATS, formatColour } from '../format'
 import { buildScale, STEPS } from '../scale'
 
 // A quad, so every accent rank and optional role is exercised.
@@ -75,6 +76,33 @@ describe('emitScss', () => {
     for (const base of [...scale.ramps.map(r => r.slug), 'neutral', 'accent', 'accent-4'])
       expect(text).toContain(`  '${base}': (`)
     expect(text).toContain(`    'canvas': ${scale.semantic.dark.canvas.hex},`)
+  })
+})
+
+describe('colour formats', () => {
+  const anchor = scale.ramps[0].steps[scale.ramps[0].anchor]
+
+  it('spells one value three ways', () => {
+    expect(formatColour(anchor, 'hex')).toBe(anchor.hex)
+    expect(formatColour(anchor, 'oklch')).toMatch(/^oklch\(0\.\d+ \d\.\d+ [\d.]+\)$/)
+    expect(formatColour(anchor, 'rgb')).toMatch(/^rgb\(\d{1,3} \d{1,3} \d{1,3}\)$/)
+  })
+
+  it.each([
+    ['css', emitCss, '--cc-'],
+    ['tailwind', emitTailwind, '--color-cc-'],
+    ['scss', emitScss, '$cc-'],
+  ] as const)('%s changes only how values are spelled', (_, emit, prefix) => {
+    const hex = emit(scale)
+    expect(emit(scale, { format: 'hex' })).toBe(hex)
+    const names = [...declarations(hex, prefix).keys()]
+    for (const format of COLOUR_FORMATS) {
+      const text = emit(scale, { format })
+      expect([...declarations(text, prefix).keys()]).toEqual(names)
+      if (format !== 'hex')
+        expect(text).not.toMatch(/#[0-9a-f]{6}/)
+    }
+    expect(emit(scale, { format: 'oklch' })).toContain(formatColour(anchor, 'oklch'))
   })
 })
 

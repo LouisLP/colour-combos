@@ -151,6 +151,14 @@ const css = emitCss(scale) // the same text as colour-combos/42.css
 `emitTailwind`, `emitScss`, `emitTs` and `emitJs` are there too. They are what
 generated the files above, and what the site shows in its code blocks.
 
+The files are hex. `emitCss`, `emitTailwind` and `emitScss` take a `format` to
+spell every colour as `oklch()` or `rgb()` instead; the names don't change:
+
+```ts
+emitCss(scale, { format: 'oklch' }) // --cc-english-red-500: oklch(… … …);
+formatColour(scale.semantic.dark.ink, 'rgb') // 'rgb(… … …)'
+```
+
 ## Credits
 
 Colours from Sanzo Wada's *A Dictionary of Color Combinations* (1933–1937),
