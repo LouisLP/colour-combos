@@ -69,6 +69,27 @@ and the combo fixes the mode (see **Mode**) — memoised in the adapter and
 rendered as a `<style>` element. See
 [ADR 0005](docs/adr/0005-app-state-architecture.md).
 
+**Scale** — the complete exported value of one combo: a tonal layer and a
+semantic layer. The library's public unit, and a pure function of the combo id.
+See [ADR 0012](docs/adr/0012-combo-scale-model.md).
+
+**Tonal layer** — one 11-step ramp per colour in a combo, plus a neutral ramp
+tinted from the hue source. Steps are placed by WCAG luminance, so the contrast
+between two steps depends on how far apart they are, never on hue.
+
+**Step** — one of the eleven positions `50 100 200 … 900 950` in a ramp, each
+with a fixed target luminance. Steps ≥500 apart clear 4.5:1, and steps ≥400
+apart clear 3:1, in every ramp in the catalogue.
+
+**Anchor** — the step in a colour's ramp that holds the exact Wada hex. It is
+the step nearest the colour's own luminance, and its generated value is replaced
+by the raw hex, so the swatch is always in its ramp. A ramp depends only on its
+colour's hex, so a colour has the same ramp and anchor in every combo.
+
+**Semantic layer** — the roles (canvas, ink, accent, …) exported for both modes,
+with the combo's canonical mode marked. Exact adapter values, not references to
+steps; the site's re-theming is a live preview of it.
+
 **Module store** — a module-level singleton owning exactly one fact, read
 through `useSyncExternalStore`. Favourites is now the only one; the app ships no
 context providers. (Mode was the second until it became combo-derived —
@@ -93,3 +114,4 @@ the surface it happens to sit on in one component.
 - [ADR 0007 — Combo card refinements](docs/adr/0007-combo-card-refinements.md)
 - [ADR 0008 — Combo-owned light/dark mode](docs/adr/0008-combo-owned-mode.md)
 - [ADR 0009 — Bolder combo colour across the chrome](docs/adr/0009-bolder-combo-colour-across-chrome.md)
+- [ADR 0012 — Combo scale model](docs/adr/0012-combo-scale-model.md)
