@@ -1,13 +1,18 @@
-import { useSelectedCombo } from '../hooks/useSelectedCombo'
+import { defineComponent, h } from 'vue'
+import { useSelectedCombo } from '../composables/useSelectedCombo'
 import { adapt, comboMode } from '../theme/adapt'
 import { paletteToCss } from '../theme/tokens'
 
 /**
  * The palette, *rendered* rather than written (ADR 0005 §2). The style lands in
- * the same commit as the tree that consumes it, so there is no window in which
+ * the same patch as the tree that consumes it, so there is no window in which
  * markup exists under the wrong palette, and nothing here touches the DOM.
  *
- * This is the only caller of `adapt()` in the app. No `useMemo`: the adapter
+ * A render function rather than an SFC: Vue's template compiler drops a
+ * `<style>` tag in a template, since there it is almost always a mistake. Here
+ * it is the whole point.
+ *
+ * This is the only caller of `adapt()` in the app. No `computed`: the adapter
  * memoises by `id:mode`, so after the first render for a pair this is a map
  * lookup (ADR 0005 §3).
  *
@@ -17,11 +22,16 @@ import { paletteToCss } from '../theme/tokens'
  * `color-scheme: light dark` baseline in `index.css` by source order, and feeds
  * every `light-dark()` in the ramp. Nothing is knowable before this style
  * exists — the bare `/` picks its random combo in JS — so the achromatic token
- * baseline renders under that mode-agnostic scheme until the first commit.
+ * baseline renders under that mode-agnostic scheme until the first render.
  */
-export function ThemeStyle() {
-  const combo = useSelectedCombo()
-  const mode = comboMode(combo)
+export default defineComponent({
+  name: 'ThemeStyle',
+  setup() {
+    const combo = useSelectedCombo()
 
-  return <style>{`:root{color-scheme:${mode};${paletteToCss(adapt(combo, mode))}}`}</style>
-}
+    return () => {
+      const mode = comboMode(combo.value)
+      return h('style', `:root{color-scheme:${mode};${paletteToCss(adapt(combo.value, mode))}}`)
+    }
+  },
+})

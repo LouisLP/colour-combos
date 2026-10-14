@@ -30,11 +30,12 @@
       picks its combo at random in JS, so no combo — and no mode — is knowable
       before hydration. The pre-hydration frame is the achromatic token baseline
       (`index.css`), which reads fine under the `color-scheme: light dark`
-      fallback until `ThemeStyle` renders the combo's chosen scheme.
+      fallback until `ThemeStyle` renders the combo's chosen scheme on the
+      app's first render.
     -->
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

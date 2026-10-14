@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { COMBO_COUNT, getCombo } from '../data/combos'
-import { fallbackComboId, resolveComboId, validateHubSearch } from './search'
+import { fallbackComboId, resolveComboId, toHubQuery, validateHubSearch } from './search'
 
 describe('resolveComboId', () => {
   it('passes a valid id through untouched', () => {
@@ -25,9 +25,9 @@ describe('resolveComboId', () => {
       expect(getCombo(resolveComboId(raw).id)).toBeDefined()
   })
 
-  // ADR 0005 §6: StrictMode double-invokes validators and TanStack re-validates
-  // on any param change, so a non-memoised fallback would re-theme the site as
-  // the user typed in the search box.
+  // ADR 0005 §6: the query is re-validated on every param change, so a
+  // non-memoised fallback would re-theme the site as the user typed in the
+  // search box.
   it('picks the same fallback combo for the lifetime of the document', () => {
     const first = fallbackComboId()
     expect(fallbackComboId()).toBe(first)
@@ -43,17 +43,27 @@ describe('validateHubSearch', () => {
     expect(validateHubSearch({ c: '1', q: 'blue' }).q).toBe('blue')
   })
 
-  // TanStack parses search params structurally, so `?q=13` arrives as a number.
-  // Dropping it would lose the `No. 13` search — the one query a user can be
-  // certain matches something, because it is printed on the card.
-  it('keeps a numeric query, which the router hands over as a number', () => {
-    expect(validateHubSearch({ c: '1', q: 13 }).q).toBe('13')
-    expect(validateHubSearch({ c: '1', q: 0 }).q).toBe('0')
+  // `13` is the `No. 13` printed on a card — the one query a user can be
+  // certain matches something, so it must survive as a string.
+  it('keeps a numeric query', () => {
+    expect(validateHubSearch({ c: '1', q: '13' }).q).toBe('13')
+    expect(validateHubSearch({ c: '1', q: '0' }).q).toBe('0')
+  })
+
+  it('reads the first of a repeated param', () => {
+    expect(validateHubSearch({ c: ['7', '9'], q: ['blue', 'rose'] })).toEqual({ c: 7, q: 'blue', size: undefined })
   })
 
   it('accepts only the sizes the catalogue contains', () => {
     expect(validateHubSearch({ c: '1', size: '3' }).size).toBe(3)
     expect(validateHubSearch({ c: '1', size: '5' }).size).toBeUndefined()
     expect(validateHubSearch({ c: '1', size: 'big' }).size).toBeUndefined()
+  })
+})
+
+describe('toHubQuery', () => {
+  it('writes c first and leaves absent params out', () => {
+    expect(toHubQuery({ c: 7 })).toEqual({ c: '7' })
+    expect(toHubQuery({ c: 7, q: 'blue', size: 3 })).toEqual({ c: '7', q: 'blue', size: '3' })
   })
 })

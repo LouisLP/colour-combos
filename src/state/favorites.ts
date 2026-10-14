@@ -1,12 +1,14 @@
-// Favourites, as a module singleton (ADR 0003 §4, ADR 0005 §4). It is now the
-// app's only module store — mode used to share the shape until it became
-// combo-derived (ADR 0008).
+// Favourites, as a module singleton (ADR 0003 §4, ADR 0005 §4, ADR 0011). It is
+// the app's only module store — mode used to share the shape until it became
+// combo-derived (ADR 0008). A module-level `shallowRef` is the whole store: Vue's
+// reactivity is the subscription mechanism, so there is no listener set to keep.
 //
 // Memory is the truth for the session; localStorage is the durable mirror,
 // written through on every mutation. A favourite is a bare numeric Wada id and
 // never a copy of a combo's colours, so a corrected hex can leave nothing stale
 // behind.
 
+import { computed, shallowRef } from 'vue'
 import { getCombo } from '../data/combos'
 
 /** Namespaced, so nothing else on this origin can collide with it (§2). */
@@ -60,18 +62,14 @@ function read(): number[] {
   }
 }
 
-/** Newest first: the array *is* the order, so nothing extra is stored (§3). */
-let ids = read()
-/** Derived, and kept in step deliberately: membership is O(1) on 348 cards. */
-let index = new Set(ids)
-
-const listeners = new Set<() => void>()
-
-function emit(next: number[]) {
-  ids = next
-  index = new Set(next)
-  listeners.forEach(listener => listener())
-}
+/**
+ * Newest first: the array *is* the order, so nothing extra is stored (§3).
+ * Shallow, and replaced wholesale on every mutation — never mutated in place —
+ * so a reader holding the old array never sees it move.
+ */
+const ids = shallowRef<number[]>(read())
+/** Derived: membership is O(1) on 348 cards. */
+const index = computed(() => new Set(ids.value))
 
 let warned = false
 
@@ -88,45 +86,37 @@ function persist(next: number[]) {
   }
 }
 
-export function subscribe(listener: () => void): () => void {
-  listeners.add(listener)
-  return () => listeners.delete(listener)
-}
+/** The favourited ids, newest first. Read-only: `toggle` is the one writer. */
+export const favorites = computed(() => ids.value)
 
 /**
- * The snapshot is the array itself, replaced wholesale on every mutation — so
- * `useSyncExternalStore` compares references and never sees a moving target.
+ * Reactive when read inside a `computed` or a render, so a card that asks about
+ * its own id re-renders only when *its* answer flips (ADR 0005 §8, ADR 0011).
  */
-export const getSnapshot = (): number[] => ids
-
-/** Prerendering has no storage to read (ADR 0005 consequences). */
-const EMPTY: number[] = []
-export const getServerSnapshot = (): number[] => EMPTY
-
-export const isFavorite = (id: number): boolean => index.has(id)
+export const isFavorite = (id: number): boolean => index.value.has(id)
 
 /**
  * Add (prepending, so the list stays newest-first) or remove, then persist and
- * notify.
+ * publish.
  *
  * Ids outside the catalogue are ignored rather than stored: they would be
  * dropped on the next read anyway, and a list that silently shrinks across a
  * reload is worse than one that never grew.
  */
 export function toggle(id: number): void {
-  if (index.has(id)) {
-    const next = ids.filter(existing => existing !== id)
+  if (index.value.has(id)) {
+    const next = ids.value.filter(existing => existing !== id)
     persist(next)
-    emit(next)
+    ids.value = next
     return
   }
 
   if (getCombo(id) === undefined)
     return
 
-  const next = [id, ...ids]
+  const next = [id, ...ids.value]
   persist(next)
-  emit(next)
+  ids.value = next
 }
 
 if (typeof window !== 'undefined') {
@@ -136,6 +126,6 @@ if (typeof window !== 'undefined') {
   window.addEventListener('storage', (event) => {
     if (event.key !== null && event.key !== FAVORITES_KEY)
       return
-    emit(read())
+    ids.value = read()
   })
 }

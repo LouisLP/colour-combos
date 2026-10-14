@@ -1,3 +1,4 @@
+import type { LocationQueryRaw } from 'vue-router'
 import type { ComboSize } from '../data/combos'
 import { COMBO_COUNT, COMBO_SIZES } from '../data/combos'
 
@@ -20,12 +21,12 @@ export interface HubSearch {
  * The random combo a bare or invalid `c` falls back to, picked at most once per
  * document.
  *
- * Validators are not called once: StrictMode double-invokes them, and TanStack
- * re-validates whenever *any* search param changes. A bare `Math.random()` here
- * would hand back a different combo on each call and the site would re-theme
- * itself as the user typed in the search box (ADR 0005 §6). Memoising makes the
- * validator pure with respect to the document: a reload picks a new combo, a
- * re-validation cannot.
+ * Validation is not called once: the router guard runs on every navigation and
+ * every component re-reads the query whenever *any* param changes. A bare
+ * `Math.random()` here would hand back a different combo on each call and the
+ * site would re-theme itself as the user typed in the search box (ADR 0005 §6).
+ * Memoising makes validation pure with respect to the document: a reload picks a
+ * new combo, a re-validation cannot.
  */
 let sessionComboId: number | undefined
 export function fallbackComboId(): number {
@@ -65,36 +66,47 @@ function resolveSize(raw: unknown): ComboSize | undefined {
   return COMBO_SIZES.find(size => size === n)
 }
 
-/**
- * A search is always a string, but it does not always arrive as one: TanStack
- * parses search params structurally, so `?q=13` hands this a `number`.
- *
- * Rejecting that would drop the param silently — and `13` is not an odd query,
- * it is the `No. 13` a card is captioned with (ADR 0006 §3), so it is one of
- * the few searches a user can be certain will match something.
- */
 function resolveQuery(raw: unknown): string | undefined {
-  if (typeof raw === 'number' && Number.isFinite(raw))
-    return String(raw)
   return typeof raw === 'string' && raw !== '' ? raw : undefined
 }
 
 /**
- * Validate and default the search params during route matching — synchronously,
- * not in an async loader, so the theme is a function of the URL from the first
- * frame (ADR 0004 §7).
+ * A repeated param (`?q=a&q=b`) arrives as an array. The first one wins, the
+ * same answer `URLSearchParams.get` gives, so a hand-edited URL degrades to one
+ * reading rather than to none.
+ */
+export function firstValue(raw: unknown): unknown {
+  return Array.isArray(raw) ? raw[0] : raw
+}
+
+/**
+ * Validate and default the raw query — synchronously, on every read, so the
+ * theme is a function of the URL from the first frame (ADR 0004 §7).
  */
 export function validateHubSearch(input: Record<string, unknown>): HubSearch {
   return {
-    c: resolveComboId(input.c).id,
-    q: resolveQuery(input.q),
-    size: resolveSize(input.size),
+    c: resolveComboId(firstValue(input.c)).id,
+    q: resolveQuery(firstValue(input.q)),
+    size: resolveSize(firstValue(input.size)),
   }
 }
 
 /**
- * Carry the whole param set across a navigation unchanged — the reducer every
- * `<Link>` passes as its `search`.
+ * The query a `HubSearch` serialises to. Absent params are left out rather than
+ * written empty, to keep the URL clean, and the order is fixed so a shared link
+ * always reads `?c=…&q=…&size=…`.
+ */
+export function toHubQuery(search: HubSearch): LocationQueryRaw {
+  return {
+    c: String(search.c),
+    ...(search.q !== undefined && { q: search.q }),
+    ...(search.size !== undefined && { size: String(search.size) }),
+  }
+}
+
+/**
+ * Carry the whole param set across a navigation unchanged — what every
+ * cross-route `<RouterLink>` passes through `toHubQuery`.
  *
  * `c` is required in the schema (exactly one combo is always selected), so a
  * link cannot silently drop it: TypeScript makes carrying the params the

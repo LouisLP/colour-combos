@@ -5,59 +5,27 @@
 // this mounts the real route tree, presses a chip, and checks what reached the
 // clipboard and what the chip then says.
 
-import { createMemoryHistory, createRouter, RouterProvider } from '@tanstack/react-router'
-import { act } from 'react'
-import { createRoot } from 'react-dom/client'
+import { flushPromises } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { COMBOS } from '../data/combos'
-import { routeTree } from '../routing/router'
-
-// jsdom ships no `matchMedia`, and the mode store attaches its listener at
-// import time (ADR 0005 §4). `vi.hoisted` runs before the module graph is
-// evaluated, which is the only window in which this can be provided.
-vi.hoisted(() => {
-  globalThis.matchMedia ??= (() => ({
-    matches: false,
-    addEventListener: () => {},
-    removeEventListener: () => {},
-  })) as unknown as typeof matchMedia
-})
-
-;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
+import { click, mountHub } from '../test/mountHub'
 
 const writeText = vi.fn<(text: string) => Promise<void>>(async () => {})
 vi.stubGlobal('navigator', { clipboard: { writeText } })
 
 async function mount(initial: string) {
-  const history = createMemoryHistory({ initialEntries: [initial] })
-  const router = createRouter({ routeTree, history })
-  const container = document.createElement('div')
-  document.body.append(container)
-  const root = createRoot(container)
-
-  await act(async () => {
-    root.render(<RouterProvider router={router} />)
-  })
-
+  const view = await mountHub(initial)
   return {
-    container,
+    ...view,
     /** The copy chips of the first card, in colour order. */
-    chips: () => [...container.querySelectorAll<HTMLButtonElement>('.combo-card .combo-copy')],
-    unmount: async () => {
-      await act(async () => root.unmount())
-      container.remove()
-    },
+    chips: () => [...view.container.querySelectorAll<HTMLButtonElement>('.combo-card .combo-copy')],
   }
 }
 
-async function click(element: HTMLElement) {
-  await act(async () => {
-    element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, button: 0 }))
-  })
-}
-
 beforeEach(() => {
-  vi.useFakeTimers({ shouldAdvanceTime: true })
+  // Only the timers the card uses: `flushPromises` rides `setImmediate`, which
+  // has to stay real for a click's navigation to settle.
+  vi.useFakeTimers({ shouldAdvanceTime: true, toFake: ['setTimeout', 'clearTimeout'] })
   writeText.mockClear()
 })
 
@@ -80,7 +48,7 @@ describe('a swatch copy chip', () => {
     for (const colour of first.colours)
       expect(labels).toContain(`Copy ${colour.name} ${colour.hex}`)
 
-    await view.unmount()
+    view.unmount()
   })
 
   it('writes the swatch hex to the clipboard and confirms it', async () => {
@@ -94,7 +62,7 @@ describe('a swatch copy chip', () => {
     // The confirmation is the chip's own accessible name flipping to "Copied".
     expect(chip.getAttribute('aria-label')).toBe(`Copied ${first.colours[0].hex}`)
 
-    await view.unmount()
+    view.unmount()
   })
 
   it('clears the confirmation after a moment', async () => {
@@ -105,12 +73,11 @@ describe('a swatch copy chip', () => {
     await click(chip)
     expect(chip.getAttribute('aria-label')).toBe(`Copied ${first.colours[0].hex}`)
 
-    await act(async () => {
-      vi.advanceTimersByTime(1500)
-    })
+    vi.advanceTimersByTime(1500)
+    await flushPromises()
 
     expect(chip.getAttribute('aria-label')).toBe(`Copy ${first.colours[0].name} ${first.colours[0].hex}`)
 
-    await view.unmount()
+    view.unmount()
   })
 })
