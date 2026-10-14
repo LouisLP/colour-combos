@@ -43,12 +43,18 @@ in every format from that build, plus the `package.json` with the `exports`
 map. Nothing in `dist-lib/` is committed. CI builds it and runs the smoke test
 on every push.
 
-Publishing is a manual step: bump `VERSION` in `scripts/build-lib.ts`, then
+The package's version is the root `package.json`'s. Publishing is a manual
+step, from a clean `main`:
 
 ```sh
+npm version patch   # or minor / major: bumps, commits and tags vX.Y.Z
 pnpm build:lib && pnpm smoke:lib
 npm publish dist-lib
+git push --follow-tags
 ```
+
+`npm version`, not `pnpm version`: pnpm 11's command applies change intents
+instead of bumping.
 
 ## Deployment
 
