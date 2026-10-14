@@ -1,6 +1,6 @@
 # 10. Visual language: type, spacing, motion, and finishing the identity band
 
-- **Status**: Accepted
+- **Status**: Superseded by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-07-23
 - **Ticket**: [T4: Beauty pass with a frontend design skill](https://github.com/LouisLP/colour-combos/issues/36)
 - **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)

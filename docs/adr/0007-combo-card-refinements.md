@@ -1,6 +1,6 @@
 # 7. Combo card refinements — density, absolute star, per-colour copy
 
-- **Status**: Accepted
+- **Status**: Superseded by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-07-23
 - **Ticket**: [T3: Combo card refinements](https://github.com/LouisLP/colour-combos/issues/35)
 - **Parent**: [Card & detail polish](https://github.com/LouisLP/colour-combos/issues/32)

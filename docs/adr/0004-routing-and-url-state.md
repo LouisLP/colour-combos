@@ -1,6 +1,6 @@
 # 4. Shareable combo URL & routing scheme
 
-- **Status**: Accepted
+- **Status**: Accepted; amended by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-07-22
 - **Ticket**: [Shareable combo URL & routing scheme](https://github.com/LouisLP/colour-combos/issues/5)
 - **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)

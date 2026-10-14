@@ -1,6 +1,6 @@
 # 3. Favorites persistence model
 
-- **Status**: Accepted
+- **Status**: Superseded by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-07-22
 - **Ticket**: [Favorites persistence model](https://github.com/LouisLP/colour-combos/issues/6)
 - **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)

@@ -1,8 +1,6 @@
 # 5. App state architecture
 
-- **Status**: Accepted; §4–5 superseded by [ADR 0008](0008-combo-owned-mode.md);
-  the React/TanStack mechanics of §2, §6–8 superseded by
-  [ADR 0011](0011-vue-migration.md) (the architecture itself stands)
+- **Status**: Superseded by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-07-22
 - **Ticket**: [App state architecture](https://github.com/LouisLP/colour-combos/issues/12)
 - **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)

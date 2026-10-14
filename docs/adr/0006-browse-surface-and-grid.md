@@ -2,7 +2,7 @@
 
 - **Status**: Accepted; §3 (no hex on the face) relaxed for the compact list,
   §7 extended with hue/mode filters and highlighting, by
-  [ADR 0014](0014-faster-browse.md)
+  [ADR 0014](0014-faster-browse.md); amended by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-07-22
 - **Ticket**: [Browse & grid UI](https://github.com/LouisLP/colour-combos/issues/13)
 - **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)

@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * The copy glyph, swapping to a check while a copy is confirmed. Shared by every
- * copy control so they all confirm the same way (ADR 0007 §4).
- */
+/** The copy glyph, swapping to a check while a copy is confirmed. */
 defineProps<{ copied: boolean }>()
 </script>
 
@@ -20,7 +17,7 @@ defineProps<{ copied: boolean }>()
 
 <style scoped>
 .copy-check {
-  animation: copy-pop var(--dur) var(--ease);
+  animation: copy-pop var(--dur) var(--ease-bounce);
 }
 
 @keyframes copy-pop {

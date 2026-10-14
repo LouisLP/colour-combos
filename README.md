@@ -1,15 +1,14 @@
 # colour-combos
 
 A browser for Sanzo Wada's *A Dictionary of Color Combinations* — all 348
-classic combinations. Pick one and it re-themes the entire site, contrast-safe
-in light and dark.
+classic combinations. Click one for its full tonal scale and copy-ready code.
 
 **[louislp.github.io/colour-combos](https://louislp.github.io/colour-combos/)**
 
-The interesting part is not the grid, it is what happens when you click a card:
-every combination is adapted into a full semantic design system at runtime, and
-all 696 renderings (348 combos × 2 modes) are proved to clear WCAG 2.2 AA in
-CI. A combo that cannot be made legible does not ship — there are none.
+Under the grid, every combination is adapted into a full semantic design
+system, and all 696 renderings (348 combos × 2 modes) are proved to clear WCAG
+2.2 AA in CI. A combo that cannot be made legible does not ship — there are
+none.
 
 ## Running it
 
@@ -69,6 +68,8 @@ Two things follow from the host and are easy to break:
 `CONTEXT.md` holds the glossary; `docs/adr/` holds the reasoning. Start with
 [ADR 0002](docs/adr/0002-combo-adaptation-model.md) if you only read one — it
 is the combo → design-system adaptation model everything else hangs off.
+[ADR 0015](docs/adr/0015-playful-redesign-dialog-not-retheme.md) covers the
+current site: one dark look, a details dialog, no favourites.
 
 ## Credits
 
