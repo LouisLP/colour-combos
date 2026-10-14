@@ -10,7 +10,7 @@
 //   colour-combos/42.json       -> tokens/42.json W3C design tokens
 //   colour-combos/tailwind/42.css -> tailwind/42.css  Tailwind v4 @theme
 
-import { copyFileSync, mkdirSync, writeFileSync } from 'node:fs'
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import * as lib from '../dist-lib/index.js'
@@ -18,8 +18,8 @@ import * as lib from '../dist-lib/index.js'
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const out = join(root, 'dist-lib')
 
-/** The package's version. Bump it here before a publish. */
-const VERSION = '0.1.0'
+/** The package's version: the root `package.json`'s, bumped by `npm version`. */
+const { version } = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as { version: string }
 
 /** Every per-combo format: where its files go, and how one is written. */
 const FORMATS = {
@@ -43,7 +43,7 @@ for (const combo of lib.COMBOS) {
 
 const manifest = {
   name: lib.PACKAGE_NAME,
-  version: VERSION,
+  version,
   description: 'Importable colour scales for the 348 combinations in Sanzo Wada\'s A Dictionary of Color Combinations: CSS, Tailwind, SCSS, design tokens and typed data.',
   type: 'module',
   repository: { type: 'git', url: 'git+https://github.com/LouisLP/colour-combos.git' },

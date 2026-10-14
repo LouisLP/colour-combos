@@ -79,9 +79,10 @@ test that can catch it.
 - A workspace split stays available: `src/lib` imports only `src/data` and
   `src/theme`, never the site. It is not worth doing until the site needs to
   depend on a published version.
-- Publishing is a human step: bump `VERSION` in `scripts/build-lib.ts`, build,
-  smoke, `npm publish dist-lib`. No changesets yet; one package with a
-  hand-bumped version does not need them.
+- Publishing is a human step: `npm version`, build, smoke,
+  `npm publish dist-lib`. The version is the root `package.json`'s, which
+  `scripts/build-lib.ts` copies into the generated manifest. No changesets yet;
+  one package with a hand-bumped version does not need them.
 - The repo has no licence of its own, so the package declares none. Settle that
   before the first publish.
 - Any change to an emitter's output is a change to the published files. The
