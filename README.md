@@ -48,7 +48,7 @@ a clean `main`:
 ```sh
 npm version patch   # or minor / major: bumps, commits and tags vX.Y.Z
 pnpm build:lib && pnpm smoke:lib
-npm publish dist-lib
+npm publish ./dist-lib   # the ./ matters: a bare name is looked up on the registry
 git push --follow-tags
 ```
 
