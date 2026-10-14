@@ -75,7 +75,9 @@ reproducible from it.
 **Question:** what is "a scale" for a combo — the exported tonal + semantic
 layers, where the exact Wada hex lives, which contrast promises hold?
 
-**Answer:** _pending — ADR 0012._
+**Answer:** [ADR 0012](../docs/adr/0012-combo-scale-model.md) — model A on the
+wcag curve, ends Y 0.98 / 0.001: the exact hex replaces its nearest step, and
+steps are placed by luminance so grade-gap contrast promises hold catalogue-wide.
 
 ```bash
 pnpm prototype:scale         # http://localhost:5173/colour-combos/prototypes/scale-model/

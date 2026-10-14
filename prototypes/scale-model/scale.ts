@@ -37,7 +37,7 @@ export const CURVE_NAMES: Record<CurveKey, string> = {
 }
 
 /** wcag curve endpoints: Y(50)=0.95, Y(950)=0.004 → ×1.383 contrast per 100 grades. */
-export const ENDS = { top: 0.95, bottom: 0.004 }
+export const ENDS = { top: 0.98, bottom: 0.001 }
 export let TARGET_Y: number[] = []
 /** Contrast ratio gained per 100 grades on the wcag curve. */
 export let PER_100 = 1
