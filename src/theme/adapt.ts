@@ -1,33 +1,21 @@
-// Combo -> semantic palette. Implements ADR 0002 (chroma-weighted hybrid).
-//
-// Assignment (which colour plays which role) is MODE-INVARIANT per ADR 0001.
-// Derivation (the final value) is mode-dependent.
+// Combo -> semantic palette (ADR 0002). Assignment is mode-invariant;
+// derivation depends on mode.
 
-import type { Combo, ComboColour } from '../data/combos'
+import type { Combo } from '../data/combos'
 import type { Oklch } from './colour'
-import { clampToContrast, hexToOklch, oklchToHex, onColour } from './colour'
+import { clampToContrast, hexToOklch, HUE_SOURCE_MIN_CHROMA, oklchToHex, onColour } from './colour'
+import { accentName, accentRoles, MAX_ACCENTS } from './roles'
 
-/** Both renderings a combo can own, in the order the mode filter lists them. */
+/** Both modes, in display order. */
 export const MODES = ['light', 'dark'] as const
 export type Mode = typeof MODES[number]
 
-/**
- * The lightness a combo must average, in OKLab L, to render light rather than
- * dark. 0.60 is the OKLab lightness of neutral mid-grey (`#808080`): a combo
- * whose colours are, on average, lighter than mid-grey reads as a light palette
- * and gets a near-white canvas; darker reads as a dark palette and gets a
- * near-black one (ADR 0008).
- */
+/** Mean OKLab L at or above which a combo is light: mid-grey `#808080` (ADR 0008). */
 export const MODE_L_THRESHOLD = 0.6
 
 /**
- * The mode a combo renders in — combo-owned, not user-chosen (ADR 0008). Mean
- * OKLab lightness across the combo's raw colours, thresholded at mid-grey.
- *
- * Equal-weight and lightness-only on purpose: no area information exists to
- * weight by, and lightness is the single axis the near-neutral canvas swings
- * along. Chroma and hue decide *which* colour tints the canvas (`assignRoles`),
- * never how bright the room is.
+ * A combo's canonical mode (ADR 0008). Equal weights and lightness only: there's
+ * no area data to weight by, and lightness is the only axis the canvas moves on.
  */
 export function comboMode(combo: Combo): Mode {
   const meanL = combo.colours.reduce((sum, c) => sum + hexToOklch(c.hex).l, 0) / combo.colours.length
@@ -41,10 +29,7 @@ export interface Assignment {
   accents: number[]
 }
 
-/** Below this OKLCh chroma a colour's hue carries no usable information. */
-export const HUE_SOURCE_MIN_CHROMA = 0.04
-
-/** Canvases the accent score probes against. Approximations of the two ladders. */
+/** Rough canvases per mode, for scoring accents. */
 const PROBE_CANVAS: Record<Mode, string> = { light: '#f7f7f7', dark: '#242424' }
 
 /** Drift beyond this much lightness zeroes out the score's chroma reward. */
@@ -52,17 +37,10 @@ const DRIFT_PENALTY_SPAN = 0.5
 /** Share of a colour's score that drift can eat. */
 const DRIFT_PENALTY_WEIGHT = 0.6
 
-/**
- * Mode-invariant, so one entry per combo. Bounded at 348 by the catalogue, whose
- * inputs are committed static data — no eviction policy, nothing to invalidate
- * (ADR 0005 §3).
- */
+/** One entry per combo, so at most 348; static input, nothing to evict. */
 const assignmentCache = new Map<number, Assignment>()
 
-/**
- * Which colour plays which role. Computed once per combo and invariant across
- * modes, so it is safe to cache by combo id.
- */
+/** Which colour plays which role. The same in both modes. */
 export function assignRoles(combo: Combo): Assignment {
   const hit = assignmentCache.get(combo.id)
   if (hit)
@@ -75,10 +53,8 @@ export function assignRoles(combo: Combo): Assignment {
 function computeAssignment(combo: Combo): Assignment {
   const cols = combo.colours.map((c, i) => ({ i, ...hexToOklch(c.hex) }))
 
-  // Quietest colour tints the paper — it loses the least when chroma is cut
-  // ~90%. But below ~0.04 chroma a colour's hue is numerical noise, and tinting
-  // the whole site with it is arbitrary. 46/348 combos contain such a colour;
-  // unfiltered, this picks it every time.
+  // The quietest colour tints the paper, since it loses least when chroma is cut
+  // ~90%. Below the floor its hue is noise; 46/348 combos have such a colour.
   const eligible = cols.filter(c => c.c >= HUE_SOURCE_MIN_CHROMA)
   const hueSource = [...(eligible.length ? eligible : cols)].sort((x, y) => x.c - y.c)[0].i
 
@@ -90,10 +66,8 @@ function computeAssignment(combo: Combo): Assignment {
     return col.c * (1 - Math.min(1, cost / DRIFT_PENALTY_SPAN) * DRIFT_PENALTY_WEIGHT)
   }
 
-  // The hue source is NOT excluded from accent ranking. Combo #55 is Old Rose +
-  // White: excluding it forces White to be the accent, and light mode drags
-  // White to grey (dL 0.38). One colour playing both roles is a better
-  // rendering than a colour that has to stop being itself.
+  // The hue source can also be an accent. Excluding it makes White the accent in
+  // #55 (Old Rose + White), and light mode drags it to grey (dL 0.38).
   const accents = [...cols].sort((x, y) => score(y) - score(x)).map(c => c.i)
   return { hueSource, accents }
 }
@@ -110,19 +84,16 @@ export const LADDER = {
 
 /** Chroma retained by the near-neutrals, as a fraction of the hue source's. */
 export const TINT = { canvas: 0.08, surface: 0.06, muted: 0.14, ink: 0.16, border: 0.3 }
-/** Hard ceiling so a vivid hue source can't make the "neutral" actually colourful. */
+/** Ceiling, so a vivid hue source can't make the neutrals colourful. */
 export const TINT_CAP = { canvas: 0.012, surface: 0.012, muted: 0.02, ink: 0.03, border: 0.035 }
 /**
- * Floor, as a fraction of the cap. Without it, tint strength tracks the hue
- * source's own chroma, so combos whose quietest colour is near-grey render an
- * untinted page while vivid ones render a tinted one — the same algorithm
- * reading as two different products. The floor makes tint strength constant
- * and lets the hue source be chosen purely on hue quality.
+ * Floor, as a fraction of the cap. Keeps tint strength the same across combos,
+ * so a near-grey hue source still tints the page.
  */
 export const TINT_FLOOR = 0.55
 
 function tint(src: Oklch, l: number, frac: number, cap: number) {
-  // An all-grey combo gets a genuinely grey site rather than an arbitrary tint.
+  // An all-grey combo stays grey.
   if (src.c < HUE_SOURCE_MIN_CHROMA)
     return oklchToHex({ l, c: 0, h: 0 })
   return oklchToHex({ l, c: Math.min(Math.max(src.c * frac, cap * TINT_FLOOR), cap), h: src.h })
@@ -134,22 +105,13 @@ export interface Role {
   from?: string
   /** Lightness moved to satisfy the contrast contract. */
   shifted?: number
-  /** False when the contract could not be met at the lightness rail. */
+  /** False when the contrast floor couldn't be met. */
   reached?: boolean
 }
 
 export interface Palette {
   roles: Record<string, Role>
   assignment: Assignment
-  hueSourceColour: ComboColour
-  accentColours: ComboColour[]
-  /**
-   * False when no colour in the combo cleared `HUE_SOURCE_MIN_CHROMA`, so the
-   * neutrals are genuinely achromatic rather than tinted (ADR 0002 §2). The
-   * stylesheet's relative-colour ramp reads this as `--tint-scale`, which is how
-   * a declarative ramp reproduces the branch `tint()` takes here.
-   */
-  tinted: boolean
 }
 
 export function derivePalette(combo: Combo, mode: Mode): Palette {
@@ -162,12 +124,11 @@ export function derivePalette(combo: Combo, mode: Mode): Palette {
   const surface = tint(src, L.surface, TINT.surface, TINT_CAP.surface)
   const surfaceMuted = tint(src, L.muted, TINT.muted, TINT_CAP.muted)
 
-  // Ink is derived from the hue source too, then clamped to AA on the *lowest
-  // contrast* surface it can land on (muted), so it passes everywhere.
+  // Clamped on surface-muted, the worst surface, so ink passes everywhere.
   const ink = clampToContrast({ l: L.ink, c: inkC, h: src.h }, surfaceMuted, 4.5, L.dir)
   const inkMuted = clampToContrast({ l: L.inkMuted, c: inkC, h: src.h }, surfaceMuted, 4.5, L.dir)
 
-  // Decorative hairline (no contrast promise) + a 3:1 boundary for real UI edges.
+  // A decorative hairline, plus a 3:1 border for real UI edges.
   const borderHex = tint(src, L.border, TINT.border, TINT_CAP.border)
   const borderStrong = clampToContrast(hexToOklch(borderHex), canvas, 3, L.dir)
 
@@ -181,39 +142,26 @@ export function derivePalette(combo: Combo, mode: Mode): Palette {
     'border-strong': { hex: borderStrong.hex, shifted: borderStrong.shifted, reached: borderStrong.reached },
   }
 
-  const accentColours: ComboColour[] = []
-  a.accents.slice(0, 3).forEach((idx, rank) => {
+  a.accents.slice(0, MAX_ACCENTS).forEach((idx, rank) => {
     const raw = combo.colours[idx]
-    accentColours.push(raw)
     const col = hexToOklch(raw.hex)
-    // Clamp against surface-muted, the LOWEST-contrast backdrop either role can
-    // land on. Clamping against `canvas` passes the audit there and silently
-    // fails on muted cards — measured at 454/696 renderings before this change.
+    // Clamp on the worst surface. Clamping on `canvas` failed muted cards in
+    // 454/696 renderings.
     const fill = clampToContrast(col, surfaceMuted, 3, L.dir)
     const text = clampToContrast(col, surfaceMuted, 4.5, L.dir)
-    const suffix = rank === 0 ? '' : `-${rank + 1}`
-    roles[`accent${suffix}`] = { hex: fill.hex, from: raw.hex, shifted: fill.shifted, reached: fill.reached }
-    roles[`accent${suffix}-text`] = { hex: text.hex, from: raw.hex, shifted: text.shifted, reached: text.reached }
-    roles[`on-accent${suffix}`] = { hex: onColour(fill.hex) }
+    const names = accentRoles(accentName(rank))
+    roles[names.fill] = { hex: fill.hex, from: raw.hex, shifted: fill.shifted, reached: fill.reached }
+    roles[names.text] = { hex: text.hex, from: raw.hex, shifted: text.shifted, reached: text.reached }
+    roles[names.on] = { hex: onColour(fill.hex) }
   })
 
-  return {
-    roles,
-    assignment: a,
-    hueSourceColour: combo.colours[a.hueSource],
-    accentColours,
-    tinted: src.c >= HUE_SOURCE_MIN_CHROMA,
-  }
+  return { roles, assignment: a }
 }
 
-/** Bounded at 348 x 2 for the whole catalogue (ADR 0005 §3). */
+/** At most 348 × 2 entries (ADR 0005 §3). */
 const paletteCache = new Map<string, Palette>()
 
-/**
- * The palette for a combo in a mode. The app's single entry point to the
- * adapter, and cached here rather than in a `useMemo` so the AA sweep exercises
- * exactly the code the site renders from (ADR 0005 §3).
- */
+/** A combo's palette in one mode. The adapter's only entry point, cached. */
 export function adapt(combo: Combo, mode: Mode): Palette {
   const key = `${combo.id}:${mode}`
   const hit = paletteCache.get(key)
@@ -222,9 +170,4 @@ export function adapt(combo: Combo, mode: Mode): Palette {
   const computed = derivePalette(combo, mode)
   paletteCache.set(key, computed)
   return computed
-}
-
-/** How far a palette drifted from the raw combo — the "recognisability" cost. */
-export function totalShift(p: Palette): number {
-  return Object.values(p.roles).reduce((sum, r) => sum + (r.shifted ?? 0), 0)
 }

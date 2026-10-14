@@ -7,12 +7,8 @@ import { STEPS } from '../scale'
 import { banner, roleRamps, semanticPairs } from './shared'
 
 /**
- * `:root` custom properties for one combo: colour-named ramps with an alias for
- * each anchor, the neutral ramp, role-named ramps that alias the colour ramps,
- * and the semantic roles as `light-dark()` pairs.
- *
- * The semantic roles follow `color-scheme` where they are *used*, not where
- * they are declared, so a `[data-theme]` subtree flips them on its own.
+ * Colour ramps, the neutral ramp, role ramps as aliases, and semantic roles as
+ * `light-dark()`, which resolves where used, so `[data-theme]` subtrees flip.
  */
 export function emitCss(scale: ComboScale, { format = 'hex' }: EmitOptions = {}): string {
   const v = (value: ColourValue) => formatColour(value, format)

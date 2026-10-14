@@ -1,6 +1,5 @@
-// The package entry point (`colour-combos`): the catalogue, the scale engine
-// and every export format. A single combo's scale is importable on its own as
-// `colour-combos/<id>` without any of this; see `scripts/build-lib.ts`.
+// The package entry: catalogue, scale engine and emitters. Single combos import
+// on their own as `japanese-colour-combos/<id>`.
 
 export type { Combo, ComboColour, ComboSize } from '../data/combos'
 export { COMBO_COUNT, COMBO_SIZES, comboLabel, COMBOS, getCombo, requireCombo } from '../data/combos'

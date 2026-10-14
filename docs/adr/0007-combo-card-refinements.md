@@ -1,17 +1,17 @@
-# 7. Combo card refinements — density, absolute star, per-colour copy
+# 7. Combo card refinements: density, absolute star, per-colour copy
 
 - **Status**: Superseded by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-07-23
-- **Ticket**: [T3: Combo card refinements](https://github.com/LouisLP/colour-combos/issues/35)
-- **Parent**: [Card & detail polish](https://github.com/LouisLP/colour-combos/issues/32)
+- **Ticket**: [T3: Combo card refinements](https://github.com/LouisLP/japanese-colour-combos/issues/35)
+- **Parent**: [Card & detail polish](https://github.com/LouisLP/japanese-colour-combos/issues/32)
 - **Builds on**: [ADR 0006](0006-browse-surface-and-grid.md) (the card is that
   ADR's variant A; this refines it), [ADR 0001](0001-light-dark-and-combo-theming-semantics.md) §4,
   [ADR 0002](0002-combo-adaptation-model.md) §5, [ADR 0004](0004-routing-and-url-state.md) §1
 
 ## Context
 
-ADR 0006 settled the card in the abstract — framed, equal-split swatches,
-always-present caption — but three things only showed up once the real grid was
+ADR 0006 settled the card in the abstract ( framed, equal-split swatches,
+always-present caption) but three things only showed up once the real grid was
 in front of people:
 
 - The cards were **larger than the content needs**. A 6.5rem swatch block and
@@ -33,7 +33,7 @@ from `minmax(13rem, 1fr)` to **`minmax(11.5rem, 1fr)`** (13rem above 100rem).
 That is one more column at common widths without taking the card so narrow the
 caption ellipsises on its *first word*, which is the floor ADR 0006 §5 set and
 this keeps. `contain-intrinsic-size` drops from `auto 11rem` to `auto 7.5rem` to
-track the shorter card — it is a paint estimate (ADR 0006 §6), so it should
+track the shorter card: it is a paint estimate (ADR 0006 §6), so it should
 follow the real height or the scrollbar drifts further than the accepted ~8%.
 
 ### 2. The star and the copy chips live *over* the swatch block, not in the link
@@ -41,8 +41,8 @@ follow the real height or the scrollbar drifts further than the accepted ~8%.
 This is the load-bearing structural decision and the rest follows from it.
 
 The swatch block is a single selection `<a>` (selecting a combo *is* a
-navigation, ADR 0004 §1). A per-colour copy control has to be a real `<button>`
-— it has an action, a pressed confirmation, and a keyboard story — and **a
+navigation, ADR 0004 §1). A per-colour copy control has to be a real `<button>`:
+it has an action, a pressed confirmation, and a keyboard story, and **a
 button cannot nest inside an anchor**. The same is true of the star.
 
 So both are **sibling overlays** of the link inside a shared
@@ -50,18 +50,18 @@ So both are **sibling overlays** of the link inside a shared
 
 - The **star** is `position: absolute`, top-right, the same 2rem box on every
   card regardless of caption (the ticket's headline ask). Always visible, never
-  hover-revealed — hover-only dies on touch (ADR 0006 §8) — carrying
+  hover-revealed (hover-only dies on touch (ADR 0006 §8)) carrying
   `aria-pressed` as before.
 - The **copy chips** are one small button per swatch in an overlay row that
   mirrors the swatch flex. The row is `pointer-events: none` and only the chips
   are `pointer-events: auto`, so a tap that misses a chip **falls through to the
-  selection link beneath** — tapping a colour still selects the combo, tapping
+  selection link beneath**: tapping a colour still selects the combo, tapping
   its chip copies its hex.
 
 ### 3. Both overlays get a `--surface` backdrop
 
 Moving the star off the caption puts it over raw Wada colour, which can be any
-hue at any lightness — a bare glyph is not guaranteed legible there. The caption
+hue at any lightness: a bare glyph is not guaranteed legible there. The caption
 gave it a `--surface` background for free; the overlay has to ask for it. So the
 star and every copy chip sit on a `--surface` chip with a `--border` hairline.
 `--surface` is theme-owned and contrast-checked (ADR 0002 §5), so the control is
@@ -85,7 +85,7 @@ on success, and a per-card `role="status"` region announces the copy for screen
 readers since the visual confirmation is otherwise a silent icon swap. The
 confirmation clears after 1.4s; the timer is cancelled on re-copy so a fast
 series never leaves a stale check behind. `navigator.clipboard.writeText` can
-reject (denied permission, insecure context) — a failed copy shows no
+reject (denied permission, insecure context): a failed copy shows no
 confirmation rather than throwing.
 
 A native right-click context menu was considered (the ticket allowed it) and
@@ -99,7 +99,7 @@ that works the same in all three input modes beats two that each cover a slice.
   of every colour being keyboard-copyable across a 348-card grid, and it is the
   same order the always-present star already established. Not free, but the
   feature is per-colour by definition.
-- **Hex now has a partial home on the card again** — copyable but never
+- **Hex now has a partial home on the card again**: copyable but never
   displayed, so ADR 0006 §3's reasoning (no monospace strings on the face)
   stands. The detail surface still owns the full readout.
 - **`--surface` is now the legibility contract for anything placed over raw
@@ -112,7 +112,7 @@ that works the same in all three input modes beats two that each cover a slice.
 ## Alternatives rejected
 
 - **Copy the whole combo's colours from one control.** Simpler, one button, but
-  it answers a different question — the ticket is a *single* colour to the
+  it answers a different question: the ticket is a *single* colour to the
   clipboard, which a per-swatch chip is the direct shape of.
 - **Move selection off the swatch block onto the caption so the swatches can be
   copy buttons.** Removes the overlay entirely and the nesting problem with it,

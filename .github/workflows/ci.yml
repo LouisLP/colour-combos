@@ -27,28 +27,23 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      # The WCAG 2.2 AA sweep lives here (src/theme/adapt.sweep.test.ts).
-      # It is a hard gate: any failing pairing on any of the 348 combos in
-      # either mode fails the build. See docs/adr/0002-combo-adaptation-model.md.
-      # So is the scale sweep (src/lib/scale.sweep.test.ts): every contrast
-      # promise of every ramp in the catalogue. See docs/adr/0012-combo-scale-model.md.
+      # Includes two hard gates: the AA sweep (ADR 0002) and the scale sweep
+      # (ADR 0012). One failing pairing in any combo fails the build.
       - name: Test
         run: pnpm test
 
       - name: Build
         run: pnpm build
 
-      # The importable package (T4): every combo in every format, then packed,
-      # installed into an empty project and imported by name — the `exports`
-      # map only fails for a consumer, never in this repo's own tests.
+      # Pack, install and import by name: a broken `exports` map only fails for
+      # a consumer.
       - name: Build the library
         run: pnpm build:lib
 
       - name: Smoke-test the packed library
         run: pnpm smoke:lib
 
-      # The SPA fallback (ADR 0004 §9): GitHub Pages has no rewrite rules, so
-      # `404.html` is the rewrite. Without it every deep link 404s on reload —
-      # a failure that only shows up on the deployed host, never in dev.
+      # The SPA fallback (ADR 0004 §9). Without it, deep links 404 on reload,
+      # but only on the deployed host.
       - name: Assert the SPA fallback shipped
         run: cmp dist/index.html dist/404.html

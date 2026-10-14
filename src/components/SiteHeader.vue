@@ -22,8 +22,7 @@ import { COMBO_COUNT } from '../data/combos'
 </template>
 
 <style scoped>
-/* Seigaiha — the "blue sea waves" pattern — drawn in hairlines just above the
-   background, fading out under the titles. */
+/* Seigaiha ("blue sea waves") in hairlines, fading out under the titles. */
 .hero {
   --wave: oklch(from var(--line) l c h / 0.55);
 

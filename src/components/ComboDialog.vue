@@ -2,31 +2,21 @@
 import type { Combo } from '../data/combos'
 import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from 'reka-ui'
 import { computed, shallowRef, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { useComboDialog } from '../composables/useComboDialog'
 import { comboHexes, comboLabel } from '../data/combos'
-import { accentName } from '../lib/emit/shared'
 import { buildScale } from '../lib/scale'
-import { toHubQuery } from '../routing/search'
+import { useHub } from '../routing/hub'
 import { onColour } from '../theme/colour'
+import { accentName } from '../theme/roles'
 import { toKanji } from '../ui/japanese'
 import CodeBlocks from './CodeBlocks.vue'
 import CopyButton from './CopyButton.vue'
 import CopyIcon from './CopyIcon.vue'
 import ScaleRamp from './ScaleRamp.vue'
 
-/**
- * "More details" for one combo (ADR 0015): its raw colours, the full scale and
- * the code, in a Reka dialog over the grid. `?c=` opens it; Escape, the overlay
- * and the close button shut it; `←` / `→` step through the catalogue.
- */
-const router = useRouter()
-const { combo, close, step } = useComboDialog()
+/** One combo's colours, scale and code (ADR 0015). `←` / `→` step combos. */
+const { combo, close, step, link: linkTo } = useHub()
 
-/**
- * The combo on screen. Held past `?c=` going away so the closing animation
- * still has something to show.
- */
+/** Outlives `?c=` so the close animation has something to show. */
 const shown = shallowRef<Combo>()
 watch(combo, (next) => {
   if (next)
@@ -35,9 +25,7 @@ watch(combo, (next) => {
 
 const scale = computed(() => shown.value && buildScale(shown.value))
 
-const link = computed(() => shown.value
-  ? new URL(router.resolve({ path: '/', query: toHubQuery({ c: shown.value.id }) }).href, location.origin).href
-  : '')
+const link = computed(() => shown.value ? linkTo(shown.value.id) : '')
 
 /** `accent`, `accent-2`, … for a colour ramp, by its rank in the scale. */
 function roleOf(index: number): string | undefined {
@@ -45,7 +33,7 @@ function roleOf(index: number): string | undefined {
   return rank === -1 ? undefined : accentName(rank)
 }
 
-/** `←` / `→`, except where something focused has its own use for an arrow. */
+/** `←` / `→`, unless the focused element uses arrows. */
 function onKeydown(event: KeyboardEvent) {
   if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
     return

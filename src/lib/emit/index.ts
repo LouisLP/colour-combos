@@ -2,7 +2,9 @@
 // site and the package get a format's text from.
 
 export { emitCss } from './css'
-export { emitJs, emitTs } from './module'
+export type { ExportFormat } from './formats'
+export { EXPORT_FORMATS, importStatementFor, specifierFor } from './formats'
+export { emitDts, emitJs, emitTs } from './module'
 export { emitScss } from './scss'
 export { PACKAGE_NAME } from './shared'
 export { emitTailwind } from './tailwind'

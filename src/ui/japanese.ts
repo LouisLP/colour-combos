@@ -1,16 +1,11 @@
-// The site's Japanese accents (ADR 0015): a combo's number in kanji, and a
-// one-character name for each hue family. Decoration only — every one sits
-// beside its English, never in place of it, and is hidden from assistive tech.
+// Japanese accents (ADR 0015): kanji numbers and one-character hue names.
+// Decoration only: always beside the English, and hidden from assistive tech.
 
 import type { HueFamily } from '../data/hue'
 
 const DIGITS = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九']
 
-/**
- * A number from 1 to 999 in kanji, as it would be written on a page: `十二`,
- * `百十`, `三百四十八`. A leading one is dropped before 十 and 百, as it is in
- * ordinary writing.
- */
+/** 1–999 in kanji (`十二`, `百十`, `三百四十八`), dropping a leading 一 before 十 and 百. */
 export function toKanji(n: number): string {
   const hundreds = Math.floor(n / 100)
   const tens = Math.floor(n / 10) % 10

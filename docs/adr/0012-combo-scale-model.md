@@ -2,8 +2,8 @@
 
 - **Status**: Accepted
 - **Date**: 2026-10-14
-- **Ticket**: [T2: Combo scale model — prototype → ADR](https://github.com/LouisLP/colour-combos/issues/43)
-- **Map**: [Vue rewrite, exportable scale library & docs UI](https://github.com/LouisLP/colour-combos/issues/41)
+- **Ticket**: [T2: Combo scale model: prototype → ADR](https://github.com/LouisLP/japanese-colour-combos/issues/43)
+- **Map**: [Vue rewrite, exportable scale library & docs UI](https://github.com/LouisLP/japanese-colour-combos/issues/41)
 - **Builds on**: [ADR 0001](0001-light-dark-and-combo-theming-semantics.md) §4
   (swatches are sacred), [ADR 0002](0002-combo-adaptation-model.md) (the
   semantic roles and the AA contract), [ADR 0008](0008-combo-owned-mode.md)
@@ -224,8 +224,8 @@ true grey (C = 0), matching ADR 0002 §2.
 
 ## Consequences
 
-- The scale engine is a pure function of combo id. T3 can memoise it per combo
-  the way `adapt()` is memoised (ADR 0005 §3).
+- The scale engine is a pure function of combo id. T3 can memoize it per combo
+  the way `adapt()` is memoized (ADR 0005 §3).
 - The ramp ends are extreme. 50 is about `#fffcfb` and 950 about `#0b0100`,
   very close to white and black. That is the price of keeping the exact hex in
   the ramp while promising grade-gap contrast. The other end of the trade-off

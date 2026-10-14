@@ -2,10 +2,7 @@ import type { Combo } from './combos'
 import type { HueFamily } from './hue'
 import { comboHasHue } from './hue'
 
-/**
- * The narrowing the `q` and `hue` params describe. Both optional, and both
- * absent means "the whole catalogue" (ADR 0015).
- */
+/** The `q` and `hue` params. Neither means the whole catalogue. */
 export interface ComboFilter {
   q?: string
   hue?: HueFamily
@@ -25,25 +22,16 @@ export function filterCombos(source: Combo[], { q, hue }: ComboFilter): Combo[] 
 }
 
 /**
- * What a search needle means, read off its shape so a query means exactly one
- * thing (ADR 0006 §7):
- *
- * | Needle | Reads as |
- * | --- | --- |
- * | `12`, `no. 12`, `no12` | the combo number, and only that |
- * | `#d96`, `#d96629` | a hex value, and only that |
- * | anything else | a colour name or an unprefixed hex |
- *
- * Without that split, `12` matches every combo with `12` anywhere in a hex —
- * dozens of them — and the card you were looking for by its `No. 12` caption is
- * buried in the noise.
+ * What a needle means, by its shape (ADR 0006 §7): `12` or `no. 12` is a combo
+ * number, `#d96` a hex, anything else a name or bare hex. Otherwise `12` matches
+ * dozens of hexes.
  */
 export type Needle
   = | { kind: 'number', id: number }
     | { kind: 'hex', text: string }
     | { kind: 'text', text: string }
 
-/** `12`, `no 12`, `no. 12` — the caption the user is reading off the card. */
+/** `12`, `no 12`, `no. 12`: the card's caption. */
 const COMBO_NUMBER = /^(?:no\.?\s*)?(\d+)$/
 
 export function parseNeedle(q: string | undefined): Needle | undefined {
@@ -58,11 +46,7 @@ export function parseNeedle(q: string | undefined): Needle | undefined {
   return text.startsWith('#') ? { kind: 'hex', text } : { kind: 'text', text }
 }
 
-/**
- * What a search actually covers: colour names, hex values, and the combo number
- * (ADR 0006 §7). A Wada combo carries no name of its own — only its colours do
- * (ADR 0006 §3) — so there is no combo name to match against.
- */
+/** Search covers colour names, hexes and the combo number (ADR 0006 §7). */
 function matches(combo: Combo, needle: Needle): boolean {
   switch (needle.kind) {
     case 'number':

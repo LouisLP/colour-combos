@@ -7,12 +7,8 @@ import { STEPS } from '../scale'
 import { banner, MODES, roleRamps, semanticPairs } from './shared'
 
 /**
- * SCSS variables named as the CSS custom properties are (`$cc-english-red-400`,
- * `$cc-accent-500`, `$cc-canvas`), plus maps for looping: `$cc-ramps` by ramp
- * then step, and `$cc-semantic` by mode then role.
- *
- * `$cc-<role>` is a `light-dark()` pair, which Sass passes through as plain
- * CSS. For a value fixed at compile time, read `$cc-semantic` instead.
+ * Variables named like the CSS ones, plus `$cc-ramps` and `$cc-semantic` maps.
+ * `$cc-<role>` is `light-dark()`; read `$cc-semantic` for a fixed mode.
  */
 export function emitScss(scale: ComboScale, { format = 'hex' }: EmitOptions = {}): string {
   const v = (value: ColourValue) => formatColour(value, format)

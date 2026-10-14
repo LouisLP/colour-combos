@@ -6,8 +6,7 @@ import { validateHubSearch } from '../routing/search'
 
 /** Mount the real router and page on a memory history at `initial`. */
 export async function mountHub(initial: string) {
-  // The dialog is an async component; warm its module so it lands with the
-  // first flush, as it would shortly after a real page load.
+  // Warm the async dialog so it lands on the first flush.
   await import('../components/ComboDialog.vue')
 
   const history = createMemoryHistory()

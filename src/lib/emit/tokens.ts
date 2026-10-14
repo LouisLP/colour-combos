@@ -5,7 +5,7 @@ import type { ComboScale, Step } from '../scale'
 import { STEPS } from '../scale'
 import { banner, MODES, PACKAGE_NAME, roleRamps, semanticPairs } from './shared'
 
-/** Reverse-domain key for the scale's own metadata, as the format asks of vendor extensions. */
+/** Reverse-domain key for our `$extensions`. */
 export const TOKENS_EXTENSION = `io.github.louislp.${PACKAGE_NAME}`
 
 interface Token { $value: string }
@@ -16,14 +16,9 @@ function steps(value: (step: Step) => string): Group {
 }
 
 /**
- * Every token sits under `cc`, so a flattening tool names them as the CSS does
- * (`cc-english-red-400`, `cc-accent-500`, `cc-semantic-light-canvas`). Role
- * ramps are aliases (`{cc.english-red.400}`); a colour's anchor step and the
- * combo's canonical mode live in `$extensions`, since a group cannot also be a
- * token.
- *
- * Values are hex strings rather than the format's newer colour objects: that
- * is what the tools in use today read.
+ * Tokens sit under `cc`, so flattened names match the CSS. Role ramps are
+ * aliases; anchors and canonical mode go in `$extensions`. Hex strings, because
+ * that's what today's tools read.
  */
 export function emitTokens(scale: ComboScale): string {
   const cc: Record<string, unknown> = { $type: 'color' }

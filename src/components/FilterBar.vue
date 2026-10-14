@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import type { HueFamily } from '../data/hue'
 import { ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { useHubSearch } from '../composables/useHubSearch'
 import { HUE_FAMILIES } from '../data/hue'
-import { toHubQuery } from '../routing/search'
+import { useHub } from '../routing/hub'
 import { onColour } from '../theme/colour'
 import { HUE_DOT, HUE_KANJI } from '../ui/japanese'
 
@@ -14,25 +11,15 @@ import { HUE_DOT, HUE_KANJI } from '../ui/japanese'
  */
 defineProps<{ shown: number }>()
 
-const router = useRouter()
-const search = useHubSearch()
+const { search, setQuery, toggleHue } = useHub()
 
-// The field owns what is typed and the URL follows it; the field follows the
-// URL only when the URL moved on its own (Back).
+// The URL follows the field, and the field follows the URL only on Back.
 const text = ref(search.value.q ?? '')
 watch(() => search.value.q, (q) => {
   if ((q ?? '') !== text.value)
     text.value = q ?? ''
 })
-watch(text, (q) => {
-  const next = q === '' ? undefined : q
-  if (next !== search.value.q)
-    void router.replace({ query: toHubQuery({ ...search.value, q: next }) })
-})
-
-function toggleHue(hue: HueFamily) {
-  void router.replace({ query: toHubQuery({ ...search.value, hue: search.value.hue === hue ? undefined : hue }) })
-}
+watch(text, setQuery)
 </script>
 
 <template>

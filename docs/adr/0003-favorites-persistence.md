@@ -1,15 +1,15 @@
-# 3. Favorites persistence model
+# 3. Favourites persistence model
 
 - **Status**: Superseded by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-07-22
-- **Ticket**: [Favorites persistence model](https://github.com/LouisLP/colour-combos/issues/6)
-- **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)
+- **Ticket**: [Favourites persistence model](https://github.com/LouisLP/japanese-colour-combos/issues/6)
+- **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/japanese-colour-combos/issues/1)
 
 ## Context
 
 v1 of the colour-combinations hub lets a visitor mark any of the 348 Wada
 combos as a favorite. The combo dataset ships with the app as committed static
-JSON, so a favorite never needs to carry colour data of its own — it only needs
+JSON, so a favourite never needs to carry colour data of its own: it only needs
 to point into data we already ship. There is no account system and no server;
 persistence is browser-local.
 
@@ -18,26 +18,26 @@ when the browser fights back.
 
 ## Decision
 
-### 1. A favorite is a bare numeric combo id
+### 1. A favourite is a bare numeric combo id
 
 ```jsonc
-// localStorage["colour-combos:favorites"]
+// localStorage["japanese-colour-combos:favorites"]
 { "v": 1, "ids": [12, 87, 301] }
 ```
 
-No timestamps, no denormalized combo record. The favorite is a pointer; the
+No timestamps, no denormalized combo record. The favourite is a pointer; the
 combo data is the bundle's job. This keeps storage tiny and means a corrected
 hex or a reworded combo name can never leave a stale copy behind.
 
 The id is the **numeric Wada id (1–348)**, not a name-derived slug. The source's
-own identifier is the stable one — a slug-keyed favorite would break the moment a
+own identifier is the stable one: a slug-keyed favourite would break the moment a
 display name is corrected, while a numeric one survives. This is the same id the
-URL carries as `?c=12` ([#5](https://github.com/LouisLP/colour-combos/issues/5)),
+URL carries as `?c=12` ([#5](https://github.com/LouisLP/japanese-colour-combos/issues/5)),
 so a starred combo and a shared combo are keyed identically.
 
 ### 2. Key and read discipline
 
-Key: `colour-combos:favorites` — namespaced, so nothing else served from the
+Key: `japanese-colour-combos:favorites`: namespaced, so nothing else served from the
 same origin (a preview deploy, a sibling toy app) can collide with it.
 
 Reads are **validate-or-reset**. Anything unrecognised yields an empty set
@@ -64,21 +64,21 @@ different source list:
 /favorites → <Grid source={favCombos} />
 
 both honour ?size=3&q=blue
-/favorites?size=3 → 3-colour favorites
+/favorites?size=3 → 3-colour favourites
 ```
 
 One grid, one filter implementation, no duplicated UI.
 
-Ordering is **array insertion order, newest first** — prepend on add, so the
+Ordering is **array insertion order, newest first**: prepend on add, so the
 array *is* the order. This gives "most recently saved first" without storing
 anything extra.
 
-Entry point: a persistent nav link with a live count — `★ Favorites (12)`, or
+Entry point: a persistent nav link with a live count: `★ Favorites (12)`, or
 plain `Favorites` at zero. Always discoverable, and the count doubles as
 feedback that a star toggle registered. The empty state is not a dead end:
 
 ```
-★ No favorites yet
+★ No favourites yet
 Star any combo to save it here.
 [ Browse all 348 → ]
 ```
@@ -99,7 +99,7 @@ Memory is the truth during a session; localStorage is the durable mirror,
 written through on every mutation. No provider to thread through the tree, and
 every card's star stays consistent because they all read one snapshot.
 
-The ordered array and the derived `Set` are kept in step deliberately — a bare
+The ordered array and the derived `Set` are kept in step deliberately: a bare
 `Set` cannot express "prepend", and a bare array makes membership checks O(n)
 on a grid of 348 cards.
 
@@ -107,7 +107,7 @@ on a grid of 348 cards.
 
 The store subscribes to the window `storage` event. When another tab writes the
 key, re-read, replace the in-memory list, and notify subscribers. Both tabs
-converge live, with no merge logic — **last write wins**, which is correct for
+converge live, with no merge logic: **last write wins**, which is correct for
 one user toggling their own stars.
 
 A union-merge was rejected: it never loses an add, but it makes *un*favoriting
@@ -121,29 +121,29 @@ keep the in-memory set working and swallow the error behind a single
 survive a reload.
 
 No toast, no modal, no capability flag threaded through the UI. This is a
-low-stakes convenience feature, and the honest degradation is the quiet one —
+low-stakes convenience feature, and the honest degradation is the quiet one:
 a nag the user can't act on buys nothing.
 
 ### 7. No export, import, or share in v1
 
-Favorites are private and browser-local. The site's shareable unit is a
+Favourites are private and browser-local. The site's shareable unit is a
 *combo*, not a collection.
 
-Deferring costs nothing precisely because a favorite is an integer:
-`/favorites?ids=12,87,301` remains a **pure addition** — no storage change, no
-migration — if a share link is ever wanted.
+Deferring costs nothing precisely because a favourite is an integer:
+`/favorites?ids=12,87,301` remains a **pure addition** ( no storage change, no
+migration) if a share link is ever wanted.
 
 ## Consequences
 
-**Constraint handed to [#2](https://github.com/LouisLP/colour-combos/issues/2)
-(data schema)** — the numeric Wada id must be the canonical key in the combo
+**Constraint handed to [#2](https://github.com/LouisLP/japanese-colour-combos/issues/2)
+(data schema)**: the numeric Wada id must be the canonical key in the combo
 schema, stable across any renaming or re-scrape.
 
-**Constraint handed to [#5](https://github.com/LouisLP/colour-combos/issues/5)
-(routing)** — filter and search params must be route-agnostic, since `/` and
+**Constraint handed to [#5](https://github.com/LouisLP/japanese-colour-combos/issues/5)
+(routing)**: filter and search params must be route-agnostic, since `/` and
 `/favorites` share one param contract.
 
-**Ordering differs by route** — browse renders in Wada order, `/favorites` in
+**Ordering differs by route**: browse renders in Wada order, `/favorites` in
 insertion order. Deliberate, but it is an inconsistency a reader will notice,
 and worth a second look if the two ever need to feel like one surface.
 
@@ -152,21 +152,21 @@ for free. A "sort by date added" control, or displaying when a combo was
 saved, requires bumping to `v: 2` with `{ id, at }` items and writing the first
 real migration. Accepted knowingly: no v1 surface shows dates.
 
-**Unresolvable ids vanish silently.** If a combo leaves the dataset, favorites
+**Unresolvable ids vanish silently.** If a combo leaves the dataset, favourites
 pointing at it are dropped on read with no notice. Correct for a static,
 committed dataset that changes only when we re-scrape.
 
 ## Alternatives considered
 
-- **Full denormalized combo per favorite** — survives dataset changes and could
+- **Full denormalized combo per favourite**: survives dataset changes and could
   work without the bundle, but duplicates shipped data and goes stale when a
   hex is corrected.
-- **Favorites as a filter over the browse grid** (`/?fav=1`) instead of a route
-  — composes with filters just as well and avoids a second route, but a
+- **Favourites as a filter over the browse grid** (`/?fav=1`) instead of a route:
+  composes with filters just as well and avoids a second route, but a
   dedicated route is easier to link in nav and reads as first-class.
-- **Pinned favorites strip on home** — zero navigation cost, but permanently
+- **Pinned favourites strip on home**: zero navigation cost, but permanently
   consumes prime vertical space and doesn't compose with search or size.
-- **React Context + `useState`** — conventional, but needs a provider wrapping
+- **React Context + `useState`**: conventional, but needs a provider wrapping
   the tree and re-renders consumers more broadly than a snapshot subscription.
-- **Reading localStorage on demand** — always in sync, including across tabs,
+- **Reading localStorage on demand**: always in sync, including across tabs,
   but parses JSON on every render.

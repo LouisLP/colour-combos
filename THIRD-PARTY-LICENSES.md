@@ -1,26 +1,26 @@
 # Third-party licences
 
-## The colours themselves — public domain
+## The colours: public domain
 
 `src/data/combos.json` derives from Sanzo Wada's *A Dictionary of Color
 Combinations*, compiled from *Haishoku Soukan*, *Haishoku Soukan B-hen*,
 *Gohyaku-sen Shinsaku Zuanshu* and related works published 1933–1937. Those
 volumes entered the public domain in Japan on 31 December 2017 (50 years after
 Wada's death in 1967) and are public domain in the United States. The source
-volumes were digitised by the National Diet Library and released as public
+volumes were digitized by the National Diet Library and released as public
 domain on Wikimedia Commons.
 
-No permission is required to use the colours. The credit in the site footer is
-courtesy, not obligation.
+You don't need permission to use the colours. The credit in the site footer is
+a courtesy, not an obligation.
 
-## The digitisation — MIT
+## The digitization: MIT
 
 The machine-readable data is
 [`mattdesl/dictionary-of-colour-combinations`](https://github.com/mattdesl/dictionary-of-colour-combinations),
-chosen deliberately over `wada-sanzo-colors.com`, whose terms forbid exactly
-this use. See `docs/research/scrape-target-audit-and-combo-schema.md` for the
-audit behind that choice — the underlying colours are free, but a *particular*
-digitisation can be restricted, and this project ships one that is not.
+picked over `wada-sanzo-colors.com` on purpose, because that site's terms forbid
+exactly this use. The colours are free, but a *particular* digitization can be
+restricted, and this project ships one that isn't. The audit behind that choice
+is in `docs/research/scrape-target-audit-and-combo-schema.md`.
 
 ```
 MIT License

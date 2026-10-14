@@ -2,27 +2,27 @@
 
 - **Status**: Accepted; amended by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-07-22
-- **Ticket**: [Shareable combo URL & routing scheme](https://github.com/LouisLP/colour-combos/issues/5)
-- **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)
+- **Ticket**: [Shareable combo URL & routing scheme](https://github.com/LouisLP/japanese-colour-combos/issues/5)
+- **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/japanese-colour-combos/issues/1)
 - **Builds on**: [ADR 0001](0001-light-dark-and-combo-theming-semantics.md)
 
 ## Context
 
 Selecting a combo re-themes the entire site, so "which combo is active" is the
 single most load-bearing piece of state in the app. It has to survive a reload,
-a shared link, and navigation between the browse grid and the favourites list —
+a shared link, and navigation between the browse grid and the favourites list,
 and per ADR 0001 §6 it has to resolve *synchronously*, before first paint
 settles, because the achromatic token baseline is not a resting state.
 
 That forces three questions at once: where the combo lives in the URL, what the
 route tree looks like around it, and which router owns the parsing. Filters and
-search press on the same seam — they are part of what a shared link should
+search press on the same seam: they are part of what a shared link should
 reproduce.
 
-This ADR records what [#5](https://github.com/LouisLP/colour-combos/issues/5)
+This ADR records what [#5](https://github.com/LouisLP/japanese-colour-combos/issues/5)
 settled. It is already cited by
 [ADR 0003](0003-favorites-persistence.md) and constrains
-[#12](https://github.com/LouisLP/colour-combos/issues/12); it was written up
+[#12](https://github.com/LouisLP/japanese-colour-combos/issues/12); it was written up
 here so it stops living only in a closed issue's comments.
 
 ## Decision
@@ -46,14 +46,14 @@ param because it reads as first-class and is easy to link in nav
 
 ### 3. The combo is a search param, not a path segment
 
-`?c=153` — the `Combo.id` from
-[#2](https://github.com/LouisLP/colour-combos/issues/2)'s schema, contiguous
-`1–348` and annotated there as *"stable — used in share URLs"*.
+`?c=153`: the `Combo.id` from
+[#2](https://github.com/LouisLP/japanese-colour-combos/issues/2)'s schema, contiguous
+`1–348` and annotated there as *"stable: used in share URLs"*.
 
 It started as `/combo/153`. Once `/favorites` became a route of its own, the
 path form forced a choice between a combinatorial route tree (`/favorites/153`)
 and dropping the theme on navigation. **As a search param the combo is
-orthogonal to the route** — it composes with `/favorites`, and with any page
+orthogonal to the route**: it composes with `/favorites`, and with any page
 added later, for free.
 
 > Amended by §10: the combo *page* (T6) does get a path segment,
@@ -78,10 +78,10 @@ contract ADR 0003 §3 depends on.
 
 | Action | Behaviour |
 | --- | --- |
-| Select a combo | `push` — back undoes the re-theme |
-| Type in search | `replace`, debounced — the back button is not a keystroke-by-keystroke undo |
-| Toggle a filter | `push` — a discrete, deliberate act |
-| Resolve a bare or invalid `c` | `replace` — never leaves a history entry |
+| Select a combo | `push`: back undoes the re-theme |
+| Type in search | `replace`, debounced: the back button is not a keystroke-by-keystroke undo |
+| Toggle a filter | `push`: a discrete, deliberate act |
+| Resolve a bare or invalid `c` | `replace`, never leaves a history entry |
 
 ### 6. Light/dark stays out of the URL
 
@@ -92,7 +92,7 @@ mode.
 
 ### 7. Router: TanStack Router, code-based route tree
 
-The route tree is trivial, so the actual work is the query params — and typed,
+The route tree is trivial, so the actual work is the query params, and typed,
 validated, defaulted search params are TanStack Router's headline feature:
 
 ```ts
@@ -112,12 +112,12 @@ selected:
 | Incoming | Result |
 | --- | --- |
 | `?c=153` (valid, `1–348`) | Combo 153 themes the site |
-| `/` (absent) | Random combo, `replaceState`d in before first paint — the visit is reproducible and shareable from the first frame |
-| `?c=999`, `?c=abc` (invalid) | Random combo, `replaceState`d in, **plus** a dismissible *"Combo 999 not found — showing 71"* notice |
+| `/` (absent) | Random combo, `replaceState`d in before first paint: the visit is reproducible and shareable from the first frame |
+| `?c=999`, `?c=abc` (invalid) | Random combo, `replaceState`d in, **plus** a dismissible *"Combo 999 not found: showing 71"* notice |
 
 The invalid case deliberately does not park the user on the achromatic baseline:
 ADR 0001 reserves that for pre-hydration and transient resolution. The notice is
-what stops a mistyped or stale shared link from being silently swallowed — the
+what stops a mistyped or stale shared link from being silently swallowed: the
 user is told what happened rather than landing on what looks like a normal first
 visit.
 
@@ -134,8 +134,8 @@ Available on Netlify, Vercel, Cloudflare Pages, and GitHub Pages (via a
 
 ### 10. Amendment (T6): the combo page is `/combo/:id`
 
-[T6](https://github.com/LouisLP/colour-combos/issues/47) adds a page per
-combo — its full scale, its semantic roles and its code. That is a *place*,
+[T6](https://github.com/LouisLP/japanese-colour-combos/issues/47) adds a page per
+combo: its full scale, its semantic roles and its code. That is a *place*,
 not a selection, so it gets a path:
 
 ```
@@ -159,15 +159,15 @@ not a selection, so it gets a path:
   site in place on click; `Enter` on it (the roving-focus target, ADR 0014 §4)
   opens the page. Each card's `No. N` and each row's `→` link to it too.
 
-The §3 objection to a path segment — a combinatorial route tree — does not
+The §3 objection to a path segment (a combinatorial route tree) does not
 arise: the page is one route beside the other two, not a variant of them.
 
 ## Consequences
 
 - **Combo identity is a URL concern, not a store concern.** App state
-  architecture ([#12](https://github.com/LouisLP/colour-combos/issues/12)) reads
+  architecture ([#12](https://github.com/LouisLP/japanese-colour-combos/issues/12)) reads
   `c`, `q` and `size` from the router rather than mirroring them into client
-  state; duplicating them is a bug, not an optimisation.
+  state; duplicating them is a bug, not an optimization.
 - **Any page added later inherits theming for free**, since `c` is orthogonal to
   the route.
 - **`Combo.id` is now a published contract.** Renumbering the catalogue breaks
@@ -175,21 +175,21 @@ arise: the page is one route beside the other two, not a variant of them.
 - Per-combo prerendering for OG/SEO was considered and **deferred**. Nothing
   here blocks adding it later, though with `c` as a search param it would need
   rethinking.
-- A shared `/favorites` link shows the *recipient* their own list — favourites
+- A shared `/favorites` link shows the *recipient* their own list: favourites
   are device-local (ADR 0003).
 
 ## Alternatives rejected
 
-- **`/combo/153` as a path segment** — prettier, and the obvious first instinct.
+- **`/combo/153` as a path segment**: prettier, and the obvious first instinct.
   Rejected because it does not compose with a second route: either the route
   tree goes combinatorial (`/favorites/153`) or the theme is dropped on
   navigation.
-- **React Router** — would have meant hand-building the parse/validate/
-  serialise layer for the search params, which is the bulk of this feature.
-- **A hand-rolled router** — two routes barely justify a dependency, but it
+- **React Router**: would have meant hand-building the parse/validate/
+  serialize layer for the search params, which is the bulk of this feature.
+- **A hand-rolled router**: two routes barely justify a dependency, but it
   would mean owning scroll restoration and link interception forever.
-- **Mode in the URL** — makes a link reproduce the sender's screen exactly.
+- **Mode in the URL**: makes a link reproduce the sender's screen exactly.
   Rejected by ADR 0001: mode belongs to the viewer.
-- **Hash routing** — avoids the hosting requirement entirely, at the cost of
+- **Hash routing**: avoids the hosting requirement entirely, at the cost of
   uglier links and worse sharing semantics. The rewrite is one line on every
   host under consideration.

@@ -1,9 +1,9 @@
-# 14. Faster browse — compact list, richer filters, keyboard
+# 14. Faster browse: compact list, richer filters, keyboard
 
 - **Status**: Superseded by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-10-14
-- **Ticket**: [T5: Faster browse — compact view, richer search, keyboard nav](https://github.com/LouisLP/colour-combos/issues/46)
-- **Map**: [Vue rewrite, exportable scale library & docs UI](https://github.com/LouisLP/colour-combos/issues/41)
+- **Ticket**: [T5: Faster browse: compact view, richer search, keyboard nav](https://github.com/LouisLP/japanese-colour-combos/issues/46)
+- **Map**: [Vue rewrite, exportable scale library & docs UI](https://github.com/LouisLP/japanese-colour-combos/issues/41)
 - **Builds on**: [ADR 0004](0004-routing-and-url-state.md) §4–5,
   [ADR 0006](0006-browse-surface-and-grid.md) (amends §3, §6, §7),
   [ADR 0007](0007-combo-card-refinements.md), [ADR 0008](0008-combo-owned-mode.md)
@@ -50,7 +50,7 @@ all" button and the star.
   likes to scan, not a fact about what they are looking at, so a shared link
   opens in the recipient's layout. ADR 0004 §6 took the same stance on mode.
   It lives in a second module store, `state/density.ts`, stored under
-  `colour-combos:density`. Every storage read and write is wrapped in
+  `japanese-colour-combos:density`. Every storage read and write is wrapped in
   try/catch, and an unusable value falls back to the grid.
 
 ### 2. Search highlights what matched
@@ -148,7 +148,7 @@ actions a voice even when they have no visible control of their own (`f` and
 ### 6. `content-visibility` stays
 
 It still applies to every item, with `contain-intrinsic-size: auto 1.5rem`
-for list rows. No virtualisation: 348 rows is fewer nodes than 348 cards, and
+for list rows. No virtualization: 348 rows is fewer nodes than 348 cards, and
 ADR 0006 §6's arguments are unchanged.
 
 ## Consequences

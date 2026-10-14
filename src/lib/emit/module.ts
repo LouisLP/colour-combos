@@ -7,7 +7,7 @@ type Literal = string | number | readonly Literal[] | { readonly [key: string]: 
 
 const isPrimitive = (v: Literal) => typeof v !== 'object'
 const isLeaf = (v: Literal) => isPrimitive(v) || (Array.isArray(v) && v.every(isPrimitive))
-/** Holds only leaves, so it fits on one line: a colour value, an `oklch` triple. */
+/** Holds only leaves, so it fits on one line. */
 const isFlat = (v: Literal) => Array.isArray(v) ? v.every(isPrimitive) : Object.values(v).every(isLeaf)
 
 const quote = (s: string) => `'${s.replace(/\\/g, '\\\\').replace(/'/g, '\\\'')}'`
@@ -47,6 +47,11 @@ export function emitTs(scale: ComboScale): string {
     'export default scale',
     '',
   ].join('\n')
+}
+
+/** The declaration file shipped beside each `scales/<id>.js`. */
+export function emitDts(scale: ComboScale): string {
+  return `// ${PACKAGE_NAME} · Wada No. ${scale.id}\nimport type { ComboScale } from '../index.js'\n\ndeclare const scale: ComboScale\nexport default scale\n`
 }
 
 /** The same module as JavaScript, typed through JSDoc. */

@@ -4,11 +4,8 @@ import HomePage from '../pages/HomePage.vue'
 import { firstValue, resolveComboId, toHubQuery, validateHubSearch } from './search'
 
 /**
- * One page (ADR 0015). The dialog is a query param, not a route, so opening it
- * never re-renders the grid behind it.
- *
- * The old paths still land somewhere sensible: `/combo/42` and `?combo=42` open
- * No. 42's dialog, `/favorites` is the home page, since favourites are gone.
+ * One page; the dialog is a query param (ADR 0015). Old URLs still work:
+ * `/combo/42` and `?combo=42` open No. 42, `/favorites` goes home.
  */
 export function createHubRouter(history: RouterHistory): Router {
   const router = createRouter({
@@ -23,8 +20,7 @@ export function createHubRouter(history: RouterHistory): Router {
     ],
   })
 
-  // Rewrite `?combo=` and drop an invalid `c`, so the URL always says exactly
-  // what is on screen. `replace`, so none of it leaves a history entry.
+  // Rewrite `?combo=` and drop an invalid `c`, without a history entry.
   router.beforeEach((to) => {
     const { combo, c } = to.query
     const raw = firstValue(combo ?? c)

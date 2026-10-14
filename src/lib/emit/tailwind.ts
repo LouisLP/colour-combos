@@ -7,13 +7,9 @@ import { STEPS } from '../scale'
 import { banner, roleRamps, semanticPairs } from './shared'
 
 /**
- * A Tailwind v4 `@theme` block: `bg-cc-english-red-400`, `text-cc-accent-700`,
- * `bg-cc-canvas`. The `cc-` prefix keeps the `neutral` ramp off Tailwind's own.
- *
- * Every value is a literal, never a `var()` into another theme variable:
- * Tailwind only emits the theme variables a project uses, so an alias could
- * point at one it pruned. The semantic roles are `light-dark()` pairs and
- * follow `color-scheme` (`scheme-dark`).
+ * `bg-cc-english-red-400`, `bg-cc-canvas`, … The `cc-` prefix keeps `neutral`
+ * off Tailwind's own. Values are literals, since Tailwind prunes unused theme
+ * variables and an alias could point at a pruned one.
  */
 export function emitTailwind(scale: ComboScale, { format = 'hex' }: EmitOptions = {}): string {
   const v = (value: ColourValue) => formatColour(value, format)

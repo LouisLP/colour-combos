@@ -1,5 +1,4 @@
-// Minimal colour maths, no dependency.
-// sRGB <-> OKLCh, sRGB gamut mapping, WCAG 2.2 contrast.
+// sRGB <-> OKLCh, gamut mapping and WCAG contrast, with no dependencies.
 
 export interface Oklch { l: number, c: number, h: number }
 
@@ -53,6 +52,9 @@ function oklchToRgbRaw({ l: L, c, h }: Oklch): [number, number, number] {
   ]
 }
 
+/** Below this OKLCh chroma a colour's hue is noise: too grey to tint or classify by. */
+export const HUE_SOURCE_MIN_CHROMA = 0.04
+
 const inGamut = (rgb: number[]) => rgb.every(x => x >= -0.0005 && x <= 1.0005)
 
 /** Reduce chroma (hue + lightness held) until the colour fits sRGB. */
@@ -95,9 +97,8 @@ export interface ClampResult {
 }
 
 /**
- * Push lightness toward `direction` (-1 darker, +1 lighter), hue and nominal
- * chroma held, until `col` clears `target` against `against`. Returns the first
- * passing value, or the extreme if the target is unreachable.
+ * Move lightness toward `direction` (-1 darker, +1 lighter) until `col` clears
+ * `target` on `against`. Returns the first pass, or the extreme.
  */
 export function clampToContrast(
   col: Oklch,

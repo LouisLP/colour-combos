@@ -4,28 +4,20 @@ import ComboCard from '../components/ComboCard.vue'
 import FilterBar from '../components/FilterBar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
-import { useComboDialog } from '../composables/useComboDialog'
-import { useHubSearch } from '../composables/useHubSearch'
 import { COMBOS } from '../data/combos'
 import { filterCombos } from '../data/filter'
+import { useHub } from '../routing/hub'
 
 /**
- * The whole site (ADR 0015): the catalogue, narrowed by `q` and `hue`, and the
- * details dialog over it.
- *
- * The list reads `q` and `hue` through their own computeds, so opening,
- * stepping or closing the dialog — which only moves `c` — never re-renders the
- * grid.
+ * The whole site (ADR 0015): the filtered catalogue and the dialog. The grid
+ * reads only `q` and `hue`, so moving `c` never re-renders it.
  */
-const search = useHubSearch()
+const { search, open } = useHub()
 const q = computed(() => search.value.q)
 const hue = computed(() => search.value.hue)
 const shown = computed(() => filterCombos(COMBOS, { q: q.value, hue: hue.value }))
 
-const { open } = useComboDialog()
-
-// Async, so the scale engine, the emitters and Reka stay out of the first paint;
-// it loads straight after.
+// Async, to keep the scale engine, emitters and Reka out of first paint.
 const ComboDialog = defineAsyncComponent(() => import('../components/ComboDialog.vue'))
 </script>
 

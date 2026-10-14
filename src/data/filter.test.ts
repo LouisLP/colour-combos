@@ -25,8 +25,7 @@ describe('filterCombos', () => {
     expect(ids(filterCombos(COMBOS, { q: hex.slice(1).toUpperCase() }))).toContain(1)
   })
 
-  // ADR 0006 §3: a combo has no name of its own, so `No. N` is the only stable
-  // label a user can search by — and it has to actually find that one combo.
+  // `No. N` is a combo's only label (ADR 0006 §3), so it must find exactly one.
   it.each(['12', 'no. 12', 'no 12', 'No.12'])('matches the combo number in %s', (q) => {
     expect(ids(filterCombos(COMBOS, { q }))).toEqual([12])
   })
