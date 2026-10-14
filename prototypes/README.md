@@ -69,3 +69,36 @@ reproducible from it.
 | `VariantA/B/C.tsx` | the three surfaces — no shared layout, by design |
 | `state.ts` | params + history semantics, filtering, favourites store, paint meter |
 | `shared.tsx` | the star glyph and the accent-ranked band split. Nothing else. |
+
+## `scale-model/` — issue #43
+
+**Question:** what is "a scale" for a combo — the exported tonal + semantic
+layers, where the exact Wada hex lives, which contrast promises hold?
+
+**Answer:** _pending — ADR 0012._
+
+```bash
+pnpm prototype:scale         # http://localhost:5173/colour-combos/prototypes/scale-model/
+pnpm prototype:scale:sweep   # headless: 3 models × 2 curves × 348 combos
+```
+
+Three tonal models (`?model=A|B|C`, `←`/`→`) × two lightness curves
+(`?curve=wcag|oklab`, `c`) over any combo (`?combo=`, `↑`/`↓`). The wcag
+curve's endpoints are knobs (`?yTop=`, `?yBottom=`), so the margin each
+contrast promise runs on is visible. `?naming=role|colour` flips the export.
+
+| | |
+|---|---|
+| A | fixed step targets; the exact hex **replaces** its nearest step |
+| B | exact hex at its own lightness; other steps re-spaced around it |
+| C | fixed step targets untouched; exact hex ships as a separate `DEFAULT` |
+
+The semantic cards are the real adapter (`src/theme/adapt.ts`), annotated with
+the nearest tonal step each role could reference. The dark panel is prototype
+chrome: the catalogue-wide promise sweep and the CSS a combo would export.
+
+| File | |
+|---|---|
+| `scale.ts` | the three models, both curves, P3 check, candidate promises |
+| `sweep.ts` | catalogue sweep, shared by the panel and the CLI |
+| `App.tsx` | the page |
