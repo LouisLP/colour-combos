@@ -30,6 +30,8 @@ jobs:
       # The WCAG 2.2 AA sweep lives here (src/theme/adapt.sweep.test.ts).
       # It is a hard gate: any failing pairing on any of the 348 combos in
       # either mode fails the build. See docs/adr/0002-combo-adaptation-model.md.
+      # So is the scale sweep (src/lib/scale.sweep.test.ts): every contrast
+      # promise of every ramp in the catalogue. See docs/adr/0012-combo-scale-model.md.
       - name: Test
         run: pnpm test
 

@@ -1,0 +1,254 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`snapshots — so a curve change is visible in review > combo #1 1`] = `
+{
+  "accents": [
+    0,
+    1,
+  ],
+  "canonicalMode": "light",
+  "ramps": [
+    "english-red@400: #fffcfb #ffe5d9 #fdb899 #ee9268 #d96629 #bf571e #9e4410 #7f3202 #5c2200 #320f00 #0b0100",
+    "cerulian-blue@400: #f8feff #d1f0f5 #99d1db #65b5c3 #0093a5 #008292 #006976 #00525c #003a42 #001e22 #000405",
+    "neutral: #f8feff #e2eced #bfcacc #9fabae #839093 #6b787a #566163 #414b4d #2d3537 #151b1c #020404",
+  ],
+  "semantic": {
+    "dark": [
+      "canvas #0d1314",
+      "surface #181d1d",
+      "surface-muted #212b2d",
+      "ink #dfeff1",
+      "ink-muted #99a8aa",
+      "border #263f44",
+      "border-strong #4c666c",
+      "accent #d96629",
+      "accent-text #e36f34",
+      "on-accent #000000",
+      "accent-2 #0093a5",
+      "accent-2-text #1f9eb0",
+      "on-accent-2 #000000",
+    ],
+    "light": [
+      "canvas #f4fcfd",
+      "surface #ffffff",
+      "surface-muted #e2f0f2",
+      "ink #162224",
+      "ink-muted #5e6c6e",
+      "border #c1dee3",
+      "border-strong #7a959a",
+      "accent #d96629",
+      "accent-text #b64a00",
+      "on-accent #000000",
+      "accent-2 #0093a5",
+      "accent-2-text #007786",
+      "on-accent-2 #000000",
+    ],
+  },
+}
+`;
+
+exports[`snapshots — so a curve change is visible in review > combo #55 1`] = `
+{
+  "accents": [
+    0,
+    1,
+  ],
+  "canonicalMode": "light",
+  "ramps": [
+    "old-rose@400: #fffcfc #ffe4e5 #f8b7bc #e7929a #d46d7a #b45a65 #954651 #77343e #58222a #330d13 #0e0002",
+    "white@50: #ffffff #eaeaea #c7c7c7 #a9a9a9 #8e8e8e #757575 #5f5f5f #494949 #343434 #1a1a1a #030303",
+    "neutral: #fffcfc #f3e7e8 #d2c4c5 #b5a6a7 #9a8a8b #827273 #6a5c5d #534747 #3b3232 #201819 #060303",
+  ],
+  "semantic": {
+    "dark": [
+      "canvas #161010",
+      "surface #1f1a1b",
+      "surface-muted #312526",
+      "ink #f9e6e7",
+      "ink-muted #b1a0a1",
+      "border #4b3335",
+      "border-strong #765b5d",
+      "accent #d46d7a",
+      "accent-text #d66f7c",
+      "on-accent #000000",
+      "accent-2 #ffffff",
+      "accent-2-text #ffffff",
+      "on-accent-2 #000000",
+    ],
+    "light": [
+      "canvas #fff8f9",
+      "surface #ffffff",
+      "surface-muted #f9e8e9",
+      "ink #281b1c",
+      "ink-muted #746465",
+      "border #eecfd1",
+      "border-strong #a78a8c",
+      "accent #cd6774",
+      "accent-text #ac4958",
+      "on-accent #000000",
+      "accent-2 #868686",
+      "accent-2-text #696969",
+      "on-accent-2 #000000",
+    ],
+  },
+}
+`;
+
+exports[`snapshots — so a curve change is visible in review > combo #69 1`] = `
+{
+  "accents": [
+    0,
+    1,
+  ],
+  "canonicalMode": "dark",
+  "ramps": [
+    "warm-gray@300: #fdfdfb #e9eae7 #c7c8c2 #a1a39a #8d8f87 #75766f #5e6059 #494a45 #333430 #1a1a17 #030303",
+    "black@900: #fcfdfd #e9eaea #c7c8c8 #a8a9aa #8d8e8f #747677 #5d5f60 #484a4b #323435 #111314 #030304",
+    "neutral: #fdfdfd #eaeaea #c7c7c7 #a9a9a9 #8e8e8e #757575 #5f5f5f #494949 #343434 #1a1a1a #030303",
+  ],
+  "semantic": {
+    "dark": [
+      "canvas #121212",
+      "surface #1c1c1c",
+      "surface-muted #292929",
+      "ink #ebebeb",
+      "ink-muted #a4a4a4",
+      "border #3a3a3a",
+      "border-strong #616161",
+      "accent #a1a39a",
+      "accent-text #a1a39a",
+      "on-accent #000000",
+      "accent-2 #707274",
+      "accent-2-text #8f9293",
+      "on-accent-2 #ffffff",
+    ],
+    "light": [
+      "canvas #fafafa",
+      "surface #ffffff",
+      "surface-muted #ededed",
+      "ink #1f1f1f",
+      "ink-muted #696969",
+      "border #d7d7d7",
+      "border-strong #8f8f8f",
+      "accent #878980",
+      "accent-text #6a6c63",
+      "on-accent #000000",
+      "accent-2 #111314",
+      "accent-2-text #111314",
+      "on-accent-2 #ffffff",
+    ],
+  },
+}
+`;
+
+exports[`snapshots — so a curve change is visible in review > combo #121 1`] = `
+{
+  "accents": [
+    0,
+    1,
+    2,
+  ],
+  "canonicalMode": "dark",
+  "ramps": [
+    "brown@700: #fffcfb #f9e6de #e0c1b4 #c8a190 #b1846f #9d6952 #885137 #7c4226 #532812 #2f1103 #0b0100",
+    "ochraceous-salmon@300: #fffcfa #fce6d6 #e9c0a2 #d8a37b #b28462 #956d4f #7a583d #61432d #462f1c #271609 #080200",
+    "lincoln-green@600: #fdfdf7 #eaebe0 #c7c9b7 #a9ab93 #8d9074 #757857 #555832 #494c29 #34361a #1a1b08 #030400",
+    "neutral: #fdfdf9 #eaeae6 #c7c8c3 #a9aaa4 #8e8e89 #757670 #5f5f5a #494a46 #343431 #1a1a17 #030302",
+  ],
+  "semantic": {
+    "dark": [
+      "canvas #12120f",
+      "surface #1c1c19",
+      "surface-muted #292923",
+      "ink #ebece5",
+      "ink-muted #a4a59f",
+      "border #3a3c30",
+      "border-strong #616356",
+      "accent #9f6245",
+      "accent-text #c18164",
+      "on-accent #ffffff",
+      "accent-2 #d8a37b",
+      "accent-2-text #d8a37b",
+      "on-accent-2 #000000",
+      "accent-3 #71744d",
+      "accent-3-text #8e926a",
+      "on-accent-3 #ffffff",
+    ],
+    "light": [
+      "canvas #fafbf6",
+      "surface #fffffe",
+      "surface-muted #edeee5",
+      "ink #1f201b",
+      "ink-muted #696964",
+      "border #d7d9cb",
+      "border-strong #8f9184",
+      "accent #7c4226",
+      "accent-text #7c4226",
+      "on-accent #ffffff",
+      "accent-2 #ae7c55",
+      "accent-2-text #8f5f38",
+      "on-accent-2 #000000",
+      "accent-3 #555832",
+      "accent-3-text #555832",
+      "on-accent-3 #ffffff",
+    ],
+  },
+}
+`;
+
+exports[`snapshots — so a curve change is visible in review > combo #241 1`] = `
+{
+  "accents": [
+    0,
+    2,
+    1,
+    3,
+  ],
+  "canonicalMode": "light",
+  "ramps": [
+    "red-orange@500: #fffcfc #ffe4df #ffb6a7 #fa8a75 #eb634c #dd4027 #b32c17 #901c09 #6b0c00 #3c0400 #0e0000",
+    "pale-lemon-yellow@100: #fffdf4 #ffefae #d6c88f #b6a977 #998e61 #7f754e #675f3c #514a2c #3a341b #1e1a08 #050300",
+    "isabella-color@300: #fffdf8 #f5e8d3 #dcc59d #c5a56e #a68a59 #8b7247 #715c37 #594727 #403217 #231806 #060300",
+    "dark-medici-blue@500: #f9feff #e3eced #bccacd #99adb1 #7b9297 #547076 #496369 #374d52 #25373a #101c1e #010405",
+    "neutral: #fffdf8 #edeae4 #cbc7c1 #ada9a2 #928d86 #79756e #625e58 #4d4944 #36342f #1c1a16 #040302",
+  ],
+  "semantic": {
+    "dark": [
+      "canvas #13110e",
+      "surface #1d1b18",
+      "surface-muted #2c2823",
+      "ink #f0eae2",
+      "ink-muted #a9a49c",
+      "border #41392c",
+      "border-strong #686052",
+      "accent #dd4027",
+      "accent-text #f95b41",
+      "on-accent #000000",
+      "accent-2 #c5a56e",
+      "accent-2-text #c5a56e",
+      "on-accent-2 #000000",
+      "accent-3 #ffefae",
+      "accent-3-text #ffefae",
+      "on-accent-3 #000000",
+    ],
+    "light": [
+      "canvas #fcfaf5",
+      "surface #ffffff",
+      "surface-muted #f1ece4",
+      "ink #221f18",
+      "ink-muted #6d6861",
+      "border #e0d6c6",
+      "border-strong #978e7f",
+      "accent #dd4027",
+      "accent-text #cc2d13",
+      "on-accent #000000",
+      "accent-2 #a2834d",
+      "accent-2-text #82652e",
+      "on-accent-2 #000000",
+      "accent-3 #97884a",
+      "accent-3-text #78692b",
+      "on-accent-3 #000000",
+    ],
+  },
+}
+`;
