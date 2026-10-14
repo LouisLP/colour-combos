@@ -1,12 +1,6 @@
-// The AA guarantee, locked in. Ported from `prototypes/adaptation-model/sweep.ts`
-// per ADR 0002, and restated to one mode per combo by ADR 0008: mode is now
-// combo-owned, so each combo has exactly one canonical rendering, and the sweep
-// is 348 combos x 1 mode, not x2. This runs the AA proof against the shipping
-// adapter so a tweak to the derivation ladder cannot silently regress contrast.
-//
-// The pairing set is wider than the prototype's 13: `auditPalette` also checks
-// the accent fills against `surface-muted`, without which the sweep cannot see
-// the regression ADR 0002 §4 exists to prevent.
+// The AA guarantee (ADR 0002), run on the shipping adapter so a derivation
+// tweak can't quietly regress contrast. `auditPalette` also checks accent fills
+// on `surface-muted`, the regression ADR 0002 §4 exists to prevent.
 
 import { describe, expect, it } from 'vitest'
 import { COMBOS } from '../data/combos'
@@ -14,10 +8,7 @@ import { adapt, comboMode } from './adapt'
 import { auditPalette } from './audit'
 import { contrast, hexToOklch } from './colour'
 
-/**
- * Every combo's canonical rendering — the one mode its own colours select
- * (ADR 0008) — derived once. This is exactly what the site ever shows.
- */
+/** Every combo in its canonical mode (ADR 0008). */
 const RENDERINGS = COMBOS.map((combo) => {
   const mode = comboMode(combo)
   return { combo, mode, palette: adapt(combo, mode) }
@@ -36,13 +27,11 @@ describe('aA gate — WCAG 2.2 across the whole catalogue', () => {
         .map(row => `#${combo.id}/${mode} ${row.pair} ${row.ratio.toFixed(2)} < ${row.target}`),
     )
 
-    // Listed in full rather than counted: if this ever breaks, the failing
-    // pairings are the whole diagnosis.
+    // Listed in full, so a failure is its own diagnosis.
     expect(failures).toEqual([])
   })
 
-  // The combo page previews the semantic layer in *both* modes side by side
-  // (T6), so the other mode is on screen too and holds the same contract.
+  // The dialog shows both modes, so the other one holds the same contract.
   it('has no failing pairing in the non-canonical mode either', () => {
     const failures = COMBOS.flatMap((combo) => {
       const mode = comboMode(combo) === 'light' ? 'dark' : 'light'
@@ -66,14 +55,9 @@ describe('aA gate — WCAG 2.2 across the whole catalogue', () => {
 })
 
 describe('drift budget — regression signal, not a gate', () => {
-  // Remeasured on the canonical renderings (ADR 0008). Drift runs higher than
-  // the old 348x2 average: each combo now renders in its native-lightness mode,
-  // so a light palette's light accents sit on a light canvas and must drag
-  // darker to clear AA (and vice versa) — the direction the x2 average diluted.
-  // The bounds sit deliberately clear of the measured values: they catch a
-  // derivation change that makes the catalogue visibly duller or draggier, not
-  // freeze the numbers. Moving a bound is a legitimate edit — silently blowing
-  // past one is what this is here to prevent.
+  // Measured on canonical renderings (ADR 0008). The bounds sit clear of the
+  // measurements: they catch a visibly duller catalogue, not freeze numbers.
+  // Moving one on purpose is fine.
   const accents = RENDERINGS.map(r => r.palette.roles.accent)
 
   it('keeps mean accent lightness drift low (measured 0.077)', () => {
@@ -115,13 +99,8 @@ describe('role assignment', () => {
 })
 
 describe('worst surface', () => {
-  // The clamps above only prove the assembled site is safe *because* every
-  // foreground is clamped against `--surface-muted` and `--surface-muted` is
-  // the lowest-contrast backdrop in the system. The second half of that is an
-  // assumption everywhere else: the audit never pairs a foreground with
-  // `--surface`, so a component that sits on a card — the footer, the
-  // not-found notice, every combo caption — is covered only if the assumption
-  // holds. Here it is, checked rather than reasoned about.
+  // The audit only clamps against `--surface-muted`, which is safe only if it's
+  // the worst surface. Check that instead of assuming it.
   const FOREGROUNDS = ['ink', 'ink-muted', 'border-strong', 'accent', 'accent-text']
   const OTHER_SURFACES = ['canvas', 'surface']
 

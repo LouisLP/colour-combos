@@ -1,11 +1,7 @@
 <!--
-  Attribution, once, for the dataset as a whole.
-
-  Deliberately not per combo: a Wada combination has no per-combo source page to
-  point at — the data arrives as one vendored file, so one dataset-level credit
-  is the honest shape (#2). Two facts have to be separable here, because they
-  carry different obligations: Wada's colours are **public domain** and owe no
-  credit, while the digitisation we actually shipped is **MIT** and does.
+  One credit for the whole dataset, since there's no per-combo source (#2).
+  Wada's colours are public domain; the digitization we ship is MIT and needs
+  credit.
 -->
 <template>
   <footer class="site-footer">

@@ -2,8 +2,8 @@
 
 - **Status**: Superseded by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-07-22
-- **Ticket**: [Light/dark & combo theming semantics](https://github.com/LouisLP/colour-combos/issues/3)
-- **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)
+- **Ticket**: [Light/dark & combo theming semantics](https://github.com/LouisLP/japanese-colour-combos/issues/3)
+- **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/japanese-colour-combos/issues/1)
 
 ## Context
 
@@ -19,8 +19,8 @@ colours can't keep that promise.
 
 > **Superseded by [ADR 0008](0008-combo-owned-mode.md).** Mode is now a pure
 > function of the selected combo: no toggle, no `prefers-color-scheme` default,
-> and one rendering per combo rather than two. The rest of this ADR — the
-> derived canvas, the AA contract, the raw-vs-role split — stands.
+> and one rendering per combo rather than two. The rest of this ADR ( the
+> derived canvas, the AA contract, the raw-vs-role split) stands.
 
 The site has its own light/dark toggle, defaulting to `prefers-color-scheme`.
 It is the sole source of truth for mode.
@@ -42,7 +42,7 @@ mode.
 );
 ```
 
-Raw combo colours appear at full strength only in **accent** positions —
+Raw combo colours appear at full strength only in **accent** positions:
 buttons, links, borders, chips, focus rings, and the swatches themselves.
 Re-theming therefore reads as a hue shift across the whole page rather than a
 block of paint, and body text legibility is guaranteed by construction.
@@ -54,7 +54,7 @@ without overriding the colour anyway.
 ### 3. Contrast contract: WCAG 2.2 AA
 
 - **4.5:1** for body text against its surface.
-- **3:1** for large text (≥24px, or ≥19px bold) and for UI boundaries — button
+- **3:1** for large text (≥24px, or ≥19px bold) and for UI boundaries: button
   fills, borders, icons, focus rings.
 
 AA is a hard gate, not a target. Nothing ships failing it.
@@ -63,9 +63,9 @@ AA is a hard gate, not a target. Nothing ships failing it.
 
 The same colour has two distinct uses, and only one of them is negotiable.
 
-- **Displayed as itself** — grid card, detail swatch, hex/RGB/LAB readout: the
+- **Displayed as itself**: grid card, detail swatch, hex/RGB/LAB readout: the
   exact Wada value, never altered. This is the product's whole reason to exist.
-- **Playing a role** — accent, link, button fill, border: may be
+- **Playing a role**: accent, link, button fill, border: may be
   lightness-shifted in `oklch` with **hue and chroma preserved** until it clears
   the AA floor against the current canvas.
 
@@ -75,8 +75,8 @@ collide because they never apply to the same pixel.
 ### 5. Role assignment is mode-invariant
 
 > **Partly superseded by [ADR 0008](0008-combo-owned-mode.md).** The invariant
-> below still holds — assignment is computed once per combo and derivation is
-> mode-dependent — but a combo now only ever renders in *one* mode, so there is
+> below still holds ( assignment is computed once per combo and derivation is
+> mode-dependent) but a combo now only ever renders in *one* mode, so there is
 > no toggle to flip and no two-ways-lit reading to preserve.
 
 Which colour is the hue source and which is the accent is computed **once per
@@ -84,7 +84,7 @@ combo** and holds in both modes. Only the *derivation* is mode-dependent:
 canvas lightness swings between the extremes, ink inverts, and accent lightness
 is clamped toward whichever end clears AA against the current canvas.
 
-Flipping the toggle must read as one palette lit two ways — never as the combo
+Flipping the toggle must read as one palette lit two ways, never as the combo
 itself changing.
 
 ### 6. Default state: random combo, pinned to the URL
@@ -93,14 +93,14 @@ A bare `/` picks a random combo and immediately `replaceState`s it into the URL,
 so the visit is reproducible and shareable from the first frame.
 
 Achromatic neutrals (zero chroma, `light-dark()` greys) survive as the **token
-baseline** — the static fallback before hydration, and the resolution when a URL
+baseline**: the static fallback before hydration, and the resolution when a URL
 names a combo that doesn't exist. They are never a resting state a user sits in.
 
 ## Consequences
 
-- Every combo needs validation in **two** renderings (light, dark) — not four,
+- Every combo needs validation in **two** renderings (light, dark), not four,
   because role assignment doesn't fork by mode.
-- The adaptation model ([Combo → design-system adaptation model](https://github.com/LouisLP/colour-combos/issues/4))
+- The adaptation model ([Combo → design-system adaptation model](https://github.com/LouisLP/japanese-colour-combos/issues/4))
   inherits a fixed target: pick a hue source and an accent per combo, derive the
   neutrals, clamp the accent to AA. It does **not** get to redefine what light
   and dark mean.
@@ -116,15 +116,15 @@ names a combo that doesn't exist. They are never a resting state a user sits in.
 
 ## Alternatives rejected
 
-- **Combo-derived mode with no toggle** — maximum fidelity, but ignores system
+- **Combo-derived mode with no toggle**: maximum fidelity, but ignores system
   preference and leaves users unable to force a mode.
-- **Full-bleed raw combo backgrounds** — the boldest rendering, rejected because
+- **Full-bleed raw combo backgrounds**: the boldest rendering, rejected because
   mid-luminance combos make AA unreachable and collapse the light/dark
   distinction.
-- **AAA for body text** — nearly free given derived neutrals, but it constrains
+- **AAA for body text**: nearly free given derived neutrals, but it constrains
   how tinted the canvas may be for little practical gain over AA.
-- **Never altering raw colours** (substituting or failing loudly instead) —
+- **Never altering raw colours** (substituting or failing loudly instead):
   either makes some combos visibly theme less than others, or knowingly ships
   inaccessible UI.
-- **Achromatic or fixed-house-combo default** — safe, but the site never
+- **Achromatic or fixed-house-combo default**: safe, but the site never
   demonstrates its core mechanic on arrival.

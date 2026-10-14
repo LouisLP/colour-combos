@@ -1,8 +1,5 @@
-// The tonal layer's guarantees, locked in. ADR 0012 §7 promises these pairings
-// for every ramp, colour and neutral, in all 348 combos. This is the second CI
-// hard gate beside the AA sweep (`adapt.sweep.test.ts`). The 500-grade rule
-// passes at exactly 4.50 with no margin, so a curve change that turns this red
-// is rejected, not waved through.
+// ADR 0012 §7's pairings for every ramp in all 348 combos. A CI hard gate. The
+// 500-grade rule passes at exactly 4.50, so a curve change that fails it is out.
 
 import type { ColourRamp, NeutralRamp, Step } from './scale'
 import { describe, expect, it } from 'vitest'
@@ -41,7 +38,7 @@ const PROMISES: Promise[] = [
 
 /** Maximum hue drift of an emitted step from its Wada colour (ADR 0012 §5). */
 const HUE_DRIFT_TOLERANCE = 8
-/** Below this chroma a step's hue is 8-bit noise and is not held to the tolerance. */
+/** Below this chroma, hue is 8-bit noise and isn't checked. */
 const HUE_DRIFT_MIN_CHROMA = 0.03
 
 describe('scale sweep — ADR 0012 across the whole catalogue', () => {
@@ -51,8 +48,7 @@ describe('scale sweep — ADR 0012 across the whole catalogue', () => {
     expect(ALL_RAMPS).toHaveLength(1380)
   })
 
-  // Strict `>=` with no epsilon: the prototype measured these on the same
-  // 8-bit hexes, and the 500-grade rule's worst case is exactly on the line.
+  // Strict `>=`, no epsilon: the worst 500-grade case is exactly on the line.
   it.each(PROMISES)('keeps the promise: $label', ({ pairs, ratio }) => {
     const failures = ALL_RAMPS.flatMap(({ id, ramp }) =>
       pairs
@@ -61,7 +57,7 @@ describe('scale sweep — ADR 0012 across the whole catalogue', () => {
         .map(({ a, b, r }) => `${label(id, ramp)} ${a}/${b} ${r.toFixed(3)} < ${ratio}`),
     )
 
-    // Listed in full rather than counted: the failing pairings are the diagnosis.
+    // Listed in full, so a failure is its own diagnosis.
     expect(failures).toEqual([])
   })
 

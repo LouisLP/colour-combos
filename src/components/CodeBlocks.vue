@@ -8,12 +8,8 @@ import CopyButton from './CopyButton.vue'
 import CopyIcon from './CopyIcon.vue'
 
 /**
- * The combo's export formats as tabbed code blocks. Every block is an
- * emitter's output, byte for byte — what `import` would load (ADR 0013 §1).
- *
- * Highlighting is Shiki, loaded on first use with a dynamic `import()`. Until it
- * lands the block is the same text, unhighlighted: copying works from the first
- * frame.
+ * Tabbed code blocks, each an emitter's output byte for byte (ADR 0013 §1).
+ * Shiki loads lazily; until then the text shows plain.
  */
 const props = defineProps<{ scale: ComboScale }>()
 
@@ -22,7 +18,7 @@ const tab = computed(() => CODE_TABS.find(t => t.id === active.value)!)
 const code = computed(() => tab.value.code(props.scale))
 const install = computed(() => tab.value.install(props.scale.id))
 
-/** Highlighted HTML for the block on screen; empty until Shiki has done it. */
+/** Highlighted HTML for the current block, empty until Shiki is done. */
 const html = shallowRef('')
 
 watchEffect(async (onCleanup) => {

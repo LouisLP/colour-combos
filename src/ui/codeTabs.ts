@@ -1,6 +1,4 @@
-// The dialog's code blocks: one tab per export format, each the exact text the
-// package ships (ADR 0013 §1). Nothing here writes a colour — every block is an
-// emitter's output, and the snippet above it is how to import that file.
+// One tab per export format, each the exact text the package ships (ADR 0013 §1).
 
 import type { ComboScale } from '../lib/scale'
 import type { CodeLang } from './highlight'

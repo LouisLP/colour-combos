@@ -1,9 +1,7 @@
 // @vitest-environment jsdom
 //
-// A code block is part of the page, so it is part of the page's AA promise.
-// The colours are Shiki's, not the adapter's, so the catalogue sweep cannot see
-// them: this highlights what the page actually shows and measures every token
-// colour against the block's own background.
+// Code blocks are part of the AA promise, but their colours are Shiki's, so the
+// sweep can't see them. This measures every token against the block's bg.
 
 import type { CodeLang } from './highlight'
 import { describe, expect, it } from 'vitest'
@@ -31,7 +29,7 @@ function parse(html: string) {
 let highlighted: Promise<string[]> | undefined
 const highlightAll = () => highlighted ??= Promise.all(BLOCKS.map(([lang, code]) => highlight(code, lang)))
 
-/** `color:#abc` → `#abc`. Anchored, so `background-color` is not read as `color`. */
+/** `color:#abc` → `#abc`, skipping `background-color`. */
 function styleColour(style: string, prop: string): string | undefined {
   return style.match(new RegExp(`(?:^|;)\\s*${prop}:\\s*(#[0-9a-f]{6})`, 'i'))?.[1]
 }

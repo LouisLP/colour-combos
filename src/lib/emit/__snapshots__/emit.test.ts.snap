@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`snapshots — so a format change is visible in review > css 1`] = `
-"/* colour-combos · Wada No. 1 — English Red · Cerulian Blue. Canonical mode: light. */
+"/* japanese-colour-combos · Wada No. 1 — English Red · Cerulian Blue. Canonical mode: light. */
 :root {
   /* English Red: the exact Wada hex is step 400 */
   --cc-english-red-50: #fffcfb;
@@ -92,7 +92,7 @@ exports[`snapshots — so a format change is visible in review > css 1`] = `
 `;
 
 exports[`snapshots — so a format change is visible in review > scss 1`] = `
-"// colour-combos · Wada No. 1 — English Red · Cerulian Blue. Canonical mode: light.
+"// japanese-colour-combos · Wada No. 1 — English Red · Cerulian Blue. Canonical mode: light.
 
 $cc-canonical-mode: light;
 
@@ -282,7 +282,7 @@ $cc-semantic: (
 `;
 
 exports[`snapshots — so a format change is visible in review > tailwind 1`] = `
-"/* colour-combos · Wada No. 1 — English Red · Cerulian Blue. Canonical mode: light. */
+"/* japanese-colour-combos · Wada No. 1 — English Red · Cerulian Blue. Canonical mode: light. */
 @theme {
   /* English Red: the exact Wada hex is step 400 */
   --color-cc-english-red-50: #fffcfb;
@@ -371,9 +371,9 @@ exports[`snapshots — so a format change is visible in review > tailwind 1`] = 
 
 exports[`snapshots — so a format change is visible in review > tokens 1`] = `
 "{
-  "$description": "colour-combos · Wada No. 1 — English Red · Cerulian Blue. Canonical mode: light.",
+  "$description": "japanese-colour-combos · Wada No. 1 — English Red · Cerulian Blue. Canonical mode: light.",
   "$extensions": {
-    "io.github.louislp.colour-combos": {
+    "io.github.louislp.japanese-colour-combos": {
       "id": 1,
       "canonicalMode": "light"
     }
@@ -415,7 +415,7 @@ exports[`snapshots — so a format change is visible in review > tokens 1`] = `
         "$value": "#0b0100"
       },
       "$extensions": {
-        "io.github.louislp.colour-combos": {
+        "io.github.louislp.japanese-colour-combos": {
           "name": "English Red",
           "anchor": 400
         }
@@ -456,7 +456,7 @@ exports[`snapshots — so a format change is visible in review > tokens 1`] = `
         "$value": "#000405"
       },
       "$extensions": {
-        "io.github.louislp.colour-combos": {
+        "io.github.louislp.japanese-colour-combos": {
           "name": "Cerulian Blue",
           "anchor": 400
         }
@@ -657,8 +657,8 @@ exports[`snapshots — so a format change is visible in review > tokens 1`] = `
 `;
 
 exports[`snapshots — so a format change is visible in review > ts 1`] = `
-"// colour-combos · Wada No. 1 — English Red · Cerulian Blue. Canonical mode: light.
-import type { ComboScale } from 'colour-combos'
+"// japanese-colour-combos · Wada No. 1 — English Red · Cerulian Blue. Canonical mode: light.
+import type { ComboScale } from 'japanese-colour-combos'
 
 const scale: ComboScale = {
   id: 1,

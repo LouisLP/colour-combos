@@ -5,15 +5,13 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Least privilege plus the two Pages needs: `pages: write` to publish and
-# `id-token: write` for the OIDC token `deploy-pages` exchanges for it.
+# Least privilege, plus what Pages needs to publish via OIDC.
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# One deploy at a time, and never cancel one in flight — a half-published site
-# is worse than a stale one.
+# One at a time, never cancelled: half-published is worse than stale.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -31,8 +29,7 @@ jobs:
           node-version: 24
           cache: pnpm
 
-      # `enablement` turns Pages on for the repo if it is off, so the first run
-      # of this workflow does not need a visit to the settings page.
+      # Turns Pages on if it's off, so the first run needs no settings visit.
       - uses: actions/configure-pages@v5
         with:
           enablement: true
@@ -41,9 +38,7 @@ jobs:
 
       - run: pnpm build
 
-      # The SPA fallback (ADR 0004 §9). Vite's `github-pages-spa-fallback`
-      # plugin writes it; without it every deep link 404s on reload, which is a
-      # failure only a deployed reload would reveal.
+      # The SPA fallback (ADR 0004 §9), written by our Vite plugin.
       - name: Assert the SPA fallback shipped
         run: cmp dist/index.html dist/404.html
 

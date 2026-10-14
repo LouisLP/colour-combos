@@ -22,23 +22,13 @@ export const COMBOS: Combo[] = raw
 /** The classic catalogue: ids are contiguous `1–348` (#2). */
 export const COMBO_COUNT = COMBOS.length
 
-/**
- * The sizes the catalogue actually contains — 120 pairs, 120 triples, 108 quads.
- *
- * A fact about the data, so it lives with the data: both the `size` search-param
- * validator (ADR 0004 §4) and the filter chips' facet counts read it from here
- * rather than each carrying their own list.
- */
+/** The combo sizes in the catalogue: 120 pairs, 120 triples, 108 quads. */
 export const COMBO_SIZES = [2, 3, 4] as const
 export type ComboSize = typeof COMBO_SIZES[number]
 
 export const getCombo = (id: number) => COMBOS.find(c => c.id === id)
 
-/**
- * Look up a combo whose id has already been validated against the catalogue.
- * Throws rather than returning a fallback: a miss here means the search-param
- * validator and the data disagree, which is a bug, not a user-facing state.
- */
+/** Look up an already-validated id. A miss is a bug, so it throws. */
 export function requireCombo(id: number): Combo {
   const combo = getCombo(id)
   if (!combo)
@@ -46,22 +36,12 @@ export function requireCombo(id: number): Combo {
   return combo
 }
 
-/**
- * A combo's colour names, joined — the closest thing it has to a name.
- *
- * A Wada combo carries no name of its own; only its colours do (ADR 0006 §3).
- * So every surface that labels a combo pairs `No. N` with this, and the two are
- * always the same string.
- */
+/** A combo's colour names, joined. Combos have no names of their own (ADR 0006 §3). */
 export function comboLabel(combo: Combo): string {
   return combo.colours.map(colour => colour.name).join(' · ')
 }
 
-/**
- * A combo's hexes as one clipboard string, in Wada's order, space-separated —
- * what "copy all" and the `c` shortcut write (ADR 0014 §5). Space rather than
- * newline so it pastes into a single field and still splits on whitespace.
- */
+/** A combo's hexes, space-separated so they paste into one field. */
 export function comboHexes(combo: Combo): string {
   return combo.colours.map(colour => colour.hex).join(' ')
 }

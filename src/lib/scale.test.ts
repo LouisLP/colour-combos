@@ -105,10 +105,8 @@ describe('naming (ADR 0012 §8)', () => {
 })
 
 describe('snapshots — so a curve change is visible in review', () => {
-  // A pair, a triple, a quad, the hue-source special case (#55: Old Rose +
-  // White) and the true-grey neutral (#69).
-  // Hex only: `oklch` and `rgb` are functions of it, and one line per ramp
-  // keeps a curve change readable in a diff.
+  // A pair, triple and quad, plus #55 (hue-source edge case) and #69 (grey).
+  // Hex only, one line per ramp, so curve changes diff cleanly.
   const digest = (scale: ComboScale) => ({
     canonicalMode: scale.canonicalMode,
     accents: scale.accents,

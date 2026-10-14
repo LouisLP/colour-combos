@@ -2,10 +2,10 @@
 
 - **Status**: Accepted
 - **Date**: 2026-10-14
-- **Ticket**: [T1: Port the site to Vue 3](https://github.com/LouisLP/colour-combos/issues/42)
-- **Map**: [Vue rewrite, exportable scale library & docs UI](https://github.com/LouisLP/colour-combos/issues/41)
-- **Supersedes**: the framework parts of [ADR 0005](0005-app-state-architecture.md)
-  — §2's "rendered in the same commit" mechanism, §6's StrictMode/TanStack
+- **Ticket**: [T1: Port the site to Vue 3](https://github.com/LouisLP/japanese-colour-combos/issues/42)
+- **Map**: [Vue rewrite, exportable scale library & docs UI](https://github.com/LouisLP/japanese-colour-combos/issues/41)
+- **Supersedes**: the framework parts of [ADR 0005](0005-app-state-architecture.md):
+  §2's "rendered in the same commit" mechanism, §6's StrictMode/TanStack
   rationale, §7's TanStack location state, and §8's hook rule and
   `useSyncExternalStore` subscription. The architecture those sections describe
   (no app state, a rendered palette, URL as truth, one module store) is unchanged.
@@ -31,7 +31,7 @@ touched.
 `vue-router` is the idiomatic choice and the smaller one. What TanStack gave us
 was typed, validated search params on the root route. Here that is
 `validateHubSearch` run over `route.query` inside one composable,
-`useHubSearch()`, plus `toHubQuery()` to serialise a `HubSearch` back to a query
+`useHubSearch()`, plus `toHubQuery()` to serialize a `HubSearch` back to a query
 with a fixed `c, q, size` order and absent params left out. If typed search
 params become awkward, `@tanstack/vue-router` is the like-for-like swap.
 
@@ -131,7 +131,7 @@ the directory stays outside lint and type-checking.
 
 - **`@tanstack/vue-router`.** Closest to the old code, but heavier and less
   idiomatic. Its main advantage, typed search params, takes one composable and
-  one serialiser to replace.
+  one serializer to replace.
 - **Pinia for favourites.** A store library for one array.
 - **Teleporting the palette `<style>` into `<head>`.** It would work, but it
   splits the palette from the tree it themes and adds DOM placement the

@@ -7,7 +7,7 @@ type Literal = string | number | readonly Literal[] | { readonly [key: string]: 
 
 const isPrimitive = (v: Literal) => typeof v !== 'object'
 const isLeaf = (v: Literal) => isPrimitive(v) || (Array.isArray(v) && v.every(isPrimitive))
-/** Holds only leaves, so it fits on one line: a colour value, an `oklch` triple. */
+/** Holds only leaves, so it fits on one line. */
 const isFlat = (v: Literal) => Array.isArray(v) ? v.every(isPrimitive) : Object.values(v).every(isLeaf)
 
 const quote = (s: string) => `'${s.replace(/\\/g, '\\\\').replace(/'/g, '\\\'')}'`

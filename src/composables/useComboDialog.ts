@@ -5,26 +5,19 @@ import { toHubQuery } from '../routing/search'
 import { useHubSearch } from './useHubSearch'
 
 /**
- * Whether the open dialog was pushed by a click here. If so, closing it is
- * Back — the history entry goes away again and Back after closing leaves the
- * site rather than reopening it. A dialog that arrived on a shared link has no
- * entry of ours behind it, so closing replaces. Module-level: there is one
- * dialog and one history.
+ * Whether we pushed the open dialog. If so, closing goes Back, so Back after
+ * closing doesn't reopen it. A shared link has no entry of ours, so it replaces.
  */
 let pushed = false
 
-/**
- * The details dialog (ADR 0015), driven by `?c=`. Opening it is a navigation, so
- * a dialog is shareable and Back closes it; the grid behind it reads only `q` and
- * `hue`, so it does not re-render.
- */
+/** The details dialog, driven by `?c=` (ADR 0015). Opening is a navigation. */
 export function useComboDialog() {
   const router = useRouter()
   const search = useHubSearch()
 
   const combo = computed(() => search.value.c === undefined ? undefined : getCombo(search.value.c))
 
-  // Back (or anything else) closed it: the next close is no longer ours to undo.
+  // Closed some other way, so the next close isn't ours to undo.
   watch(() => search.value.c, (c) => {
     if (c === undefined)
       pushed = false
@@ -47,7 +40,7 @@ export function useComboDialog() {
     }
   }
 
-  /** Step through the catalogue, wrapping at both ends. Replaces: one dialog, one entry. */
+  /** Step through the catalogue, wrapping. Replaces, so it's still one entry. */
   function step(delta: 1 | -1) {
     const c = search.value.c
     if (c === undefined)

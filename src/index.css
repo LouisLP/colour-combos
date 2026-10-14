@@ -1,12 +1,8 @@
-/* One dark scheme, set in ink and washi paper with a vermilion seal for accent
- * (ADR 0015). Document-level rules only — the tokens, the reset, element
- * defaults and the shared utilities. Every component owns its own rules in a
- * `<style scoped>` block.
- */
+/* One dark scheme: ink, washi paper and a vermilion seal (ADR 0015). Tokens,
+ * reset and shared utilities only; components scope their own styles. */
 
 :root {
-  /* Sumi ink, lifted a little towards plum so the raw Wada colours sit on it
-     without any one of them fighting the background. */
+  /* Sumi ink, nudged towards plum so no Wada colour fights it. */
   --bg: #16121d;
   --bg-raised: #211b2b;
   --bg-sunk: #0f0c14;
@@ -17,8 +13,7 @@
   --ink: #f6eedf;
   --ink-muted: #b9ad9f;
 
-  /* Shu (vermilion, the seal colour) and kin (gold). Both clear 4.5:1 on
-     `--bg` and `--bg-raised` as text. */
+  /* Shu (vermilion) and kin (gold). Both clear 4.5:1 as text on both bgs. */
   --shu: #ff6a4d;
   --kin: #f7c948;
   --on-shu: #1a0f0c;

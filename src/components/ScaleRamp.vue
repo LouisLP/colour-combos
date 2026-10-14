@@ -5,11 +5,7 @@ import { onColour } from '../theme/colour'
 import CopyButton from './CopyButton.vue'
 import CopyIcon from './CopyIcon.vue'
 
-/**
- * One tonal ramp as a row of eleven chips, `50` to `950` (ADR 0012). Each chip
- * copies its hex. Text sits on the step in whichever of black or white contrasts
- * more, which clears 4.5:1 against any sRGB colour.
- */
+/** One ramp as eleven copyable chips. Labels use black or white, whichever wins. */
 defineProps<{
   /** Wada name, or `Neutral`. */
   name: string

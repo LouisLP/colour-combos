@@ -15,18 +15,11 @@ import CopyButton from './CopyButton.vue'
 import CopyIcon from './CopyIcon.vue'
 import ScaleRamp from './ScaleRamp.vue'
 
-/**
- * "More details" for one combo (ADR 0015): its raw colours, the full scale and
- * the code, in a Reka dialog over the grid. `?c=` opens it; Escape, the overlay
- * and the close button shut it; `←` / `→` step through the catalogue.
- */
+/** One combo's colours, scale and code (ADR 0015). `←` / `→` step combos. */
 const router = useRouter()
 const { combo, close, step } = useComboDialog()
 
-/**
- * The combo on screen. Held past `?c=` going away so the closing animation
- * still has something to show.
- */
+/** Outlives `?c=` so the close animation has something to show. */
 const shown = shallowRef<Combo>()
 watch(combo, (next) => {
   if (next)
@@ -45,7 +38,7 @@ function roleOf(index: number): string | undefined {
   return rank === -1 ? undefined : accentName(rank)
 }
 
-/** `←` / `→`, except where something focused has its own use for an arrow. */
+/** `←` / `→`, unless the focused element uses arrows. */
 function onKeydown(event: KeyboardEvent) {
   if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
     return

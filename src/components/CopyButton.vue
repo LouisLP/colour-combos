@@ -2,11 +2,7 @@
 import { onBeforeUnmount, ref } from 'vue'
 import { copyText } from '../ui/clipboard'
 
-/**
- * A button that copies one string and confirms it. The look is the caller's, so
- * the content is a slot that is told whether the confirmation is showing; the
- * accessible name flips to `Copied …` for as long as it does.
- */
+/** Copies one string and confirms it. The slot gets `copied`; the label flips to `Copied …`. */
 const props = defineProps<{
   /** What lands on the clipboard. */
   text: string

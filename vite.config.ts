@@ -5,14 +5,9 @@ import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
 
 /**
- * Routing's one demand on the host is an SPA fallback — `/*` → `/index.html`
- * with a 200, so a deep link survives a hard reload (ADR 0004 §9). GitHub Pages
- * has no rewrite rules; what it has is `404.html`, served for every unmatched
- * path. A byte-identical copy of `index.html` is therefore the rewrite.
- *
- * It lives in the build rather than in the deploy workflow so that `pnpm build`
- * produces a deployable `dist` on its own, and so the fallback cannot be lost by
- * an unrelated change to CI.
+ * SPA fallback for GitHub Pages (ADR 0004 §9): it serves `404.html` for unknown
+ * paths, so a copy of `index.html` is the rewrite. Done in the build so
+ * `dist` deploys on its own.
  */
 function githubPagesSpaFallback(): Plugin {
   let outDir = 'dist'
@@ -31,20 +26,11 @@ function githubPagesSpaFallback(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
-  /**
-   * A GitHub project page is served from `/<repo>/`, not the domain root, so
-   * every asset URL and the router's own base have to agree on one prefix. The
-   * router's history reads this back as `import.meta.env.BASE_URL`, so changing hosts —
-   * or moving to a custom domain — is this line and nothing else.
-   */
-  base: '/colour-combos/',
+  /** Project pages live at `/<repo>/`. The router reads this via `BASE_URL`. */
+  base: '/japanese-colour-combos/',
   plugins: [vue(), githubPagesSpaFallback()],
   optimizeDeps: {
-    /**
-     * Without this, the dep scanner crawls every `.html` under the root —
-     * including `prototypes/*`, which are frozen as React with React
-     * uninstalled — and aborts pre-bundling on the unresolved imports.
-     */
+    /** Keeps the dep scanner out of the React-only `prototypes/`. */
     entries: ['index.html'],
   },
 })

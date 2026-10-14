@@ -1,13 +1,13 @@
-# colour-combos
+# japanese-colour-combos
 
-Colour scales for the 348 combinations in Sanzo Wada's *A Dictionary of Color
-Combinations*, one combo at a time, in the formats people build with.
+Colour scales for all 348 combinations in Sanzo Wada's *A Dictionary of Color
+Combinations*. Import one combo at a time, in whatever format you build with.
 
-Browse them at **[louislp.github.io/colour-combos](https://louislp.github.io/colour-combos/)**
+Browse them at **[louislp.github.io/japanese-colour-combos](https://louislp.github.io/japanese-colour-combos/)**
 and note the number of the one you want.
 
 ```sh
-npm install colour-combos
+npm install japanese-colour-combos
 ```
 
 ## What a scale is
@@ -41,7 +41,7 @@ combos never gives one name two values. Role-named ones (`accent-*`,
 ## CSS custom properties
 
 ```css
-@import 'colour-combos/42.css';
+@import 'japanese-colour-combos/42.css';
 
 body {
   background: var(--cc-canvas);
@@ -69,7 +69,7 @@ Set it on the page, or on any subtree with `data-theme`:
 
 ```css
 @import 'tailwindcss';
-@import 'colour-combos/tailwind/42.css';
+@import 'japanese-colour-combos/tailwind/42.css';
 ```
 
 ```html
@@ -86,7 +86,7 @@ replace Tailwind's. The semantic colours switch with `scheme-light` and
 ## SCSS
 
 ```scss
-@use 'pkg:colour-combos/42.scss' as cc;
+@use 'pkg:japanese-colour-combos/42.scss' as cc;
 @use 'sass:map';
 
 .button {
@@ -106,29 +106,29 @@ replace Tailwind's. The semantic colours switch with `scheme-light` and
 ```
 
 `pkg:` URLs need Sass's Node package importer (`NodePackageImporter`). Without
-it, use the path: `node_modules/colour-combos/scss/42.scss`.
+it, use the path: `node_modules/japanese-colour-combos/scss/42.scss`.
 
 ## Design tokens (JSON)
 
-`colour-combos/42.json` is in the W3C Design Tokens format, with hex values,
+`japanese-colour-combos/42.json` is in the W3C Design Tokens format, with hex values,
 so Style Dictionary and Tokens Studio for Figma read it as is.
 
 ```js
-import tokens from 'colour-combos/42.json' with { type: 'json' }
+import tokens from 'japanese-colour-combos/42.json' with { type: 'json' }
 
 tokens.cc['accent'][500].$value // '{cc.yellow-ocher.500}', an alias
 tokens.cc.semantic.dark.canvas.$value // '#…'
 ```
 
 Each colour ramp's anchor step and the combo's canonical mode are under
-`$extensions["io.github.louislp.colour-combos"]`.
+`$extensions["io.github.louislp.japanese-colour-combos"]`.
 
 ## JavaScript and TypeScript
 
 One combo, without the rest of the catalogue:
 
 ```ts
-import scale from 'colour-combos/42'
+import scale from 'japanese-colour-combos/42'
 
 scale.canonicalMode // 'light'
 scale.ramps[0].steps[500].hex // '#…'
@@ -142,17 +142,18 @@ The main entry has the whole catalogue, the scale engine and every format as a
 function, for building your own output:
 
 ```ts
-import { buildScale, COMBOS, emitCss, emitTokens, requireCombo } from 'colour-combos'
+import { buildScale, COMBOS, emitCss, emitTokens, requireCombo } from 'japanese-colour-combos'
 
 const scale = buildScale(requireCombo(42))
-const css = emitCss(scale) // the same text as colour-combos/42.css
+const css = emitCss(scale) // the same text as japanese-colour-combos/42.css
 ```
 
 `emitTailwind`, `emitScss`, `emitTs` and `emitJs` are there too. They are what
 generated the files above, and what the site shows in its code blocks.
 
-The files are hex. `emitCss`, `emitTailwind` and `emitScss` take a `format` to
-spell every colour as `oklch()` or `rgb()` instead; the names don't change:
+The files use hex. `emitCss`, `emitTailwind` and `emitScss` take a `format`
+option to write every colour as `oklch()` or `rgb()` instead. The names stay the
+same:
 
 ```ts
 emitCss(scale, { format: 'oklch' }) // --cc-english-red-500: oklch(… … …);
@@ -161,8 +162,8 @@ formatColour(scale.semantic.dark.ink, 'rgb') // 'rgb(… … …)'
 
 ## Credits
 
-Colours from Sanzo Wada's *A Dictionary of Color Combinations* (1933–1937),
-public domain; data via
+Colours are from Sanzo Wada's *A Dictionary of Color Combinations* (1933–1937),
+which is public domain. The data comes from
 [dictionary-of-colour-combinations](https://github.com/mattdesl/dictionary-of-colour-combinations)
 by Matt DesLauriers (MIT). See `THIRD-PARTY-LICENSES.md`.
 

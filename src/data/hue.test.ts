@@ -15,8 +15,7 @@ describe('colourHueFamily', () => {
     expect(colourHueFamily({ hex })).toBe(family)
   })
 
-  // White and greys have a hue angle in OKLCH, but it is noise: they must not
-  // land in whichever family that noise happens to point at.
+  // Greys have a noise hue in OKLCH; it mustn't pick their family.
   it.each(['#ffffff', '#111314', '#a1a39a'])('reads %s as neutral', (hex) => {
     expect(colourHueFamily({ hex })).toBe('neutral')
   })

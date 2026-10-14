@@ -1,5 +1,4 @@
-// Minimal colour maths, no dependency.
-// sRGB <-> OKLCh, sRGB gamut mapping, WCAG 2.2 contrast.
+// sRGB <-> OKLCh, gamut mapping and WCAG contrast, with no dependencies.
 
 export interface Oklch { l: number, c: number, h: number }
 
@@ -95,9 +94,8 @@ export interface ClampResult {
 }
 
 /**
- * Push lightness toward `direction` (-1 darker, +1 lighter), hue and nominal
- * chroma held, until `col` clears `target` against `against`. Returns the first
- * passing value, or the extreme if the target is unreachable.
+ * Move lightness toward `direction` (-1 darker, +1 lighter) until `col` clears
+ * `target` on `against`. Returns the first pass, or the extreme.
  */
 export function clampToContrast(
   col: Oklch,

@@ -4,8 +4,8 @@
   §7 extended with hue/mode filters and highlighting, by
   [ADR 0014](0014-faster-browse.md); amended by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-07-22
-- **Ticket**: [Browse & grid UI](https://github.com/LouisLP/colour-combos/issues/13)
-- **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)
+- **Ticket**: [Browse & grid UI](https://github.com/LouisLP/japanese-colour-combos/issues/13)
+- **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/japanese-colour-combos/issues/1)
 - **Builds on**: [ADR 0001](0001-light-dark-and-combo-theming-semantics.md),
   [ADR 0002](0002-combo-adaptation-model.md) §5,
   [ADR 0003](0003-favorites-persistence.md) §3,
@@ -17,7 +17,7 @@
 
 Everything the browse surface depends on is settled: the data schema, the
 theming semantics, the token contract, and the `c` / `q` / `size` param
-contract shared with `/favorites`. What was not settled is the surface itself —
+contract shared with `/favorites`. What was not settled is the surface itself:
 how a 2–4 colour combo reads at grid scale, how a page themed *by* one combo
 displays the other 347 without the grid and the theme fighting, and whether 348
 cards paint acceptably.
@@ -26,7 +26,7 @@ Three structurally different browse surfaces were built on the real adaptation
 model and the real param contract, then measured in a production build under
 Chromium:
 
-| | A — Framed catalogue | B — Colour wall | C — Reference index |
+| | A: Framed catalogue | B: Colour wall | C: Reference index |
 | --- | --- | --- | --- |
 | unit | bordered card on `--surface` | gapless full-bleed tile | table row |
 | swatches | equal-split bands | proportional, ranked | one lead block + chips |
@@ -38,7 +38,7 @@ Chromium:
 
 ## Decision
 
-### 1. Variant A — the framed card grid
+### 1. Variant A: the framed card grid
 
 Cards on `--surface` with a hairline `--border`, an equal-split swatch block,
 and a caption that is always present. It is the least clever of the three and
@@ -48,12 +48,12 @@ The deciding property is that **a card must read as a combination, not as
 colours**. B proved the negative case: with zero gaps, adjacent tiles' bands
 line up into continuous horizontal stripes across the whole viewport and the
 eye cannot find the boundary between one combo and the next. The wall is a
-gorgeous image and a useless browser — it dissolves the exact unit the product
+gorgeous image and a useless browser: it dissolves the exact unit the product
 exists to sell. The frame is not decoration; it is what makes the unit legible.
 
 ### 2. Equal-split bands, not proportional ones
 
-B and C weighted their bands by the ADR 0002 accent ranking, which is honest —
+B and C weighted their bands by the ADR 0002 accent ranking, which is honest:
 the widest band is the colour that would dominate the theme. At grid scale it
 fails twice: a 4-colour combo's third and fourth bands become slivers too thin
 to read as colours, and the weighting silently editorialises about a plate
@@ -63,7 +63,7 @@ Equal split, full bleed, no rounding on the swatch block itself. The card's
 `overflow: hidden` provides the corner radius so no `--canvas` shows through
 between the colours.
 
-### 3. There is no combo name — the label is `No. N` plus its colour names
+### 3. There is no combo name: the label is `No. N` plus its colour names
 
 > **Still true of the card.** [ADR 0014](0014-faster-browse.md) §1 adds a
 > second density, the compact list, which *does* print each hex on its colour:
@@ -75,7 +75,7 @@ combo carries **no name of its own**. Only its colours do. So the caption is
 `--ink-muted`, ellipsised at one line.
 
 Hex values do **not** appear on the card. They are the one piece of metadata a
-grid cannot afford — three or four monospace strings per card at 13rem wide
+grid cannot afford: three or four monospace strings per card at 13rem wide
 either wrap to three lines or shrink below legibility. C proved they are
 wonderful when there is room for them; the grid is not that room. They live on
 the card's `title` and on the detail surface.
@@ -85,11 +85,11 @@ the card's `title` and on the detail surface.
 > **The `--ink` marker is upheld; the accent reservation below is superseded by
 > [ADR 0009](0009-bolder-combo-colour-across-chrome.md) §2, §4.** T2 spreads the
 > accent family across the chrome on purpose, so "accent reserved for interactive
-> state" no longer holds. The `--ink` selected-card marker survives — its
+> state" no longer holds. The `--ink` selected-card marker survives: its
 > reasoning *strengthens* once the accent is everywhere (ADR 0009 §4).
 
 The page wears the selected combo while showing 347 rivals, so the marker for
-"this is the one you're wearing" cannot be `--accent` — the accent is already
+"this is the one you're wearing" cannot be `--accent`: the accent is already
 on the filter chips, the focus rings and the buttons, and a fourth accented
 thing reads as more chrome rather than as *this one*.
 
@@ -98,8 +98,8 @@ pill reading **Theming this page**. `--ink` is the one token guaranteed 4.5:1
 against every surface in the system (ADR 0002 §5), which makes the marker
 theme-proof by construction rather than by luck.
 
-The general rule this generalises to: **`--accent` is spent only on interactive
-state** — an engaged filter chip, a starred star, a focus ring. Never on
+The general rule this generalizes to: **`--accent` is spent only on interactive
+state**: an engaged filter chip, a starred star, a focus ring. Never on
 identity or decoration. That leaves the accent meaning exactly one thing on a
 page that is otherwise saturated with colour it does not control.
 
@@ -113,9 +113,9 @@ of the same product as the rest of the site.
 100rem. That yields 5 columns at 1440px, 2 at 390px, and never a card so narrow
 that the caption ellipsises on the first word.
 
-### 6. No virtualisation. `content-visibility: auto` instead
+### 6. No virtualization. `content-visibility: auto` instead
 
-Measured, not assumed — production build, Chromium, synchronous style+layout
+Measured, not assumed: production build, Chromium, synchronous style+layout
 forcing (no `requestAnimationFrame` quantisation), 12 successive filter passes
 re-rendering the whole grid, plus 60 full-document scroll jumps:
 
@@ -125,23 +125,23 @@ re-rendering the whole grid, plus 60 full-document scroll jumps:
 | filter pass, mean | 4.7 ms | 7.4 ms | 14.8 ms | 26.0 ms |
 | filter pass, worst | 8.8 ms | 19.5 ms | 31.8 ms | 76.5 ms |
 | 60 scroll jumps, total | 0.5 ms | 0.1 ms | 0.4 ms | 0.7 ms |
-| select + re-theme | 1.4 ms | 0.5 ms | — | — |
-| first grid painted | — | — | 285 ms | 336 ms |
+| select + re-theme | 1.4 ms | 0.5 ms | | |
+| first grid painted | | | 285 ms | 336 ms |
 
 348 cards is 5,248 DOM nodes and a 12,516px document. A full re-render of every
 card on every keystroke costs single-digit milliseconds on a desktop and stays
-inside one frame on a 4×-throttled phone. **Virtualisation would buy nothing
+inside one frame on a 4×-throttled phone. **Virtualization would buy nothing
 and cost scroll restoration, find-in-page, and Ctrl+F.**
 
 `content-visibility: auto` with `contain-intrinsic-size: auto 11rem` on each
 grid item is kept because it more than halves the *worst* keystroke on the slow
-device — 32 ms against 77 ms, and on B and C 32/36 ms against 92/99 ms. That is
+device: 32 ms against 77 ms, and on B and C 32/36 ms against 92/99 ms. That is
 the difference between a filter that feels immediate and one that visibly
 stutters at the top of the range. Scroll cost stays negligible either way.
 
 Its price is a document height estimated from `contain-intrinsic-size` rather
 than measured: 13,498px against a true 12,516px, ~8% out, so the scrollbar
-thumb drifts as skipped content is rendered for real. Accepted — a slightly
+thumb drifts as skipped content is rendered for real. Accepted: a slightly
 elastic scrollbar is a smaller sin than a stuttering search.
 
 ### 7. Filters and search
@@ -151,8 +151,8 @@ elastic scrollbar is a smaller sin than a stuttering search.
 > and keyboard shortcuts. Only its first row stays sticky now.
 
 A sticky bar directly under the header, holding the search field, the size
-chips, and a live count. Chips carry their **facet counts** — `Any (348)`,
-`2 colours (120)`, `3 colours (120)`, `4 colours (108)` — lifted from C, which
+chips, and a live count. Chips carry their **facet counts** ( `Any (348)`,
+`2 colours (120)`, `3 colours (120)`, `4 colours (108)`) lifted from C, which
 made it obvious that a count is what turns a filter into a fact about the
 catalogue. Search matches colour names, hex values, and the combo number.
 
@@ -169,8 +169,7 @@ search actually covers, and a **Clear filters** button.
 ### 8. The star is always visible
 
 Hover-only fails on touch outright, and focus-only hides the feature from
-everyone not driving by keyboard. B's compromise —
-`@media (pointer: coarse)` to force it visible — works, but it means the
+everyone not driving by keyboard. B's compromise (`@media (pointer: coarse)` to force it visible) works, but it means the
 affordance a designer looks at is not the one half the users get.
 
 So the star sits in the caption row at all times: `--ink-muted` when off,
@@ -184,10 +183,10 @@ outside the swatch block entirely.
   requires; the route supplies the source list, and the empty state's copy is
   the only branch.
 - **Hex values now need a home.** Cutting them from the card makes the detail
-  surface responsible for the full readout — that is the next ticket's problem,
+  surface responsible for the full readout: that is the next ticket's problem,
   and it inherits a real requirement from this one.
 - **`content-visibility` is load-bearing for search feel on mobile**, so it is
-  not a stray optimisation to be tidied away. The 8% scrollbar drift is its
+  not a stray optimization to be tidied away. The 8% scrollbar drift is its
   known cost and should not be "fixed" by removing it.
 - **`--accent` is now reserved for interactive state** across the whole site,
   not just the grid. That is a constraint on every component built after this.
@@ -205,23 +204,23 @@ outside the swatch block entirely.
 
 ## Alternatives rejected
 
-- **B — the colour wall.** The best-looking of the three and the one that
+- **B: the colour wall.** The best-looking of the three and the one that
   answers the recursion problem most elegantly (the wall opts out of the theme
   entirely, so nothing can fight it). Rejected because gapless tiling destroys
-  combo boundaries — adjacent tiles' bands merge into continuous stripes and the
+  combo boundaries: adjacent tiles' bands merge into continuous stripes and the
   combination stops being visible as a unit. Its punch-out selection also
   *shrinks* the selected tile, emphasising it by making it smaller.
-- **C — the reference index.** Genuinely better than A at the thing it does:
+- **C: the reference index.** Genuinely better than A at the thing it does:
   hex values inline, faceted counts, everything scannable. Rejected as the
-  browse surface because it is a lookup table, not a browse — you read it rather
+  browse surface because it is a lookup table, not a browse: you read it rather
   than see it, colour occupies maybe 8% of the row, and 348 rows is an
   18,474px document. Its facet counts were taken into A.
-- **Proportional bands weighted by accent rank** — encodes real information
+- **Proportional bands weighted by accent rank**: encodes real information
   about how the combo would theme the site, but reduces a 4-colour combo's
   minor colours to unreadable slivers.
-- **Hover-revealed metadata** — maximises colour per card and dies on touch.
-- **Marking the selected card with `--accent`** — the obvious choice, and wrong:
+- **Hover-revealed metadata**: maximizes colour per card and dies on touch.
+- **Marking the selected card with `--accent`**: the obvious choice, and wrong:
   the accent is already spread across the page chrome, so it reads as one more
   accented element rather than as identity.
-- **Windowed/virtualised list** — measured as unnecessary at 348 items, and it
+- **Windowed/virtualized list**: measured as unnecessary at 348 items, and it
   would cost find-in-page and scroll restoration to buy nothing.

@@ -17,8 +17,7 @@ defineProps<{ shown: number }>()
 const router = useRouter()
 const search = useHubSearch()
 
-// The field owns what is typed and the URL follows it; the field follows the
-// URL only when the URL moved on its own (Back).
+// The URL follows the field, and the field follows the URL only on Back.
 const text = ref(search.value.q ?? '')
 watch(() => search.value.q, (q) => {
   if ((q ?? '') !== text.value)

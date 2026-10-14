@@ -2,8 +2,8 @@
 
 - **Status**: Accepted
 - **Date**: 2026-10-14
-- **Ticket**: [T4: Export formats & importable package build](https://github.com/LouisLP/colour-combos/issues/45)
-- **Map**: [Vue rewrite, exportable scale library & docs UI](https://github.com/LouisLP/colour-combos/issues/41)
+- **Ticket**: [T4: Export formats & importable package build](https://github.com/LouisLP/japanese-colour-combos/issues/45)
+- **Map**: [Vue rewrite, exportable scale library & docs UI](https://github.com/LouisLP/japanese-colour-combos/issues/41)
 - **Builds on**: [ADR 0012](0012-combo-scale-model.md) (the scale, its naming)
 
 ## Context
@@ -52,15 +52,15 @@ committed), including its own `package.json`. tsdown bundles `src/lib/index.ts`
 with declarations; `scripts/build-lib.ts` then generates every combo in every
 format by importing that **build**, so the files come from the code that ships.
 
-The package is `colour-combos` (free on npm at the time of writing):
+The package is `japanese-colour-combos` (free on npm at the time of writing):
 
 ```
-colour-combos                 index.js        catalogue, buildScale, emitters
-colour-combos/42              scales/42.js    the scale (+ .d.ts)
-colour-combos/42.css          css/42.css
-colour-combos/42.scss         scss/42.scss
-colour-combos/42.json         tokens/42.json
-colour-combos/tailwind/42.css tailwind/42.css
+japanese-colour-combos                 index.js        catalogue, buildScale, emitters
+japanese-colour-combos/42              scales/42.js    the scale (+ .d.ts)
+japanese-colour-combos/42.css          css/42.css
+japanese-colour-combos/42.scss         scss/42.scss
+japanese-colour-combos/42.json         tokens/42.json
+japanese-colour-combos/tailwind/42.css tailwind/42.css
 ```
 
 Export patterns resolve most-specific first in Node and TypeScript, which is
@@ -69,7 +69,7 @@ what lets `./*.css` and `./*` coexist.
 ### 4. CI proves it as a consumer would
 
 `pnpm smoke:lib` counts the files (348 per format), `npm pack`s `dist-lib/`,
-installs the tarball into an empty project, imports `colour-combos/42` and
+installs the tarball into an empty project, imports `japanese-colour-combos/42` and
 resolves every per-combo specifier by name, and type-checks a NodeNext
 consumer. The `exports` map only fails for a consumer, so this is the only
 test that can catch it.
@@ -83,7 +83,7 @@ test that can catch it.
   `npm publish dist-lib`. The version is the root `package.json`'s, which
   `scripts/build-lib.ts` copies into the generated manifest. No changesets yet;
   one package with a hand-bumped version does not need them.
-- The repo and the package are MIT, matching the upstream digitisation. The
+- The repo and the package are MIT, matching the upstream digitization. The
   colours are public domain either way.
 - Any change to an emitter's output is a change to the published files. The
   emitter snapshots make it visible in review.

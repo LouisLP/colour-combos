@@ -1,9 +1,6 @@
-// Smoke test for the built package: run after `pnpm build:lib`.
-//
-// Packs `dist-lib/` the way `npm publish` would, installs the tarball into an
-// empty project, and imports from it by package name — so the `exports` map,
-// the `files` that make it into the tarball and the declarations are all
-// exercised as a consumer would meet them.
+// Run after `pnpm build:lib`. Packs `dist-lib/`, installs the tarball into an
+// empty project and imports it by name, so `exports`, the packed files and the
+// types are tested the way a consumer meets them.
 
 import { strict as assert } from 'node:assert'
 import { execFileSync } from 'node:child_process'
@@ -21,7 +18,7 @@ const expected = { scales: COMBOS * 2, css: COMBOS, scss: COMBOS, tokens: COMBOS
 for (const [dir, count] of Object.entries(expected))
   assert.equal(readdirSync(join(dist, dir)).length, count, `dist-lib/${dir}`)
 
-const consumer = mkdtempSync(join(tmpdir(), 'colour-combos-smoke-'))
+const consumer = mkdtempSync(join(tmpdir(), 'japanese-colour-combos-smoke-'))
 const run = (cmd: string, args: string[]) => execFileSync(cmd, args, { cwd: consumer, encoding: 'utf8' })
 const tarball = run('npm', ['pack', dist, '--silent']).trim().split('\n').at(-1)!
 writeFileSync(join(consumer, 'package.json'), '{ "type": "module", "private": true }\n')
@@ -31,18 +28,18 @@ writeFileSync(join(consumer, 'smoke.js'), `
 import { strict as assert } from 'node:assert'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import scale from 'colour-combos/42'
-import { buildScale, emitCss, emitScss, emitTailwind, emitTokens, requireCombo } from 'colour-combos'
+import scale from 'japanese-colour-combos/42'
+import { buildScale, emitCss, emitScss, emitTailwind, emitTokens, requireCombo } from 'japanese-colour-combos'
 
 const read = specifier => readFileSync(fileURLToPath(import.meta.resolve(specifier)), 'utf8')
 const built = buildScale(requireCombo(42))
 
-assert.deepEqual(scale, built, 'colour-combos/42 is the scale buildScale returns')
-assert.equal(read('colour-combos/42.css'), emitCss(built))
-assert.equal(read('colour-combos/42.scss'), emitScss(built))
-assert.equal(read('colour-combos/42.json'), emitTokens(built))
-assert.equal(read('colour-combos/tailwind/42.css'), emitTailwind(built))
-assert.equal(JSON.parse(read('colour-combos/package.json')).name, 'colour-combos')
+assert.deepEqual(scale, built, 'japanese-colour-combos/42 is the scale buildScale returns')
+assert.equal(read('japanese-colour-combos/42.css'), emitCss(built))
+assert.equal(read('japanese-colour-combos/42.scss'), emitScss(built))
+assert.equal(read('japanese-colour-combos/42.json'), emitTokens(built))
+assert.equal(read('japanese-colour-combos/tailwind/42.css'), emitTailwind(built))
+assert.equal(JSON.parse(read('japanese-colour-combos/package.json')).name, 'japanese-colour-combos')
 `)
 run('node', ['smoke.js'])
 
@@ -52,9 +49,9 @@ writeFileSync(join(consumer, 'tsconfig.json'), JSON.stringify({
   files: ['smoke.ts'],
 }))
 writeFileSync(join(consumer, 'smoke.ts'), `
-import type { ComboScale, Step } from 'colour-combos'
-import { buildScale, emitCss, requireCombo } from 'colour-combos'
-import scale from 'colour-combos/42'
+import type { ComboScale, Step } from 'japanese-colour-combos'
+import { buildScale, emitCss, requireCombo } from 'japanese-colour-combos'
+import scale from 'japanese-colour-combos/42'
 
 const typed: ComboScale = scale
 const step: Step = typed.ramps[0].anchor

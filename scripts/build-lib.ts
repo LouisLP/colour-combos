@@ -1,14 +1,12 @@
-// Generates the per-combo files of the published package into `dist-lib/`,
-// next to the main entry tsdown has just built there. `pnpm build:lib` runs
-// both. It reads the *built* library, so every generated file comes from the
-// code the package ships.
+// Writes the per-combo files into `dist-lib/`, from the entry tsdown just built
+// there, so every file comes from the code the package ships.
 //
-//   colour-combos               -> index.js       data, buildScale, emitters
-//   colour-combos/42            -> scales/42.js   the scale object
-//   colour-combos/42.css        -> css/42.css     CSS custom properties
-//   colour-combos/42.scss       -> scss/42.scss   SCSS variables and maps
-//   colour-combos/42.json       -> tokens/42.json W3C design tokens
-//   colour-combos/tailwind/42.css -> tailwind/42.css  Tailwind v4 @theme
+//   japanese-colour-combos               -> index.js       data, buildScale, emitters
+//   japanese-colour-combos/42            -> scales/42.js   the scale object
+//   japanese-colour-combos/42.css        -> css/42.css     CSS custom properties
+//   japanese-colour-combos/42.scss       -> scss/42.scss   SCSS variables and maps
+//   japanese-colour-combos/42.json       -> tokens/42.json W3C design tokens
+//   japanese-colour-combos/tailwind/42.css -> tailwind/42.css  Tailwind v4 @theme
 
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -18,10 +16,10 @@ import * as lib from '../dist-lib/index.js'
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const out = join(root, 'dist-lib')
 
-/** The package's version: the root `package.json`'s, bumped by `npm version`. */
+/** The root `package.json` version, bumped by `npm version`. */
 const { version } = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as { version: string }
 
-/** Every per-combo format: where its files go, and how one is written. */
+/** Each per-combo format: its path pattern and emitter. */
 const FORMATS = {
   'scales/*.js': lib.emitJs,
   'scales/*.d.ts': (scale: { id: number }) =>
@@ -47,13 +45,12 @@ const manifest = {
   license: 'MIT',
   description: 'Importable colour scales for the 348 combinations in Sanzo Wada\'s A Dictionary of Color Combinations: CSS, Tailwind, SCSS, design tokens and typed data.',
   type: 'module',
-  repository: { type: 'git', url: 'git+https://github.com/LouisLP/colour-combos.git' },
-  homepage: 'https://louislp.github.io/colour-combos/',
+  repository: { type: 'git', url: 'git+https://github.com/LouisLP/japanese-colour-combos.git' },
+  homepage: 'https://louislp.github.io/japanese-colour-combos/',
   keywords: ['colour', 'color', 'palette', 'design-tokens', 'tailwind', 'wada'],
   sideEffects: ['*.css'],
-  // Patterns resolve most-specific first (Node and TypeScript agree), so
-  // `42.css` takes `./*.css` over `./*`, and `tailwind/42.css` takes the
-  // tailwind pattern over `./*.css`.
+  // Most specific pattern wins, so `42.css` skips `./*` and `tailwind/42.css`
+  // skips `./*.css`.
   exports: {
     '.': { types: './index.d.ts', default: './index.js' },
     './package.json': './package.json',

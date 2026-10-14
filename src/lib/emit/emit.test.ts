@@ -154,7 +154,7 @@ describe('emitTs / emitJs', () => {
   })
 
   it('types the TS module against the package', () => {
-    expect(emitTs(scale)).toContain(`import type { ComboScale } from 'colour-combos'`)
+    expect(emitTs(scale)).toContain(`import type { ComboScale } from 'japanese-colour-combos'`)
     expect(emitTs(scale)).toContain('const scale: ComboScale = {')
   })
 })

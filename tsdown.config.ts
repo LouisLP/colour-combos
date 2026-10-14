@@ -1,10 +1,6 @@
 import { defineConfig } from 'tsdown'
 
-/**
- * The library's main entry (`colour-combos`): catalogue, scale engine and
- * emitters, bundled to one ES module with its declarations. The per-combo
- * files are generated from this build afterwards by `scripts/build-lib.ts`.
- */
+/** The package's main entry, as one ES module. `scripts/build-lib.ts` builds the rest from it. */
 export default defineConfig({
   entry: { index: 'src/lib/index.ts' },
   outDir: 'dist-lib',

@@ -1,10 +1,9 @@
-// Combo -> scale. Implements ADR 0012: an 11-step tonal ramp per Wada colour
-// plus a tinted neutral ramp, and the adapter's semantic roles for both modes.
+// Combo -> scale (ADR 0012): a ramp per colour, a neutral ramp, and the
+// adapter's roles for both modes.
 //
-// The maths is a port of model A on the `wcag` curve in
-// `prototypes/scale-model/scale.ts`, and must stay identical to it. The
-// 500-grade contrast promise passes at exactly 4.50 (ADR 0012 §7), so a change
-// of evaluation order is enough to break it. `scale.sweep.test.ts` gates this.
+// Keep the maths identical to `prototypes/scale-model/scale.ts`. The 500-grade
+// promise passes at exactly 4.50, so even reordering operations can break it
+// (`scale.sweep.test.ts` gates this).
 
 import type { Combo } from '../data/combos'
 import type { Mode } from '../theme/adapt'
@@ -15,10 +14,10 @@ import { hexToOklch, hexToRgb, luminance, oklchToHex, oklchToRgb } from '../them
 export const STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const
 export type Step = typeof STEPS[number]
 
-/** One colour in every form an export needs. All three describe the same 8-bit sRGB value. */
+/** One 8-bit sRGB colour, in every form an export needs. */
 export interface ColourValue {
   hex: string
-  /** OKLCh of the emitted hex, not of the colour requested before gamut mapping. */
+  /** OKLCh of the emitted (gamut-mapped) hex. */
   oklch: [l: number, c: number, h: number]
   /** 8-bit sRGB channels, 0–255. */
   rgb: [r: number, g: number, b: number]
@@ -42,7 +41,7 @@ export interface NeutralRamp {
   steps: RampSteps
 }
 
-/** Every combo has at least two colours, so the adapter always fills these. */
+/** Always filled: every combo has at least two colours. */
 export type CoreRoleName
   = | 'canvas' | 'surface' | 'surface-muted'
     | 'ink' | 'ink-muted'
@@ -62,10 +61,7 @@ export interface ComboScale {
   canonicalMode: Mode
   /** One per Wada colour, in combo order. */
   ramps: ColourRamp[]
-  /**
-   * Indices into `ramps`, most accent-worthy first: the adapter's ranking
-   * (ADR 0002 §2), which names the role ramps `accent`, `accent-2`, … (ADR 0012 §8).
-   */
+  /** Indices into `ramps`, best accent first; names `accent`, `accent-2`, … */
   accents: number[]
   neutral: NeutralRamp
   /** The adapter's exact values, not references to steps (ADR 0012 §9). */
@@ -85,7 +81,7 @@ export const PER_100 = ((Y_ENDS.top + 0.05) / (Y_ENDS.bottom + 0.05)) ** (1 / 9)
 /** Target WCAG luminance per step, geometric in `Y + 0.05`. */
 export const TARGET_Y: readonly number[] = STEPS.map(s => (Y_ENDS.top + 0.05) / PER_100 ** ((s - 50) / 100) - 0.05)
 
-/** Steps are evenly spaced along this axis, which is distance in contrast space. */
+/** Distance in contrast space; steps are even along it. */
 const posOfY = (y: number) => Math.log(y + 0.05)
 
 /** Bisection iterations when solving a step's OKLab L. */
@@ -145,7 +141,7 @@ function taper(anchor: Oklch) {
   }
 }
 
-/** Index of the step nearest the colour's own luminance, in contrast space. First wins a tie. */
+/** The step nearest the colour's luminance, in contrast space. First wins ties. */
 export function anchorIndex(hex: string): number {
   const targets = TARGET_Y.map(posOfY)
   const pos = posOfY(luminance(hex))
@@ -154,10 +150,7 @@ export function anchorIndex(hex: string): number {
 
 interface Tonal { anchor: Step, hexes: string[] }
 
-/**
- * A ramp depends only on its colour's hex (ADR 0012 §6), so it is cached by hex.
- * Bounded by the catalogue's 159 distinct colours.
- */
+/** Keyed by hex, since a ramp depends only on it. At most 159 entries. */
 const tonalCache = new Map<string, Tonal>()
 
 function tonal(hex: string): Tonal {
@@ -190,7 +183,7 @@ export function buildRamp(name: string, hex: string): ColourRamp {
 /** Ceiling on the neutral ramp's chroma: it must still read as grey. */
 const NEUTRAL_MAX_CHROMA = 0.03
 
-/** Tinted from the hue source; chroma peaks mid-ramp. True grey if the source is near-achromatic. */
+/** Tinted from the hue source, peaking mid-ramp. Grey if the source is. */
 export function buildNeutral(hueSourceHex: string): NeutralRamp {
   const src = hexToOklch(hueSourceHex)
   const tinted = src.c >= HUE_SOURCE_MIN_CHROMA
@@ -213,10 +206,10 @@ function semantic(combo: Combo, mode: Mode): SemanticRoles {
   return Object.fromEntries(Object.entries(roles).map(([name, role]) => [name, colourValue(role.hex)])) as SemanticRoles
 }
 
-/** Bounded at 348 by the catalogue, like the adapter's own caches (ADR 0005 §3). */
+/** At most 348 entries. */
 const scaleCache = new Map<number, ComboScale>()
 
-/** The complete scale of a combo (ADR 0012 §1). Pure in the combo id, and memoised by it. */
+/** A combo's full scale. Pure in the combo id, and memoized. */
 export function buildScale(combo: Combo): ComboScale {
   const hit = scaleCache.get(combo.id)
   if (hit)
