@@ -10,6 +10,9 @@
 <template>
   <footer class="site-footer">
     <div class="site-footer-inner">
+      <p class="mark" aria-hidden="true">
+        おわり
+      </p>
       <p>
         Colours from Sanzo Wada's
         <cite>A Dictionary of Color Combinations</cite>
@@ -26,29 +29,31 @@
 </template>
 
 <style scoped>
-/* Dataset-level attribution. --ink-muted clears 4.5:1 on --canvas in both modes
-   by contract (ADR 0002 §5), so small and quiet is still legible. */
 .site-footer {
+  margin-block-start: var(--space-xl);
   padding: var(--space-lg);
-  border-block-start: 1px solid var(--border);
-  background: var(--surface);
+  border-block-start: 2px dashed var(--line);
   font-size: var(--text-sm);
   line-height: 1.6;
   color: var(--ink-muted);
-  transition:
-    background-color var(--dur-theme) var(--ease),
-    border-color var(--dur-theme) var(--ease),
-    color var(--dur-theme) var(--ease);
 }
 
-/* The chrome's shared 78rem measure (ADR 0010). */
 .site-footer-inner {
   display: flex;
   flex-direction: column;
   gap: var(--space-2xs);
   inline-size: 100%;
-  max-inline-size: 78rem;
+  max-inline-size: 80rem;
   margin-inline: auto;
+}
+
+.site-footer-inner p {
+  margin: 0;
+}
+
+.mark {
+  color: var(--shu);
+  font-family: var(--display);
 }
 
 cite {

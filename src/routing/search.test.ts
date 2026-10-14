@@ -1,84 +1,41 @@
 import { describe, expect, it } from 'vitest'
-import { COMBO_COUNT, getCombo } from '../data/combos'
-import { fallbackComboId, resolveComboId, toHubQuery, validateHubSearch } from './search'
+import { COMBO_COUNT } from '../data/combos'
+import { resolveComboId, toHubQuery, validateHubSearch } from './search'
 
 describe('resolveComboId', () => {
-  it('passes a valid id through untouched', () => {
-    expect(resolveComboId('153')).toEqual({ id: 153 })
-    expect(resolveComboId(1)).toEqual({ id: 1 })
-    expect(resolveComboId(COMBO_COUNT)).toEqual({ id: COMBO_COUNT })
+  it('passes a valid id through', () => {
+    expect(resolveComboId('153')).toBe(153)
+    expect(resolveComboId(1)).toBe(1)
+    expect(resolveComboId(String(COMBO_COUNT))).toBe(COMBO_COUNT)
   })
 
-  it('resolves an absent id silently', () => {
-    expect(resolveComboId(undefined).rejected).toBeUndefined()
-    expect(resolveComboId('').rejected).toBeUndefined()
-  })
-
-  it.each(['999', '0', '-1', 'abc', '1.5', '12abc'])('reports %s as rejected', (raw) => {
-    const { id, rejected } = resolveComboId(raw)
-    expect(rejected).toBe(raw)
-    expect(getCombo(id)).toBeDefined()
-  })
-
-  it('always resolves to a combo that exists', () => {
-    for (const raw of [undefined, '', '999', 'abc', '348', '1'])
-      expect(getCombo(resolveComboId(raw).id)).toBeDefined()
-  })
-
-  // ADR 0005 §6: the query is re-validated on every param change, so a
-  // non-memoised fallback would re-theme the site as the user typed in the
-  // search box.
-  it('picks the same fallback combo for the lifetime of the document', () => {
-    const first = fallbackComboId()
-    expect(fallbackComboId()).toBe(first)
-    expect(resolveComboId(undefined).id).toBe(first)
-    expect(resolveComboId('nonsense').id).toBe(first)
+  it.each([undefined, '', '999', '0', '-1', 'abc', '1.5', '12abc'])('opens nothing for %s', (raw) => {
+    expect(resolveComboId(raw)).toBeUndefined()
   })
 })
 
 describe('validateHubSearch', () => {
-  it('drops an empty query rather than serialising it', () => {
-    expect(validateHubSearch({ c: '1', q: '' }).q).toBeUndefined()
-    expect(validateHubSearch({ c: '1' }).q).toBeUndefined()
-    expect(validateHubSearch({ c: '1', q: 'blue' }).q).toBe('blue')
+  it('reads every param', () => {
+    expect(validateHubSearch({ q: 'blue', hue: 'red', c: '12' })).toEqual({ q: 'blue', hue: 'red', c: 12 })
   })
 
-  // `13` is the `No. 13` printed on a card — the one query a user can be
-  // certain matches something, so it must survive as a string.
-  it('keeps a numeric query', () => {
-    expect(validateHubSearch({ c: '1', q: '13' }).q).toBe('13')
-    expect(validateHubSearch({ c: '1', q: '0' }).q).toBe('0')
+  it('degrades a bad param to absent', () => {
+    expect(validateHubSearch({ q: '', hue: 'teal', c: '999' })).toEqual({ q: undefined, hue: undefined, c: undefined })
   })
 
-  it('reads the first of a repeated param', () => {
-    expect(validateHubSearch({ c: ['7', '9'], q: ['blue', 'rose'] })).toEqual({ c: 7, q: 'blue', size: undefined })
-  })
-
-  it('accepts only the sizes the catalogue contains', () => {
-    expect(validateHubSearch({ c: '1', size: '3' }).size).toBe(3)
-    expect(validateHubSearch({ c: '1', size: '5' }).size).toBeUndefined()
-    expect(validateHubSearch({ c: '1', size: 'big' }).size).toBeUndefined()
-  })
-
-  // A hand-edited `?hue=teal` degrades to no filter rather than to an empty
-  // grid, the same stance `size` takes.
-  it('accepts only known hue families and modes', () => {
-    expect(validateHubSearch({ c: '1', hue: 'blue', mode: 'dark' })).toMatchObject({ hue: 'blue', mode: 'dark' })
-    expect(validateHubSearch({ c: '1', hue: 'teal', mode: 'dim' })).toMatchObject({ hue: undefined, mode: undefined })
-    expect(validateHubSearch({ c: '1', hue: 'Blue' }).hue).toBeUndefined()
+  it('takes the first of a repeated param', () => {
+    expect(validateHubSearch({ q: ['a', 'b'] }).q).toBe('a')
   })
 })
 
 describe('toHubQuery', () => {
-  it('writes c first and leaves absent params out', () => {
-    expect(toHubQuery({ c: 7 })).toEqual({ c: '7' })
-    expect(toHubQuery({ c: 7, q: 'blue', size: 3 })).toEqual({ c: '7', q: 'blue', size: '3' })
+  it('leaves absent params out, in a fixed order', () => {
+    expect(toHubQuery({})).toEqual({})
+    expect(Object.keys(toHubQuery({ c: 3, hue: 'blue', q: 'x' }))).toEqual(['q', 'hue', 'c'])
   })
 
-  it('round-trips every param through the URL', () => {
-    const search = { c: 7, q: 'blue', size: 3, hue: 'green', mode: 'light' } as const
-    const query = toHubQuery(search)
-    expect(Object.keys(query)).toEqual(['c', 'q', 'size', 'hue', 'mode'])
-    expect(validateHubSearch(query)).toEqual(search)
+  it('round-trips through validation', () => {
+    const search = { q: 'sienna', hue: 'orange', c: 241 } as const
+    expect(validateHubSearch(toHubQuery(search) as Record<string, string>)).toEqual(search)
   })
 })

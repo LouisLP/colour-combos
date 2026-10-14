@@ -1,7 +1,6 @@
 # 1. Light/dark and combo theming semantics
 
-- **Status**: Accepted; §1 and the two-rendering framing of §5 superseded by
-  [ADR 0008](0008-combo-owned-mode.md)
+- **Status**: Superseded by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-07-22
 - **Ticket**: [Light/dark & combo theming semantics](https://github.com/LouisLP/colour-combos/issues/3)
 - **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)

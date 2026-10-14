@@ -1,6 +1,6 @@
 # 14. Faster browse — compact list, richer filters, keyboard
 
-- **Status**: Accepted
+- **Status**: Superseded by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-10-14
 - **Ticket**: [T5: Faster browse — compact view, richer search, keyboard nav](https://github.com/LouisLP/colour-combos/issues/46)
 - **Map**: [Vue rewrite, exportable scale library & docs UI](https://github.com/LouisLP/colour-combos/issues/41)

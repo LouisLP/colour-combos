@@ -1,39 +1,33 @@
 # Context
 
 A browser for Sanzo Wada's *A Dictionary of Color Combinations* (348 classic
-combos). Selecting a combo re-themes the entire site through a contrast-safe
-semantic design system.
+combos). Clicking a combo opens a dialog with its full tonal scale and
+copy-ready code; each combo is also an importable, contrast-safe design system.
+The site has one dark look of its own and never re-themes
+([ADR 0015](docs/adr/0015-playful-redesign-dialog-not-retheme.md)).
 
-Stack: Vue 3 (`<script setup>` SFCs, `vue-router`), Vite, TypeScript, Antfu
-ESLint config. See [ADR 0011](docs/adr/0011-vue-migration.md).
+Stack: Vue 3 (`<script setup>` SFCs, `vue-router`), Reka UI (dialog, tabs),
+Vite, TypeScript, Antfu ESLint config. See [ADR 0011](docs/adr/0011-vue-migration.md).
 
 ## Glossary
 
 **Combo** — one of the 348 classic Wada combinations: an ordered set of 2–4
-colours. The unit of selection, sharing, and favouriting. "Seasons" and other
+colours. The unit of browsing, sharing and export. "Seasons" and other
 non-classic Wada sets are out of scope.
 
 **Colour** — a single entry within a combo, carrying its hex, RGB and LAB values
 from the source data. A colour belongs to a combo; the same physical pigment
 appearing in two combos is two colours.
 
-**Selected combo** — the one combo currently theming the site. Exactly one is
-always selected; a bare URL resolves to a random one. Distinct from a
-*favourited* combo, of which there may be many.
+**Open combo** — the combo whose details dialog is showing, named by `?c=`. At
+most one; none on a bare URL. Opening is a navigation, so Back closes it and a
+link reopens it. See [ADR 0015](docs/adr/0015-playful-redesign-dialog-not-retheme.md).
 
-**Mode** — light or dark. A pure function of the selected combo, not a user
-control: the combo renders light when its colours average lighter than neutral
-mid-grey (mean OKLab L ≥ 0.60), dark otherwise. One combo → one canonical
-rendering; there is no toggle and no `prefers-color-scheme` default. See
-[ADR 0008](docs/adr/0008-combo-owned-mode.md), superseding
-[ADR 0001](docs/adr/0001-light-dark-and-combo-theming-semantics.md) §1.
-
-**Favourite** — a combo the visitor has starred. Stored browser-locally as a
-bare numeric Wada id, never a copy of the combo's colours; there may be many, and
-favouriting is independent of selection. Note the identifier in code and in the
-URL is spelled `favorites` (the `/favorites` route, the
-`colour-combos:favorites` storage key). See
-[ADR 0003](docs/adr/0003-favorites-persistence.md).
+**Mode** — light or dark. A property of a combo's *scale*, not of the site:
+each scale exports both, with its *canonical* mode marked — light when its
+colours average lighter than neutral mid-grey (mean OKLab L ≥ 0.60), dark
+otherwise. See [ADR 0008](docs/adr/0008-combo-owned-mode.md). The site itself is
+dark only.
 
 **Role** — a semantic slot the design system renders from (canvas, surface,
 ink, accent, on-accent, border, …). Roles are what components reference; they
@@ -49,26 +43,12 @@ assignment.
 **Hue source** — the combo colour whose hue tints the derived near-neutral
 canvas and surfaces. Its chroma is heavily reduced; it is not shown raw.
 
-**Accent** — the combo colour used at full strength for buttons, links, borders,
-focus rings and now the chrome (header rule, active-route underline, the identity
-band's eyebrow), lightness-clamped where necessary to clear AA. ADR 0006 §4 once
-reserved it for *interactive state* only; [ADR 0009](docs/adr/0009-bolder-combo-colour-across-chrome.md)
-spreads it across the chrome to make the selected combo obvious at a glance.
-Identity is now disambiguated by the neutral marker, not accent scarcity — the
-selected combo is marked in `--ink`, not `--accent` (ADR 0009 §4).
+**Accent** — the combo colour used at full strength for the scale's buttons,
+links, borders and focus rings, lightness-clamped where necessary to clear AA.
 
 **Raw vs role use** — showing a colour *as itself* (swatch, hex readout) uses
 the exact Wada value and is never altered; using it *as a role* permits
 lightness adjustment with hue and chroma preserved.
-
-**Token baseline** — the achromatic zero-chroma fallback values every role
-carries before hydration, and when a URL names a combo that doesn't exist.
-
-**Palette** — the concrete custom-property values one (combo, mode) pair
-derives to. Never stored: a pure function of the URL — the URL fixes the combo,
-and the combo fixes the mode (see **Mode**) — memoised in the adapter and
-rendered as a `<style>` element. See
-[ADR 0005](docs/adr/0005-app-state-architecture.md).
 
 **Scale** — the complete exported value of one combo: a tonal layer and a
 semantic layer. The library's public unit, and a pure function of the combo id.
@@ -89,43 +69,23 @@ colour's hex, so a colour has the same ramp and anchor in every combo.
 
 **Semantic layer** — the roles (canvas, ink, accent, …) exported for both modes,
 with the combo's canonical mode marked. Exact adapter values, not references to
-steps; the site's re-theming is a live preview of it.
+steps.
 
 **Emitter** — a pure function from a scale to one export format's text (CSS,
 Tailwind, SCSS, design tokens, TS/JS). The single source of that text: the
-package's files and the site's code blocks both come from it. See
+package's files and the dialog's code blocks both come from it. See
 [ADR 0013](docs/adr/0013-export-formats-and-package.md).
 
-**Module store** — a module-level singleton owning exactly one fact, held in a
-`shallowRef` and read through a composable ([ADR 0011](docs/adr/0011-vue-migration.md)).
-There are three: favourites, density and colour format. The app ships no provide/inject and no
-Pinia. (Mode was a store until it became combo-derived —
-[ADR 0008](docs/adr/0008-combo-owned-mode.md).)
-
-**Density** — how the results are laid out: the framed card *grid* or the
-compact *list*, one ruled row per combo with hexes inline. A per-viewer
-preference kept in localStorage, never in the URL, so a shared link opens in
-the recipient's layout. See [ADR 0014](docs/adr/0014-faster-browse.md).
-
-**Colour format** — the notation the combo page spells a value in: hex,
-`oklch()` or `rgb()`. Applies to the scale chips, the role values and the
-code blocks whose emitter takes a format (CSS, Tailwind, SCSS); the package
-itself ships hex. Per viewer, in localStorage, never in the URL, like
 **Density**.
 
-**Combo page** — `/combo/:id`: one combo's raw swatches, full scale, semantic
-roles previewed in both modes, and code blocks that are emitter output byte for
-byte. The path names the combo; there is no `c` there. See
-[ADR 0004](docs/adr/0004-routing-and-url-state.md) §10.
+**Details dialog** — a Reka UI dialog over the grid: one combo's raw swatches,
+full scale and code blocks that are emitter output byte for byte. Every value is
+hex and one click from the clipboard.
 
 **Hue family** — one of red, orange, yellow, green, blue, purple or neutral,
 assigned to each colour by its OKLCH hue (neutral below the hue-source chroma
 floor). A combo is *in* a family when any of its colours is. Filterable via
-`?hue=`, alongside `?mode=` for the combo's canonical mode.
-
-**Roving focus** — moving keyboard focus between results with `j`/`k`, the
-arrows, Home and End, landing on each result's selection link. An extra lane
-on top of normal Tab order, not a replacement for it.
+`?hue=`, alongside the `?q=` search.
 
 **Drift budget** — the lightness a role colour is permitted to move to clear its
 contrast floor. Hue and chroma are held; only lightness pays. Bounded at ΔL 0.36
@@ -151,3 +111,4 @@ the surface it happens to sit on in one component.
 - [ADR 0012 — Combo scale model](docs/adr/0012-combo-scale-model.md)
 - [ADR 0013 — Export formats and the importable package](docs/adr/0013-export-formats-and-package.md)
 - [ADR 0014 — Faster browse: compact list, richer filters, keyboard](docs/adr/0014-faster-browse.md)
+- [ADR 0015 — Playful redesign: one dark scheme, a details dialog, no favourites](docs/adr/0015-playful-redesign-dialog-not-retheme.md)

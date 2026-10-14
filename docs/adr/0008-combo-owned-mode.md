@@ -1,6 +1,6 @@
 # 8. Combo-owned light/dark mode
 
-- **Status**: Accepted
+- **Status**: Superseded by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-07-23
 - **Ticket**: [T1: Retire the light/dark toggle — the combo drives mode](https://github.com/LouisLP/colour-combos/issues/33)
 - **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)

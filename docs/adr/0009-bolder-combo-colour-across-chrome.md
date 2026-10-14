@@ -1,6 +1,6 @@
 # 9. Bolder combo colour across the chrome
 
-- **Status**: Accepted
+- **Status**: Superseded by [ADR 0015](0015-playful-redesign-dialog-not-retheme.md)
 - **Date**: 2026-07-23
 - **Ticket**: [T2: Bolder combo colour across the chrome](https://github.com/LouisLP/colour-combos/issues/34)
 - **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)

@@ -8,7 +8,7 @@
     <title>Colour Combos — Sanzo Wada's A Dictionary of Color Combinations</title>
     <meta
       name="description"
-      content="Browse all 348 colour combinations from Sanzo Wada's 1933 A Dictionary of Color Combinations. Pick one and it re-themes the whole site, contrast-safe in light and dark."
+      content="Browse all 348 colour combinations from Sanzo Wada's 1933 A Dictionary of Color Combinations, with a full tonal scale and copy-ready code for each."
     />
 
     <!--
@@ -21,18 +21,18 @@
     <meta property="og:title" content="Colour Combos" />
     <meta
       property="og:description"
-      content="All 348 of Sanzo Wada's colour combinations. Pick one and it re-themes the whole site."
+      content="All 348 of Sanzo Wada's colour combinations, each with a tonal scale and copy-ready code."
     />
     <meta property="og:url" content="https://louislp.github.io/colour-combos/" />
     <meta name="twitter:card" content="summary" />
-    <!--
-      No mode-priming script: mode is combo-owned (ADR 0008), and the bare `/`
-      picks its combo at random in JS, so no combo — and no mode — is knowable
-      before hydration. The pre-hydration frame is the achromatic token baseline
-      (`index.css`), which reads fine under the `color-scheme: light dark`
-      fallback until `ThemeStyle` renders the combo's chosen scheme on the
-      app's first render.
-    -->
+    <meta name="theme-color" content="#16121d" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@400;500;700&display=swap"
+    />
   </head>
   <body>
     <div id="root"></div>

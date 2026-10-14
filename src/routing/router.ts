@@ -1,105 +1,37 @@
-import type { Router, RouteRecordRaw, RouterHistory } from 'vue-router'
+import type { Router, RouterHistory } from 'vue-router'
 import { createRouter } from 'vue-router'
-import HubLayout from '../components/HubLayout.vue'
-import BrowsePage from '../pages/BrowsePage.vue'
-import FavoritesPage from '../pages/FavoritesPage.vue'
-import { COMBO_ROUTE, comboPath, firstValue, resolveComboId } from './search'
+import HomePage from '../pages/HomePage.vue'
+import { firstValue, resolveComboId, toHubQuery, validateHubSearch } from './search'
 
 /**
- * The rejected `c` from a not-found link rides in history state rather than the
- * URL — it survives the `replaceState` but not a reload, which is right: it is a
- * transient explanation of what just happened, not a fact about the app
- * (ADR 0005 §7).
- */
-export const NOT_FOUND_STATE_KEY = 'notFoundCombo'
-
-/** A link from before the combo page had a path of its own (`?combo=42`). Redirected, never written. */
-const LEGACY_COMBO_PARAM = 'combo'
-
-/**
- * The layout owns both pages as children, so the search params are one contract
- * read off whichever route is current and nothing is dropped when navigating
- * between them (ADR 0004 §4).
- */
-const routes: RouteRecordRaw[] = [
-  {
-    path: '/',
-    component: HubLayout,
-    children: [
-      { path: '', component: BrowsePage },
-      { path: 'favorites', component: FavoritesPage },
-      // Lazy: browse is the landing page, and the combo page brings the scale
-      // engine and the emitters with it.
-      { path: 'combo/:id', name: COMBO_ROUTE, component: () => import('../pages/ComboPage.vue') },
-    ],
-  },
-]
-
-/**
- * A factory so a test can mount the real routes and guard on a memory history,
- * while `main.ts` hands it the browser's.
- * The history semantics in ADR 0004 §5 are a property of the routes and the
- * components together, so a test that rebuilt an approximation of this would be
- * proving them about code that is not the code.
+ * One page (ADR 0015). The dialog is a query param, not a route, so opening it
+ * never re-renders the grid behind it.
+ *
+ * The old paths still land somewhere sensible: `/combo/42` and `?combo=42` open
+ * No. 42's dialog, `/favorites` is the home page, since favourites are gone.
  */
 export function createHubRouter(history: RouterHistory): Router {
   const router = createRouter({
     history,
-    routes,
-    // Every navigation lands at the top, as TanStack's default `resetScroll`
-    // did — selecting a combo scrolls the re-themed identity band into view
-    // (ADR 0011).
-    scrollBehavior: () => ({ top: 0 }),
+    routes: [
+      { path: '/', component: HomePage },
+      {
+        path: '/combo/:id',
+        redirect: to => ({ path: '/', query: { ...to.query, c: firstValue(to.params.id) as string } }),
+      },
+      { path: '/:rest(.*)*', redirect: to => ({ path: '/', query: to.query }) },
+    ],
   })
 
+  // Rewrite `?combo=` and drop an invalid `c`, so the URL always says exactly
+  // what is on screen. `replace`, so none of it leaves a history entry.
   router.beforeEach((to) => {
-    // `?combo=42` → `/combo/42`, keeping every other param but `c`, which the
-    // path now supplies (ADR 0004 §10). An invalid id resolves on the next pass.
-    if (to.query[LEGACY_COMBO_PARAM] !== undefined) {
-      const { [LEGACY_COMBO_PARAM]: legacy, ...rest } = to.query
-      const raw = String(firstValue(legacy) ?? '')
-      // An empty `?combo=` names nothing: drop it and stay where we are.
-      if (raw === '')
-        return { path: to.path, query: rest, hash: to.hash, replace: true }
-      const { c: _, ...query } = rest
-      return { path: `/combo/${encodeURIComponent(raw)}`, query, hash: to.hash, replace: true }
-    }
-
-    if (to.name === COMBO_ROUTE) {
-      const raw = firstValue(to.params.id)
-      const { id, rejected } = resolveComboId(raw)
-      // The path names the combo, so a `c` alongside it could only contradict
-      // it. Dropped, as a bad id is replaced: no history entry either way.
-      if (raw === String(id) && to.query.c === undefined)
-        return
-      const { c: _, ...query } = to.query
-      return {
-        path: comboPath(id),
-        query,
-        hash: to.hash,
-        replace: true,
-        state: rejected === undefined ? undefined : { [NOT_FOUND_STATE_KEY]: rejected },
-      }
-    }
-
-    const raw = firstValue(to.query.c)
-    const { id, rejected } = resolveComboId(raw)
-
-    // The URL already names a valid combo in its canonical spelling — nothing
-    // to pin.
-    if (raw === String(id))
+    const { combo, c } = to.query
+    const raw = firstValue(combo ?? c)
+    if (combo === undefined && (c === undefined || String(resolveComboId(raw)) === raw))
       return
-
-    // Pin the resolved combo so the visit is reproducible and shareable from
-    // the first frame. `replace`, so resolution never leaves a history entry
-    // (ADR 0004 §5, §8). Idempotent: the redirected URL takes the branch above.
-    return {
-      path: to.path,
-      query: { ...to.query, c: String(id) },
-      hash: to.hash,
-      replace: true,
-      state: rejected === undefined ? undefined : { [NOT_FOUND_STATE_KEY]: rejected },
-    }
+    const search = validateHubSearch({ ...to.query, c: raw })
+    return { path: to.path, query: toHubQuery(search), hash: to.hash, replace: true }
   })
 
   return router
