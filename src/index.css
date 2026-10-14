@@ -192,6 +192,20 @@ h1 {
   white-space: nowrap;
 }
 
+/* A search match, from `MatchText` (ADR 0014 §2). No fill: a highlight lands on
+   `--surface` in a caption and on a raw Wada colour in a hex chip, and no one
+   background token is legible on both. Weight plus an underline in
+   `currentColor` inherit whatever contrast the text already has on either
+   backdrop (ADR 0007 §3). */
+.match {
+  background: none;
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.15em;
+}
+
 /* One switch for all of it (T4). Honours the OS setting: no re-theme fade, no
    entry animation, no pops — the site still works, just without the movement. */
 @media (prefers-reduced-motion: reduce) {

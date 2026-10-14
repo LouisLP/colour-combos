@@ -98,8 +98,23 @@ package's files and the site's code blocks both come from it. See
 
 **Module store** — a module-level singleton owning exactly one fact, held in a
 `shallowRef` and read through a composable ([ADR 0011](docs/adr/0011-vue-migration.md)).
-Favourites is now the only one; the app ships no provide/inject and no Pinia. (Mode was the second until it became combo-derived —
+There are two: favourites and density. The app ships no provide/inject and no
+Pinia. (Mode was a store until it became combo-derived —
 [ADR 0008](docs/adr/0008-combo-owned-mode.md).)
+
+**Density** — how the results are laid out: the framed card *grid* or the
+compact *list*, one ruled row per combo with hexes inline. A per-viewer
+preference kept in localStorage, never in the URL, so a shared link opens in
+the recipient's layout. See [ADR 0014](docs/adr/0014-faster-browse.md).
+
+**Hue family** — one of red, orange, yellow, green, blue, purple or neutral,
+assigned to each colour by its OKLCH hue (neutral below the hue-source chroma
+floor). A combo is *in* a family when any of its colours is. Filterable via
+`?hue=`, alongside `?mode=` for the combo's canonical mode.
+
+**Roving focus** — moving keyboard focus between results with `j`/`k`, the
+arrows, Home and End, landing on each result's selection link. An extra lane
+on top of normal Tab order, not a replacement for it.
 
 **Drift budget** — the lightness a role colour is permitted to move to clear its
 contrast floor. Hue and chroma are held; only lightness pays. Bounded at ΔL 0.36
@@ -124,3 +139,4 @@ the surface it happens to sit on in one component.
 - [ADR 0011 — Port the site to Vue 3](docs/adr/0011-vue-migration.md)
 - [ADR 0012 — Combo scale model](docs/adr/0012-combo-scale-model.md)
 - [ADR 0013 — Export formats and the importable package](docs/adr/0013-export-formats-and-package.md)
+- [ADR 0014 — Faster browse: compact list, richer filters, keyboard](docs/adr/0014-faster-browse.md)

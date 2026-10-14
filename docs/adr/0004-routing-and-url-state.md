@@ -67,6 +67,10 @@ added later, for free.
 Orthogonal params; nothing is dropped. This is the same route-agnostic param
 contract ADR 0003 §3 depends on.
 
+> [ADR 0014](0014-faster-browse.md) §3 adds `hue` and `mode` on the same terms:
+> validated, absent when unset, `push` on toggle, carried across routes. The
+> layout density deliberately stays *out* of the URL (ADR 0014 §1).
+
 ### 5. History semantics
 
 | Action | Behaviour |

@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import type { Combo, ComboColour } from '../data/combos'
-import { onBeforeUnmount, ref } from 'vue'
+import type { Combo } from '../data/combos'
+import { useTemplateRef } from 'vue'
 import { useIsFavorite } from '../composables/useFavorites'
 import { useHubSearch } from '../composables/useHubSearch'
 import { comboLabel } from '../data/combos'
 import { toHubQuery } from '../routing/search'
 import { toggle } from '../state/favorites'
+import { handleComboShortcut } from '../ui/comboShortcuts'
+import { ROVING_ATTR } from '../ui/keyboard'
+import CopyButton from './CopyButton.vue'
+import CopyIcon from './CopyIcon.vue'
+import { MatchNames } from './MatchText'
 import StarButton from './StarButton.vue'
 
 /**
@@ -20,6 +25,9 @@ import StarButton from './StarButton.vue'
  * and a per-swatch copy chip. They cannot nest inside the `<a>` that selects the
  * combo, so they are sibling overlays with a `--surface` backdrop that keeps them
  * legible over any raw Wada colour.
+ *
+ * The selection link is the card's roving-focus target, and `f` / `c` act on the
+ * card from anywhere inside it (ADR 0014 §4).
  */
 const props = defineProps<{
   combo: Combo
@@ -33,35 +41,17 @@ const search = useHubSearch()
 // other 347 (ADR 0005 §8).
 const favorited = useIsFavorite(() => props.combo.id)
 
-/**
- * Tracks which swatch was last copied so the chip can flip to a check, and holds
- * a matching announcement for the card's live region. The confirmation clears
- * itself after a moment; the timer is cancelled on re-copy so a fast series of
- * copies never leaves a stale check behind.
- */
-const copiedIndex = ref<number | null>(null)
-const announcement = ref('')
-let timer: ReturnType<typeof setTimeout> | undefined
+const chips = useTemplateRef<InstanceType<typeof CopyButton>[]>('chips')
 
-function copy(colour: ComboColour) {
-  // `writeText` can reject (denied permission, insecure context). A failed copy
-  // simply shows no confirmation rather than throwing into the render.
-  void navigator.clipboard?.writeText(colour.hex).then(() => {
-    copiedIndex.value = colour.index
-    announcement.value = `Copied ${colour.hex}`
-    clearTimeout(timer)
-    timer = setTimeout(() => {
-      copiedIndex.value = null
-      announcement.value = ''
-    }, 1400)
-  }, () => {})
+/** `c` copied the whole combo: light every swatch's chip, not just one. */
+function confirmAll() {
+  for (const chip of chips.value ?? [])
+    chip.confirm()
 }
-
-onBeforeUnmount(() => clearTimeout(timer))
 </script>
 
 <template>
-  <article class="combo-card" :class="{ 'is-selected': selected }">
+  <article class="combo-card" :class="{ 'is-selected': selected }" @keydown="handleComboShortcut($event, combo, confirmAll)">
     <div class="combo-media">
       <!--
         A link, not a button: selecting a combo *is* a navigation (ADR 0004 §1),
@@ -75,6 +65,7 @@ onBeforeUnmount(() => clearTimeout(timer))
         :to="{ query: toHubQuery({ ...search, c: combo.id }) }"
         class="combo-hit"
         :aria-current="selected ? 'true' : undefined"
+        v-bind="{ [ROVING_ATTR]: '' }"
       >
         <span class="sr-only">{{ `Theme this page with combination ${combo.id}` }}</span>
         <!--
@@ -99,20 +90,15 @@ onBeforeUnmount(() => clearTimeout(timer))
       -->
       <div class="combo-copy-layer">
         <span v-for="colour in combo.colours" :key="colour.index" class="combo-copy-cell">
-          <button
-            type="button"
+          <CopyButton
+            ref="chips"
+            v-slot="{ copied }"
             class="combo-copy"
-            :aria-label="copiedIndex === colour.index ? `Copied ${colour.hex}` : `Copy ${colour.name} ${colour.hex}`"
-            @click="copy(colour)"
+            :text="colour.hex"
+            :label="`Copy ${colour.name} ${colour.hex}`"
           >
-            <svg v-if="copiedIndex === colour.index" class="combo-copy-check" viewBox="0 0 24 24" aria-hidden="true" width="14" height="14">
-              <path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-            <svg v-else viewBox="0 0 24 24" aria-hidden="true" width="14" height="14">
-              <rect x="8.5" y="8.5" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7" />
-              <path d="M15.5 5.5H6.5a2 2 0 0 0-2 2v9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-            </svg>
-          </button>
+            <CopyIcon :copied="copied" />
+          </CopyButton>
         </span>
       </div>
 
@@ -124,14 +110,8 @@ onBeforeUnmount(() => clearTimeout(timer))
     <div class="combo-caption">
       <!-- A Wada combo carries no name of its own — only its colours do. -->
       <b>{{ `No. ${combo.id}` }}</b>
-      <span>{{ comboLabel(combo) }}</span>
+      <span :title="comboLabel(combo)"><MatchNames :combo="combo" :q="search.q" /></span>
     </div>
-
-    <!-- One polite region per card announces the copy for screen readers, since
-         the confirmation is otherwise a silent icon swap. -->
-    <p class="sr-only" role="status" aria-live="polite">
-      {{ announcement }}
-    </p>
 
     <!--
       Marked in `--ink`, not `--accent`: the accent is already on the chips,
@@ -189,10 +169,29 @@ onBeforeUnmount(() => clearTimeout(timer))
 }
 
 .combo-hit {
+  position: relative;
   display: block;
   inline-size: 100%;
   color: inherit;
   text-decoration: none;
+}
+
+/* Roving focus lands here (ADR 0014 §4), and the plain ring fails twice: the
+   card's `overflow: hidden` clips it, and drawn inside it is `--accent` over raw
+   Wada colour — invisible on any swatch near the accent's hue. So the ring is
+   an overlay inside the swatches, `--accent` on a `--surface` band, which holds
+   3:1 against the band by contract whatever colour lies beneath (ADR 0007 §3). */
+.combo-hit:focus-visible {
+  outline: none;
+}
+
+.combo-hit:focus-visible::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow:
+    inset 0 0 0 3px var(--accent),
+    inset 0 0 0 5px var(--surface);
 }
 
 /* Shorter than the original 6.5rem so the card is visibly tighter (ADR 0007). */
@@ -254,18 +253,6 @@ onBeforeUnmount(() => clearTimeout(timer))
   transform: scale(0.9);
 }
 
-/* The check only ever mounts after a click, so animating it on mount *is* the
-   confirmation — a small spring as the tick lands, replayed on every copy. */
-.combo-copy-check {
-  animation: copy-pop var(--dur) var(--ease);
-}
-
-@keyframes copy-pop {
-  0% { transform: scale(0.4); opacity: 0; }
-  60% { transform: scale(1.15); opacity: 1; }
-  100% { transform: scale(1); }
-}
-
 @media (hover: hover) {
   .combo-media:hover .combo-copy {
     opacity: 1;
@@ -279,7 +266,10 @@ onBeforeUnmount(() => clearTimeout(timer))
   }
 }
 
-.combo-copy:focus-visible {
+/* A confirmed chip stays visible for its moment, so `c` — which lights every
+   chip at once — is seen even with the pointer elsewhere (ADR 0014 §5). */
+.combo-copy:focus-visible,
+.combo-copy.is-copied {
   opacity: 1;
 }
 
