@@ -38,6 +38,15 @@ jobs:
       - name: Build
         run: pnpm build
 
+      # The importable package (T4): every combo in every format, then packed,
+      # installed into an empty project and imported by name — the `exports`
+      # map only fails for a consumer, never in this repo's own tests.
+      - name: Build the library
+        run: pnpm build:lib
+
+      - name: Smoke-test the packed library
+        run: pnpm smoke:lib
+
       # `light-dark()` carries the whole neutral ramp across modes. Lightning
       # CSS downlevels it for older targets, and its polyfill keys off
       # `prefers-color-scheme` alone, which breaks the mode override in built

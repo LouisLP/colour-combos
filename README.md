@@ -23,11 +23,33 @@ pnpm dev
 | `pnpm test` | unit tests plus the AA and scale-promise sweeps |
 | `pnpm lint` | |
 | `pnpm build` | type-check and build to `dist/` |
+| `pnpm build:lib` | build the importable package to `dist-lib/` |
+| `pnpm smoke:lib` | pack, install and import the built package |
 | `pnpm preview` | serve the build at `/colour-combos/` |
 
 The React prototypes in `prototypes/` are kept because their ADRs cite them.
 They are frozen as React and run from commit `b057a76`; see
 `prototypes/README.md`.
+
+## The package
+
+Every combo is also an importable scale, in CSS, Tailwind v4, SCSS, W3C design
+tokens and typed JS/TS: `colour-combos/42.css`, `colour-combos/42`, and so on.
+Usage per format is in [`src/lib/README.md`](src/lib/README.md), which ships
+as the package's README.
+
+`pnpm build:lib` writes the package to `dist-lib/`: tsdown bundles the main
+entry from `src/lib/index.ts`, then `scripts/build-lib.ts` generates every combo
+in every format from that build, plus the `package.json` with the `exports`
+map. Nothing in `dist-lib/` is committed. CI builds it and runs the smoke test
+on every push.
+
+Publishing is a manual step: bump `VERSION` in `scripts/build-lib.ts`, then
+
+```sh
+pnpm build:lib && pnpm smoke:lib
+npm publish dist-lib
+```
 
 ## Deployment
 
