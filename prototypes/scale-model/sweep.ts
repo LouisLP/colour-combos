@@ -1,5 +1,5 @@
 // PROTOTYPE — headless sweep of the three models over all 348 combos.
-// Run: pnpm prototype:scale:sweep
+// Run: pnpm dlx tsx prototypes/scale-model/sweep.ts
 import type { CurveKey, ModelKey, Ramp } from './scale'
 import { COMBOS } from '../../src/data/combos'
 import { anchorOffset, setEnds, buildScale, checkPromise, CURVE_NAMES, hueDrift, MODEL_NAMES, monotonic, PROMISES, STEPS } from './scale'

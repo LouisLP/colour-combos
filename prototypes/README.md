@@ -80,9 +80,13 @@ wcag curve, ends Y 0.98 / 0.001: the exact hex replaces its nearest step, and
 steps are placed by luminance so grade-gap contrast promises hold catalogue-wide.
 
 ```bash
-pnpm prototype:scale         # http://localhost:5173/colour-combos/prototypes/scale-model/
-pnpm prototype:scale:sweep   # headless: 3 models × 2 curves × 348 combos
+pnpm dlx tsx prototypes/scale-model/sweep.ts   # headless: 3 models × 2 curves × 348 combos
+pnpm exec vite --open /colour-combos/prototypes/scale-model/   # the page, React-era checkouts only
 ```
+
+React, like the other prototypes here. The page runs only on a checkout from
+before the Vue port (ADR 0011 §8). The headless sweep has no React dependency
+and runs on any checkout where `src/theme/` still exists.
 
 Three tonal models (`?model=A|B|C`, `←`/`→`) × two lightness curves
 (`?curve=wcag|oklab`, `c`) over any combo (`?combo=`, `↑`/`↓`). The wcag

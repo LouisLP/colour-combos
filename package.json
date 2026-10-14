@@ -13,9 +13,7 @@
     "prototype:browse": "vite --open /prototypes/browse-grid/",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc -b",
-    "prototype:scale": "vite --open /prototypes/scale-model/",
-    "prototype:scale:sweep": "pnpm dlx tsx prototypes/scale-model/sweep.ts"
+    "typecheck": "tsc -b"
   },
   "dependencies": {
     "@tanstack/history": "^1.162.0",
