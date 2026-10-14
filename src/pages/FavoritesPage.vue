@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import ClearFilters from '../components/ClearFilters.vue'
-import ComboGrid from '../components/ComboGrid.vue'
+import ComboResults from '../components/ComboResults.vue'
 import FilterBar from '../components/FilterBar.vue'
 import { useFavorites } from '../composables/useFavorites'
 import { useHubSearch } from '../composables/useHubSearch'
@@ -12,11 +12,11 @@ import { carryHubSearch, toHubQuery } from '../routing/search'
 /**
  * The starred combos, in insertion order — newest first (ADR 0003 §3).
  *
- * The route's only job is to supply a different source list: the same grid as
+ * The route's only job is to supply a different source list: the same results as
  * browse, the same `c`/`q`/`size` contract, no duplicated UI. Ordering is the
  * one thing it differs from browse on, and that is deliberate.
  *
- * `q` and `size` narrow this list through the same `filterCombos` call browse
+ * `q`, `size`, `hue` and `mode` narrow this list through the same `filterCombos` call browse
  * makes, over params every link carried across the navigation. A
  * `/favorites?q=blue` link therefore behaves exactly as `/?q=blue` does, with
  * no route-specific handling on either side.
@@ -26,7 +26,7 @@ const search = useHubSearch()
 
 // Safe by construction: the store drops ids the catalogue does not contain.
 const combos = computed(() => ids.value.map(requireCombo))
-const shown = computed(() => filterCombos(combos.value, { q: search.value.q, size: search.value.size }))
+const shown = computed(() => filterCombos(combos.value, search.value))
 </script>
 
 <template>
@@ -45,7 +45,7 @@ const shown = computed(() => filterCombos(combos.value, { q: search.value.q, siz
          all is a prompt to go and star some, while a filter that excludes all
          of them is a prompt to widen the filter. Telling someone with 40
          favourites that they have none would read as the feature being broken. -->
-    <ComboGrid :combos="shown">
+    <ComboResults :combos="shown">
       <template #empty>
         <template v-if="combos.length === 0">
           <p class="combo-empty-heading">
@@ -64,6 +64,6 @@ const shown = computed(() => filterCombos(combos.value, { q: search.value.q, siz
           <ClearFilters />
         </template>
       </template>
-    </ComboGrid>
+    </ComboResults>
   </section>
 </template>

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
+import { comboMode } from '../theme/adapt'
 import { COMBO_COUNT, COMBO_SIZES, COMBOS, requireCombo } from './combos'
-import { countBySize, filterCombos } from './filter'
+import { countByHue, countByMode, countBySize, filterCombos, highlight } from './filter'
+import { comboHasHue } from './hue'
 
 const ids = (combos: { id: number }[]) => combos.map(combo => combo.id)
 
@@ -64,6 +66,27 @@ describe('filterCombos', () => {
     expect(filterCombos(COMBOS, { q: 'zzzznotacolour' })).toEqual([])
   })
 
+  it('filters by hue family', () => {
+    const blues = filterCombos(COMBOS, { hue: 'blue' })
+    expect(blues.length).toBeGreaterThan(0)
+    expect(blues.length).toBeLessThan(COMBO_COUNT)
+    expect(blues.every(combo => comboHasHue(combo, 'blue'))).toBe(true)
+  })
+
+  it('filters by the combo\'s canonical mode (ADR 0008)', () => {
+    const dark = filterCombos(COMBOS, { mode: 'dark' })
+    expect(dark.length).toBeGreaterThan(0)
+    expect(dark.every(combo => comboMode(combo) === 'dark')).toBe(true)
+    expect(dark.length + filterCombos(COMBOS, { mode: 'light' }).length).toBe(COMBO_COUNT)
+  })
+
+  it('applies every param together', () => {
+    const all = filterCombos(COMBOS, { q: 'red', size: 3, hue: 'blue', mode: 'light' })
+    const stepwise = filterCombos(filterCombos(filterCombos(filterCombos(COMBOS, { q: 'red' }), { size: 3 }), { hue: 'blue' }), { mode: 'light' })
+    expect(all.length).toBeGreaterThan(0)
+    expect(ids(all)).toEqual(ids(stepwise))
+  })
+
   it('filters any source list, which is what /favorites reuses', () => {
     const source = [requireCombo(12), requireCombo(13)]
     expect(ids(filterCombos(source, { q: '12' }))).toEqual([12])
@@ -85,5 +108,53 @@ describe('countBySize', () => {
   // catalogue rather than collapsing to the current selection (ADR 0006 §7).
   it('reports every size as zero for an empty source', () => {
     expect(countBySize([])).toEqual({ 2: 0, 3: 0, 4: 0 })
+  })
+})
+
+describe('countByHue / countByMode', () => {
+  it('counts a combo once under every family it touches', () => {
+    const counts = countByHue([requireCombo(1)]) // English Red · Cerulian Blue
+    expect(counts.orange).toBe(1)
+    expect(counts.blue).toBe(1)
+    expect(counts.green).toBe(0)
+  })
+
+  it('splits the catalogue between the two modes', () => {
+    const { light, dark } = countByMode(COMBOS)
+    expect(light + dark).toBe(COMBO_COUNT)
+  })
+})
+
+describe('highlight', () => {
+  const lit = (segments: { text: string, match: boolean }[]) =>
+    segments.filter(segment => segment.match).map(segment => segment.text)
+
+  it('marks every occurrence in a name, keeping the original case', () => {
+    expect(highlight('Blue Violet Blue', 'name', 'blue')).toEqual([
+      { text: 'Blue', match: true },
+      { text: ' Violet ', match: false },
+      { text: 'Blue', match: true },
+    ])
+  })
+
+  it('leaves text alone with no query', () => {
+    expect(highlight('Cerulian Blue', 'name', undefined)).toEqual([{ text: 'Cerulian Blue', match: false }])
+    expect(highlight('Cerulian Blue', 'name', '  ')).toEqual([{ text: 'Cerulian Blue', match: false }])
+  })
+
+  // It must agree with the matcher, or a result would light up for a reason
+  // that is not why it is there.
+  it('lights hexes only for a hashed needle', () => {
+    expect(lit(highlight('#d96629', 'hex', '#D96'))).toEqual(['#d96'])
+    expect(lit(highlight('Dark d96', 'name', '#d96'))).toEqual([])
+  })
+
+  it('lights names and unprefixed hexes for a word', () => {
+    expect(lit(highlight('#0093a5', 'hex', '93a'))).toEqual(['93a'])
+    expect(lit(highlight('Raw Sienna', 'name', 'sien'))).toEqual(['Sien'])
+  })
+
+  it('lights nothing for a combo number', () => {
+    expect(lit(highlight('#121212', 'hex', '12'))).toEqual([])
   })
 })

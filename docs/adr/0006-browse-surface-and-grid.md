@@ -1,6 +1,8 @@
 # 6. Browse surface and combo card
 
-- **Status**: Accepted
+- **Status**: Accepted; §3 (no hex on the face) relaxed for the compact list,
+  §7 extended with hue/mode filters and highlighting, by
+  [ADR 0014](0014-faster-browse.md)
 - **Date**: 2026-07-22
 - **Ticket**: [Browse & grid UI](https://github.com/LouisLP/colour-combos/issues/13)
 - **Map**: [Wada-Sanzo colour-combinations hub](https://github.com/LouisLP/colour-combos/issues/1)
@@ -62,6 +64,10 @@ Equal split, full bleed, no rounding on the swatch block itself. The card's
 between the colours.
 
 ### 3. There is no combo name — the label is `No. N` plus its colour names
+
+> **Still true of the card.** [ADR 0014](0014-faster-browse.md) §1 adds a
+> second density, the compact list, which *does* print each hex on its colour:
+> a row has the width a card lacks.
 
 Worth stating plainly because the issue asked and the schema answers: a Wada
 combo carries **no name of its own**. Only its colours do. So the caption is
@@ -139,6 +145,10 @@ thumb drifts as skipped content is rendered for real. Accepted — a slightly
 elastic scrollbar is a smaller sin than a stuttering search.
 
 ### 7. Filters and search
+
+> **Extended by [ADR 0014](0014-faster-browse.md) §2–4**: hue-family and mode
+> chips join size, matches are highlighted, and the bar gains a density toggle
+> and keyboard shortcuts. Only its first row stays sticky now.
 
 A sticky bar directly under the header, holding the search field, the size
 chips, and a live count. Chips carry their **facet counts** — `Any (348)`,

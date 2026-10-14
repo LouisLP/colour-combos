@@ -7,7 +7,9 @@ import type { Combo, ComboColour } from '../data/combos'
 import type { Oklch } from './colour'
 import { clampToContrast, hexToOklch, oklchToHex, onColour } from './colour'
 
-export type Mode = 'light' | 'dark'
+/** Both renderings a combo can own, in the order the mode filter lists them. */
+export const MODES = ['light', 'dark'] as const
+export type Mode = typeof MODES[number]
 
 /**
  * The lightness a combo must average, in OKLab L, to render light rather than

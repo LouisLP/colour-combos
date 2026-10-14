@@ -1,10 +1,14 @@
 import type { LocationQueryRaw } from 'vue-router'
 import type { ComboSize } from '../data/combos'
+import type { HueFamily } from '../data/hue'
+import type { Mode } from '../theme/adapt'
 import { COMBO_COUNT, COMBO_SIZES } from '../data/combos'
+import { HUE_FAMILIES } from '../data/hue'
+import { MODES } from '../theme/adapt'
 
 /**
  * The search params every route carries. They are route-agnostic on purpose:
- * `c`, `q` and `size` all survive navigation between `/` and `/favorites`
+ * `c`, `q`, `size`, `hue` and `mode` all survive navigation between `/` and `/favorites`
  * (ADR 0004 §3–4), which is what lets `/favorites` reuse the browse grid
  * unchanged (ADR 0003 §3).
  */
@@ -15,6 +19,10 @@ export interface HubSearch {
   q?: string
   /** Size filter. Absent means no filter, not "all". */
   size?: ComboSize
+  /** Hue-family filter (ADR 0014 §3). Absent means no filter. */
+  hue?: HueFamily
+  /** Canonical-mode filter (ADR 0008, ADR 0014 §3). Absent means no filter. */
+  mode?: Mode
 }
 
 /**
@@ -66,6 +74,14 @@ function resolveSize(raw: unknown): ComboSize | undefined {
   return COMBO_SIZES.find(size => size === n)
 }
 
+/**
+ * One of a closed set of words, or nothing. A hand-edited `?hue=teal` degrades
+ * to no filter rather than to an empty grid, the same stance `size` takes.
+ */
+function resolveOneOf<T extends string>(values: readonly T[], raw: unknown): T | undefined {
+  return values.find(value => value === raw)
+}
+
 function resolveQuery(raw: unknown): string | undefined {
   return typeof raw === 'string' && raw !== '' ? raw : undefined
 }
@@ -88,19 +104,23 @@ export function validateHubSearch(input: Record<string, unknown>): HubSearch {
     c: resolveComboId(firstValue(input.c)).id,
     q: resolveQuery(firstValue(input.q)),
     size: resolveSize(firstValue(input.size)),
+    hue: resolveOneOf(HUE_FAMILIES, firstValue(input.hue)),
+    mode: resolveOneOf(MODES, firstValue(input.mode)),
   }
 }
 
 /**
  * The query a `HubSearch` serialises to. Absent params are left out rather than
  * written empty, to keep the URL clean, and the order is fixed so a shared link
- * always reads `?c=…&q=…&size=…`.
+ * always reads `?c=…&q=…&size=…&hue=…&mode=…`.
  */
 export function toHubQuery(search: HubSearch): LocationQueryRaw {
   return {
     c: String(search.c),
     ...(search.q !== undefined && { q: search.q }),
     ...(search.size !== undefined && { size: String(search.size) }),
+    ...(search.hue !== undefined && { hue: search.hue }),
+    ...(search.mode !== undefined && { mode: search.mode }),
   }
 }
 
@@ -117,5 +137,7 @@ export function carryHubSearch(prev: Partial<HubSearch>): HubSearch {
     c: resolveComboId(prev.c).id,
     q: prev.q,
     size: prev.size,
+    hue: prev.hue,
+    mode: prev.mode,
   }
 }

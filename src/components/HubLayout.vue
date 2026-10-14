@@ -3,6 +3,7 @@ import { useHubSearch } from '../composables/useHubSearch'
 import { carryHubSearch, toHubQuery } from '../routing/search'
 import ComboIdentity from './ComboIdentity.vue'
 import FavoritesLink from './FavoritesLink.vue'
+import LiveAnnouncer from './LiveAnnouncer.vue'
 import NotFoundNotice from './NotFoundNotice.vue'
 import SiteFooter from './SiteFooter.vue'
 import ThemeStyle from './ThemeStyle'
@@ -49,6 +50,9 @@ const search = useHubSearch()
     <RouterView />
   </main>
   <SiteFooter />
+  <!-- The one live region: copies and stars made from the keyboard speak here
+       (ADR 0014 §5). -->
+  <LiveAnnouncer />
 </template>
 
 <style scoped>

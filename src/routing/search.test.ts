@@ -59,11 +59,26 @@ describe('validateHubSearch', () => {
     expect(validateHubSearch({ c: '1', size: '5' }).size).toBeUndefined()
     expect(validateHubSearch({ c: '1', size: 'big' }).size).toBeUndefined()
   })
+
+  // A hand-edited `?hue=teal` degrades to no filter rather than to an empty
+  // grid, the same stance `size` takes.
+  it('accepts only known hue families and modes', () => {
+    expect(validateHubSearch({ c: '1', hue: 'blue', mode: 'dark' })).toMatchObject({ hue: 'blue', mode: 'dark' })
+    expect(validateHubSearch({ c: '1', hue: 'teal', mode: 'dim' })).toMatchObject({ hue: undefined, mode: undefined })
+    expect(validateHubSearch({ c: '1', hue: 'Blue' }).hue).toBeUndefined()
+  })
 })
 
 describe('toHubQuery', () => {
   it('writes c first and leaves absent params out', () => {
     expect(toHubQuery({ c: 7 })).toEqual({ c: '7' })
     expect(toHubQuery({ c: 7, q: 'blue', size: 3 })).toEqual({ c: '7', q: 'blue', size: '3' })
+  })
+
+  it('round-trips every param through the URL', () => {
+    const search = { c: 7, q: 'blue', size: 3, hue: 'green', mode: 'light' } as const
+    const query = toHubQuery(search)
+    expect(Object.keys(query)).toEqual(['c', 'q', 'size', 'hue', 'mode'])
+    expect(validateHubSearch(query)).toEqual(search)
   })
 })

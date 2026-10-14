@@ -56,3 +56,12 @@ export function requireCombo(id: number): Combo {
 export function comboLabel(combo: Combo): string {
   return combo.colours.map(colour => colour.name).join(' · ')
 }
+
+/**
+ * A combo's hexes as one clipboard string, in Wada's order, space-separated —
+ * what "copy all" and the `c` shortcut write (ADR 0014 §5). Space rather than
+ * newline so it pastes into a single field and still splits on whitespace.
+ */
+export function comboHexes(combo: Combo): string {
+  return combo.colours.map(colour => colour.hex).join(' ')
+}

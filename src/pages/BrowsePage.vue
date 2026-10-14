@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import ClearFilters from '../components/ClearFilters.vue'
-import ComboGrid from '../components/ComboGrid.vue'
+import ComboResults from '../components/ComboResults.vue'
 import FilterBar from '../components/FilterBar.vue'
 import { useHubSearch } from '../composables/useHubSearch'
 import { COMBO_COUNT, COMBOS } from '../data/combos'
 import { filterCombos } from '../data/filter'
 
 /**
- * The whole catalogue, narrowed by the URL's `q` and `size`.
+ * The whole catalogue, narrowed by the URL's `q`, `size`, `hue` and `mode`.
  *
  * The route supplies the source list and the grid renders whatever it is given
  * (ADR 0006 consequences), so `/favorites` narrows its own list through this
@@ -16,7 +16,7 @@ import { filterCombos } from '../data/filter'
  * route — the two pages differ only in the list they hand over.
  */
 const search = useHubSearch()
-const shown = computed(() => filterCombos(COMBOS, { q: search.value.q, size: search.value.size }))
+const shown = computed(() => filterCombos(COMBOS, search.value))
 </script>
 
 <template>
@@ -26,7 +26,7 @@ const shown = computed(() => filterCombos(COMBOS, { q: search.value.q, size: sea
       {{ `Browse all ${COMBO_COUNT} combinations` }}
     </h1>
     <FilterBar :source="COMBOS" :shown="shown.length" />
-    <ComboGrid :combos="shown">
+    <ComboResults :combos="shown">
       <template #empty>
         <p class="combo-empty-heading">
           No combinations match that.
@@ -34,6 +34,6 @@ const shown = computed(() => filterCombos(COMBOS, { q: search.value.q, size: sea
         <p>Search covers colour names, hex values and the combination number.</p>
         <ClearFilters />
       </template>
-    </ComboGrid>
+    </ComboResults>
   </section>
 </template>
