@@ -52,6 +52,9 @@ function oklchToRgbRaw({ l: L, c, h }: Oklch): [number, number, number] {
   ]
 }
 
+/** Below this OKLCh chroma a colour's hue is noise: too grey to tint or classify by. */
+export const HUE_SOURCE_MIN_CHROMA = 0.04
+
 const inGamut = (rgb: number[]) => rgb.every(x => x >= -0.0005 && x <= 1.0005)
 
 /** Reduce chroma (hue + lightness held) until the colour fits sRGB. */

@@ -8,8 +8,9 @@
 import type { Combo } from '../data/combos'
 import type { Mode } from '../theme/adapt'
 import type { Oklch } from '../theme/colour'
-import { adapt, assignRoles, comboMode, HUE_SOURCE_MIN_CHROMA } from '../theme/adapt'
-import { hexToOklch, hexToRgb, luminance, oklchToHex, oklchToRgb } from '../theme/colour'
+import type { AccentRoleNames, BaseRoleName } from '../theme/roles'
+import { adapt, assignRoles, comboMode } from '../theme/adapt'
+import { hexToOklch, hexToRgb, HUE_SOURCE_MIN_CHROMA, luminance, oklchToHex, oklchToRgb } from '../theme/colour'
 
 export const STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const
 export type Step = typeof STEPS[number]
@@ -42,15 +43,10 @@ export interface NeutralRamp {
 }
 
 /** Always filled: every combo has at least two colours. */
-export type CoreRoleName
-  = | 'canvas' | 'surface' | 'surface-muted'
-    | 'ink' | 'ink-muted'
-    | 'border' | 'border-strong'
-    | 'accent' | 'accent-text' | 'on-accent'
-    | 'accent-2' | 'accent-2-text' | 'on-accent-2'
+export type CoreRoleName = BaseRoleName | AccentRoleNames<'accent' | 'accent-2'>
 
 /** Filled only for combos of three or more colours. */
-export type OptionalRoleName = 'accent-3' | 'accent-3-text' | 'on-accent-3'
+export type OptionalRoleName = AccentRoleNames<'accent-3'>
 
 export type RoleName = CoreRoleName | OptionalRoleName
 

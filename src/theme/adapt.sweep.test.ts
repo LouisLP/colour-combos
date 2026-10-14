@@ -7,6 +7,7 @@ import { COMBOS } from '../data/combos'
 import { adapt, comboMode } from './adapt'
 import { auditPalette } from './audit'
 import { contrast, hexToOklch } from './colour'
+import { accentName, contrastPairs, MAX_ACCENTS } from './roles'
 
 /** Every combo in its canonical mode (ADR 0008). */
 const RENDERINGS = COMBOS.map((combo) => {
@@ -84,8 +85,9 @@ describe('drift budget — regression signal, not a gate', () => {
 describe('role assignment', () => {
   it('fills every accent slot the combo can support', () => {
     for (const { combo, palette } of RENDERINGS) {
-      expect(palette.accentColours).toHaveLength(Math.min(3, combo.colours.length))
-      expect(palette.roles.accent).toBeDefined()
+      const filled = Math.min(MAX_ACCENTS, combo.colours.length)
+      for (let rank = 0; rank <= MAX_ACCENTS; rank++)
+        expect(palette.roles[accentName(rank)] !== undefined, `#${combo.id} rank ${rank}`).toBe(rank < filled)
     }
   })
 
@@ -101,12 +103,15 @@ describe('role assignment', () => {
 describe('worst surface', () => {
   // The audit only clamps against `--surface-muted`, which is safe only if it's
   // the worst surface. Check that instead of assuming it.
-  const FOREGROUNDS = ['ink', 'ink-muted', 'border-strong', 'accent', 'accent-text']
+  // Everything clamped against a surface, every accent rank included.
+  const FOREGROUNDS = [...new Set(contrastPairs(MAX_ACCENTS).filter(p => !p.fg.startsWith('on-')).map(p => p.fg))]
   const OTHER_SURFACES = ['canvas', 'surface']
 
   it('is surface-muted, in every rendering in the catalogue', () => {
     const worse = RENDERINGS.flatMap(({ combo, mode, palette }) =>
       FOREGROUNDS.flatMap((fg) => {
+        if (!palette.roles[fg])
+          return []
         const floor = contrast(palette.roles[fg].hex, palette.roles['surface-muted'].hex)
         return OTHER_SURFACES
           .map(bg => ({ bg, ratio: contrast(palette.roles[fg].hex, palette.roles[bg].hex) }))

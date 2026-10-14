@@ -1,9 +1,10 @@
 // Combo -> semantic palette (ADR 0002). Assignment is mode-invariant;
 // derivation depends on mode.
 
-import type { Combo, ComboColour } from '../data/combos'
+import type { Combo } from '../data/combos'
 import type { Oklch } from './colour'
-import { clampToContrast, hexToOklch, oklchToHex, onColour } from './colour'
+import { clampToContrast, hexToOklch, HUE_SOURCE_MIN_CHROMA, oklchToHex, onColour } from './colour'
+import { accentName, accentRoles, MAX_ACCENTS } from './roles'
 
 /** Both modes, in display order. */
 export const MODES = ['light', 'dark'] as const
@@ -27,9 +28,6 @@ export interface Assignment {
   /** Indices into combo.colours, most accent-worthy first. */
   accents: number[]
 }
-
-/** Below this OKLCh chroma a colour's hue carries no usable information. */
-export const HUE_SOURCE_MIN_CHROMA = 0.04
 
 /** Rough canvases per mode, for scoring accents. */
 const PROBE_CANVAS: Record<Mode, string> = { light: '#f7f7f7', dark: '#242424' }
@@ -114,10 +112,6 @@ export interface Role {
 export interface Palette {
   roles: Record<string, Role>
   assignment: Assignment
-  hueSourceColour: ComboColour
-  accentColours: ComboColour[]
-  /** False when no colour clears `HUE_SOURCE_MIN_CHROMA`, so neutrals are grey. */
-  tinted: boolean
 }
 
 export function derivePalette(combo: Combo, mode: Mode): Palette {
@@ -148,28 +142,20 @@ export function derivePalette(combo: Combo, mode: Mode): Palette {
     'border-strong': { hex: borderStrong.hex, shifted: borderStrong.shifted, reached: borderStrong.reached },
   }
 
-  const accentColours: ComboColour[] = []
-  a.accents.slice(0, 3).forEach((idx, rank) => {
+  a.accents.slice(0, MAX_ACCENTS).forEach((idx, rank) => {
     const raw = combo.colours[idx]
-    accentColours.push(raw)
     const col = hexToOklch(raw.hex)
     // Clamp on the worst surface. Clamping on `canvas` failed muted cards in
     // 454/696 renderings.
     const fill = clampToContrast(col, surfaceMuted, 3, L.dir)
     const text = clampToContrast(col, surfaceMuted, 4.5, L.dir)
-    const suffix = rank === 0 ? '' : `-${rank + 1}`
-    roles[`accent${suffix}`] = { hex: fill.hex, from: raw.hex, shifted: fill.shifted, reached: fill.reached }
-    roles[`accent${suffix}-text`] = { hex: text.hex, from: raw.hex, shifted: text.shifted, reached: text.reached }
-    roles[`on-accent${suffix}`] = { hex: onColour(fill.hex) }
+    const names = accentRoles(accentName(rank))
+    roles[names.fill] = { hex: fill.hex, from: raw.hex, shifted: fill.shifted, reached: fill.reached }
+    roles[names.text] = { hex: text.hex, from: raw.hex, shifted: text.shifted, reached: text.reached }
+    roles[names.on] = { hex: onColour(fill.hex) }
   })
 
-  return {
-    roles,
-    assignment: a,
-    hueSourceColour: combo.colours[a.hueSource],
-    accentColours,
-    tinted: src.c >= HUE_SOURCE_MIN_CHROMA,
-  }
+  return { roles, assignment: a }
 }
 
 /** At most 348 × 2 entries (ADR 0005 §3). */
@@ -184,9 +170,4 @@ export function adapt(combo: Combo, mode: Mode): Palette {
   const computed = derivePalette(combo, mode)
   paletteCache.set(key, computed)
   return computed
-}
-
-/** Total lightness drift from the raw combo. */
-export function totalShift(p: Palette): number {
-  return Object.values(p.roles).reduce((sum, r) => sum + (r.shifted ?? 0), 0)
 }

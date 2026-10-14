@@ -1,6 +1,5 @@
 import type { Combo, ComboColour } from './combos'
-import { HUE_SOURCE_MIN_CHROMA } from '../theme/adapt'
-import { hexToOklch } from '../theme/colour'
+import { hexToOklch, HUE_SOURCE_MIN_CHROMA } from '../theme/colour'
 
 /** Hue families to filter by (ADR 0014 §3). Seven plain words, not a wheel. */
 export const HUE_FAMILIES = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'neutral'] as const

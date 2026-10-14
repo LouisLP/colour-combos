@@ -6,20 +6,14 @@
 import type { CodeLang } from './highlight'
 import { describe, expect, it } from 'vitest'
 import { requireCombo } from '../data/combos'
-import { emitCss, emitJs, emitScss, emitTailwind, emitTokens } from '../lib/emit'
 import { buildScale } from '../lib/scale'
 import { contrast } from '../theme/colour'
+import { CODE_TABS } from './codeTabs'
 import { highlight } from './highlight'
 
 const scale = buildScale(requireCombo(241))
 
-const BLOCKS: [CodeLang, string][] = [
-  ['css', emitCss(scale)],
-  ['css', emitTailwind(scale)],
-  ['scss', emitScss(scale)],
-  ['json', emitTokens(scale)],
-  ['ts', emitJs(scale)],
-]
+const BLOCKS: [CodeLang, string][] = CODE_TABS.map(tab => [tab.lang, tab.code(scale)])
 
 function parse(html: string) {
   return new DOMParser().parseFromString(html, 'text/html').querySelector('pre')!

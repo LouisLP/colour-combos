@@ -76,6 +76,19 @@ Tailwind, SCSS, design tokens, TS/JS). It's the only source of that text: the
 package's files and the dialog's code blocks both come from it. See
 [ADR 0013](docs/adr/0013-export-formats-and-package.md).
 
+**Export format**: one way the package ships a combo (CSS, Tailwind, SCSS,
+JSON tokens, JS). Each pairs an emitter with the file it fills, the specifier
+that loads it and its import statement, all in `src/lib/emit/formats.ts`.
+
+**Contrast contract**: every pairing of a foreground role with a backdrop it can
+land on, and the ratio it must clear, for any number of accents. It lives in
+`src/theme/roles.ts` with the role names, and the audit checks palettes
+against it.
+
+**Hub**: everything the site reads from or writes to the URL (`q`, `hue`, `c`),
+plus the history rule: opening a combo pushes, everything else replaces.
+`src/routing/hub.ts`.
+
 **Details dialog**: a Reka UI dialog over the grid, showing one combo's raw
 swatches, its full scale, and code blocks that match emitter output byte for
 byte. Every value is hex and one click from the clipboard.

@@ -4,8 +4,7 @@
 import type { ColourRamp, NeutralRamp, Step } from './scale'
 import { describe, expect, it } from 'vitest'
 import { COMBOS } from '../data/combos'
-import { HUE_SOURCE_MIN_CHROMA } from '../theme/adapt'
-import { contrast, hexToOklch } from '../theme/colour'
+import { contrast, hexToOklch, HUE_SOURCE_MIN_CHROMA } from '../theme/colour'
 import { buildScale, STEPS } from './scale'
 
 const SCALES = COMBOS.map(buildScale)

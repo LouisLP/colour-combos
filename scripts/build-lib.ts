@@ -1,12 +1,6 @@
-// Writes the per-combo files into `dist-lib/`, from the entry tsdown just built
-// there, so every file comes from the code the package ships.
-//
-//   japanese-colour-combos               -> index.js       data, buildScale, emitters
-//   japanese-colour-combos/42            -> scales/42.js   the scale object
-//   japanese-colour-combos/42.css        -> css/42.css     CSS custom properties
-//   japanese-colour-combos/42.scss       -> scss/42.scss   SCSS variables and maps
-//   japanese-colour-combos/42.json       -> tokens/42.json W3C design tokens
-//   japanese-colour-combos/tailwind/42.css -> tailwind/42.css  Tailwind v4 @theme
+// Writes the per-combo files and `package.json` into `dist-lib/`, from the entry
+// tsdown just built there, so every file comes from the code the package ships.
+// The formats themselves are in `src/lib/emit/formats.ts`.
 
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -19,24 +13,16 @@ const out = join(root, 'dist-lib')
 /** The root `package.json` version, bumped by `npm version`. */
 const { version } = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as { version: string }
 
-/** Each per-combo format: its path pattern and emitter. */
-const FORMATS = {
-  'scales/*.js': lib.emitJs,
-  'scales/*.d.ts': (scale: { id: number }) =>
-    `// ${lib.PACKAGE_NAME} · Wada No. ${scale.id}\nimport type { ComboScale } from '../index.js'\n\ndeclare const scale: ComboScale\nexport default scale\n`,
-  'css/*.css': lib.emitCss,
-  'scss/*.scss': lib.emitScss,
-  'tokens/*.json': lib.emitTokens,
-  'tailwind/*.css': lib.emitTailwind,
-} as const
+/** Every per-combo file: its path pattern and emitter. */
+const FILES = lib.EXPORT_FORMATS.flatMap(f => [{ file: f.file, emit: f.emit }, ...(f.types ? [f.types] : [])])
 
-for (const pattern of Object.keys(FORMATS))
-  mkdirSync(join(out, dirname(pattern)), { recursive: true })
+for (const { file } of FILES)
+  mkdirSync(join(out, dirname(file)), { recursive: true })
 
 for (const combo of lib.COMBOS) {
   const scale = lib.buildScale(combo)
-  for (const [pattern, emit] of Object.entries(FORMATS))
-    writeFileSync(join(out, pattern.replace('*', String(combo.id))), emit(scale))
+  for (const { file, emit } of FILES)
+    writeFileSync(join(out, file.replace('*', String(combo.id))), emit(scale))
 }
 
 const manifest = {
@@ -49,16 +35,15 @@ const manifest = {
   homepage: 'https://louislp.github.io/japanese-colour-combos/',
   keywords: ['colour', 'color', 'palette', 'design-tokens', 'tailwind', 'wada'],
   sideEffects: ['*.css'],
-  // Most specific pattern wins, so `42.css` skips `./*` and `tailwind/42.css`
-  // skips `./*.css`.
+  // Most specific pattern wins, whatever the order, so `42.css` skips `./*`
+  // and `tailwind/42.css` skips `./*.css`.
   exports: {
     '.': { types: './index.d.ts', default: './index.js' },
     './package.json': './package.json',
-    './tailwind/*.css': './tailwind/*.css',
-    './*.css': './css/*.css',
-    './*.scss': './scss/*.scss',
-    './*.json': './tokens/*.json',
-    './*': { types: './scales/*.d.ts', default: './scales/*.js' },
+    ...Object.fromEntries(lib.EXPORT_FORMATS.map(f => [
+      `./${f.subpath}`,
+      f.types ? { types: `./${f.types.file}`, default: `./${f.file}` } : `./${f.file}`,
+    ])),
   },
   types: './index.d.ts',
   publishConfig: { access: 'public' },
@@ -68,4 +53,4 @@ copyFileSync(join(root, 'src/lib/README.md'), join(out, 'README.md'))
 copyFileSync(join(root, 'LICENSE'), join(out, 'LICENSE'))
 copyFileSync(join(root, 'THIRD-PARTY-LICENSES.md'), join(out, 'THIRD-PARTY-LICENSES.md'))
 
-console.log(`dist-lib: ${lib.COMBOS.length} combos × ${Object.keys(FORMATS).length} files`)
+console.log(`dist-lib: ${lib.COMBOS.length} combos × ${FILES.length} files`)

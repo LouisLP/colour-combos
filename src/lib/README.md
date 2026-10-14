@@ -150,6 +150,8 @@ const css = emitCss(scale) // the same text as japanese-colour-combos/42.css
 
 `emitTailwind`, `emitScss`, `emitTs` and `emitJs` are there too. They are what
 generated the files above, and what the site shows in its code blocks.
+`EXPORT_FORMATS` lists every format with its emitter and specifier, and
+`specifierFor(format, 42)` gives you the import path.
 
 The files use hex. `emitCss`, `emitTailwind` and `emitScss` take a `format`
 option to write every colour as `oklch()` or `rgb()` instead. The names stay the

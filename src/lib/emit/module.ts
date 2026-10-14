@@ -49,6 +49,11 @@ export function emitTs(scale: ComboScale): string {
   ].join('\n')
 }
 
+/** The declaration file shipped beside each `scales/<id>.js`. */
+export function emitDts(scale: ComboScale): string {
+  return `// ${PACKAGE_NAME} · Wada No. ${scale.id}\nimport type { ComboScale } from '../index.js'\n\ndeclare const scale: ComboScale\nexport default scale\n`
+}
+
 /** The same module as JavaScript, typed through JSDoc. */
 export function emitJs(scale: ComboScale): string {
   return [
