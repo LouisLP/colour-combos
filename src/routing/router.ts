@@ -3,7 +3,7 @@ import { createRouter } from 'vue-router'
 import HubLayout from '../components/HubLayout.vue'
 import BrowsePage from '../pages/BrowsePage.vue'
 import FavoritesPage from '../pages/FavoritesPage.vue'
-import { firstValue, resolveComboId } from './search'
+import { COMBO_ROUTE, comboPath, firstValue, resolveComboId } from './search'
 
 /**
  * The rejected `c` from a not-found link rides in history state rather than the
@@ -12,6 +12,9 @@ import { firstValue, resolveComboId } from './search'
  * (ADR 0005 §7).
  */
 export const NOT_FOUND_STATE_KEY = 'notFoundCombo'
+
+/** A link from before the combo page had a path of its own (`?combo=42`). Redirected, never written. */
+const LEGACY_COMBO_PARAM = 'combo'
 
 /**
  * The layout owns both pages as children, so the search params are one contract
@@ -25,6 +28,9 @@ const routes: RouteRecordRaw[] = [
     children: [
       { path: '', component: BrowsePage },
       { path: 'favorites', component: FavoritesPage },
+      // Lazy: browse is the landing page, and the combo page brings the scale
+      // engine and the emitters with it.
+      { path: 'combo/:id', name: COMBO_ROUTE, component: () => import('../pages/ComboPage.vue') },
     ],
   },
 ]
@@ -47,6 +53,35 @@ export function createHubRouter(history: RouterHistory): Router {
   })
 
   router.beforeEach((to) => {
+    // `?combo=42` → `/combo/42`, keeping every other param but `c`, which the
+    // path now supplies (ADR 0004 §10). An invalid id resolves on the next pass.
+    if (to.query[LEGACY_COMBO_PARAM] !== undefined) {
+      const { [LEGACY_COMBO_PARAM]: legacy, ...rest } = to.query
+      const raw = String(firstValue(legacy) ?? '')
+      // An empty `?combo=` names nothing: drop it and stay where we are.
+      if (raw === '')
+        return { path: to.path, query: rest, hash: to.hash, replace: true }
+      const { c: _, ...query } = rest
+      return { path: `/combo/${encodeURIComponent(raw)}`, query, hash: to.hash, replace: true }
+    }
+
+    if (to.name === COMBO_ROUTE) {
+      const raw = firstValue(to.params.id)
+      const { id, rejected } = resolveComboId(raw)
+      // The path names the combo, so a `c` alongside it could only contradict
+      // it. Dropped, as a bad id is replaced: no history entry either way.
+      if (raw === String(id) && to.query.c === undefined)
+        return
+      const { c: _, ...query } = to.query
+      return {
+        path: comboPath(id),
+        query,
+        hash: to.hash,
+        replace: true,
+        state: rejected === undefined ? undefined : { [NOT_FOUND_STATE_KEY]: rejected },
+      }
+    }
+
     const raw = firstValue(to.query.c)
     const { id, rejected } = resolveComboId(raw)
 

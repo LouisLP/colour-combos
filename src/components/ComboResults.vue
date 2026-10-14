@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { Combo } from '../data/combos'
+import { useRouter } from 'vue-router'
 import { useDensity } from '../composables/useDensity'
+import { useHubSearch } from '../composables/useHubSearch'
 import { useSelectedCombo } from '../composables/useSelectedCombo'
+import { comboPage } from '../routing/search'
 import { isBareShortcut, ROVING_ATTR, SEARCH_FIELD_ID } from '../ui/keyboard'
 import { columnsOf, rovingTarget } from '../ui/roving'
 import ComboCard from './ComboCard.vue'
@@ -21,9 +24,10 @@ import ComboRow from './ComboRow.vue'
  * It also owns movement between results (ADR 0014 §4). Each result marks one
  * element as its focus target; the arrows, `j`/`k`, Home and End move focus
  * between those targets, and Escape hands it back to the search field. The
- * per-result keys (`f`, `c`, Enter) belong to the result itself.
+ * per-result keys (`f`, `c`) belong to the result itself. `Enter` on a result's
+ * focus target opens its combo page (T6) where a click would theme the site.
  */
-defineProps<{
+const props = defineProps<{
   /** The list to render. The route supplies it; the results never filter. */
   combos: Combo[]
 }>()
@@ -38,6 +42,8 @@ defineSlots<{
 
 const selected = useSelectedCombo()
 const density = useDensity()
+const search = useHubSearch()
+const router = useRouter()
 
 /**
  * Move focus between results. Native Tab order is left alone — every star and
@@ -58,6 +64,15 @@ function onKeydown(event: KeyboardEvent) {
   const index = Array.prototype.findIndex.call(items, item => item.contains(event.target as Node))
   if (index === -1)
     return
+
+  // The focus target is the result's selection link. A click on it themes the
+  // site in place; `Enter`, the keyboard's way in, goes one further and opens
+  // the combo's page (ADR 0014 §4, T6).
+  if (event.key === 'Enter' && !event.shiftKey && (event.target as HTMLElement).hasAttribute(ROVING_ATTR)) {
+    event.preventDefault()
+    void router.push(comboPage(props.combos[index].id, search.value))
+    return
+  }
 
   const next = rovingTarget(event.key, index, items.length, columnsOf(items))
   if (next === undefined)

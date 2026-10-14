@@ -42,7 +42,7 @@ export async function mountHub(initial: string) {
     container: (wrapper.element as Node).parentElement!,
     /** Entries behind us — what Back would have to unwind. */
     entries: () => entries,
-    search: (): HubSearch => validateHubSearch(router.currentRoute.value.query),
+    search: (): HubSearch => validateHubSearch(router.currentRoute.value.query, router.currentRoute.value.params.id),
     unmount: () => wrapper.unmount(),
   }
 }

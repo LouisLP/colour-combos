@@ -80,11 +80,13 @@ describe('finding a combo without the mouse', () => {
     expect(view.search().q).toBe('cerulian')
     expect(view.focusedId()).toBe(expected[0]!.id)
 
-    // Enter on a focused link is the browser's own activation: what matters is
-    // that focus sits on the link that selects this combo.
+    // Enter opens the focused combo's page (T6), carrying the search along so
+    // the way back finds the same results.
     expect(document.activeElement?.tagName).toBe('A')
-    await click(document.activeElement as HTMLElement)
-    expect(view.search().c).toBe(expected[0]!.id)
+    await press('Enter')
+    // The page is a lazy route, so the navigation lands once its chunk does.
+    await vi.waitFor(() => expect(view.router.currentRoute.value.path).toBe(`/combo/${expected[0]!.id}`))
+    expect(view.search()).toMatchObject({ c: expected[0]!.id, q: 'cerulian' })
 
     view.unmount()
   })

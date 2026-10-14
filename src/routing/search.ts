@@ -1,4 +1,4 @@
-import type { LocationQueryRaw } from 'vue-router'
+import type { LocationQueryRaw, RouteLocationRaw } from 'vue-router'
 import type { ComboSize } from '../data/combos'
 import type { HueFamily } from '../data/hue'
 import type { Mode } from '../theme/adapt'
@@ -98,10 +98,13 @@ export function firstValue(raw: unknown): unknown {
 /**
  * Validate and default the raw query — synchronously, on every read, so the
  * theme is a function of the URL from the first frame (ADR 0004 §7).
+ *
+ * On `/combo/:id` the path names the combo and `c` is never written: the path
+ * wins, so the page and the theme cannot disagree (ADR 0004 §10).
  */
-export function validateHubSearch(input: Record<string, unknown>): HubSearch {
+export function validateHubSearch(input: Record<string, unknown>, pathId?: unknown): HubSearch {
   return {
-    c: resolveComboId(firstValue(input.c)).id,
+    c: resolveComboId(firstValue(pathId ?? input.c)).id,
     q: resolveQuery(firstValue(input.q)),
     size: resolveSize(firstValue(input.size)),
     hue: resolveOneOf(HUE_FAMILIES, firstValue(input.hue)),
@@ -140,4 +143,20 @@ export function carryHubSearch(prev: Partial<HubSearch>): HubSearch {
     hue: prev.hue,
     mode: prev.mode,
   }
+}
+
+/** The combo page's route name. The layout hides the identity band under it, since the page is a bigger one. */
+export const COMBO_ROUTE = 'combo'
+
+/** The combo page's path (ADR 0004 §10). */
+export const comboPath = (id: number) => `/combo/${id}`
+
+/**
+ * A link to a combo's page that carries the rest of the param set, so the
+ * filters survive a visit to a combo and the trip back. `c` is dropped: on the
+ * page the path names the combo.
+ */
+export function comboPage(id: number, search: HubSearch): RouteLocationRaw {
+  const { c: _, ...query } = toHubQuery(search)
+  return { path: comboPath(id), query }
 }

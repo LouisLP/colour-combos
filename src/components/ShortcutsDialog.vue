@@ -47,7 +47,7 @@ const shortcuts: { keys: string[], action: string }[] = [
   { keys: ['j', 'k'], action: 'Next / previous result' },
   { keys: ['←', '→', '↑', '↓'], action: 'Move through the results' },
   { keys: ['Home', 'End'], action: 'First / last result' },
-  { keys: ['Enter'], action: 'Theme the page with the focused combination' },
+  { keys: ['Enter'], action: 'Open the focused combination’s page' },
   { keys: ['f'], action: 'Favourite the focused combination' },
   { keys: ['c'], action: 'Copy its hexes' },
   { keys: ['Esc'], action: 'Back to search' },

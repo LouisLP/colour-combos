@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { useRoute } from 'vue-router'
 import { useHubSearch } from '../composables/useHubSearch'
-import { carryHubSearch, toHubQuery } from '../routing/search'
+import { carryHubSearch, COMBO_ROUTE, toHubQuery } from '../routing/search'
 import ComboIdentity from './ComboIdentity.vue'
 import FavoritesLink from './FavoritesLink.vue'
 import LiveAnnouncer from './LiveAnnouncer.vue'
@@ -18,6 +19,7 @@ import ThemeStyle from './ThemeStyle'
  * `main` so it can butt flush under that rule (ADR 0010).
  */
 const search = useHubSearch()
+const route = useRoute()
 </script>
 
 <template>
@@ -41,8 +43,9 @@ const search = useHubSearch()
   <main>
     <!-- The active combo, shown large and raw (ADR 0009, refined in ADR 0010).
          Shared chrome, so it lives here above both routes rather than inside a
-         page, and reads the combo from the URL like everything else. -->
-    <ComboIdentity />
+         page, and reads the combo from the URL like everything else. The
+         combo page has a bigger header of its own, so it stands down there. -->
+    <ComboIdentity v-if="route.name !== COMBO_ROUTE" />
     <!-- Above the outlet, not inside a page: the resolution it explains
          happened in the router guard, and it has to survive the move between
          `/` and `/favorites` that a bad link's recipient might make. -->
