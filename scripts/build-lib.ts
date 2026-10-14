@@ -44,6 +44,7 @@ for (const combo of lib.COMBOS) {
 const manifest = {
   name: lib.PACKAGE_NAME,
   version,
+  license: 'MIT',
   description: 'Importable colour scales for the 348 combinations in Sanzo Wada\'s A Dictionary of Color Combinations: CSS, Tailwind, SCSS, design tokens and typed data.',
   type: 'module',
   repository: { type: 'git', url: 'git+https://github.com/LouisLP/colour-combos.git' },
@@ -67,6 +68,7 @@ const manifest = {
 }
 writeFileSync(join(out, 'package.json'), `${JSON.stringify(manifest, null, 2)}\n`)
 copyFileSync(join(root, 'src/lib/README.md'), join(out, 'README.md'))
+copyFileSync(join(root, 'LICENSE'), join(out, 'LICENSE'))
 copyFileSync(join(root, 'THIRD-PARTY-LICENSES.md'), join(out, 'THIRD-PARTY-LICENSES.md'))
 
 console.log(`dist-lib: ${lib.COMBOS.length} combos × ${Object.keys(FORMATS).length} files`)

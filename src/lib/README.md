@@ -165,3 +165,5 @@ Colours from Sanzo Wada's *A Dictionary of Color Combinations* (1933–1937),
 public domain; data via
 [dictionary-of-colour-combinations](https://github.com/mattdesl/dictionary-of-colour-combinations)
 by Matt DesLauriers (MIT). See `THIRD-PARTY-LICENSES.md`.
+
+The package itself is MIT; see `LICENSE`.

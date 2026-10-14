@@ -83,7 +83,7 @@ test that can catch it.
   `npm publish dist-lib`. The version is the root `package.json`'s, which
   `scripts/build-lib.ts` copies into the generated manifest. No changesets yet;
   one package with a hand-bumped version does not need them.
-- The repo has no licence of its own, so the package declares none. Settle that
-  before the first publish.
+- The repo and the package are MIT, matching the upstream digitisation. The
+  colours are public domain either way.
 - Any change to an emitter's output is a change to the published files. The
   emitter snapshots make it visible in review.

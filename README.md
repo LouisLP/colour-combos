@@ -83,3 +83,5 @@ Colours from Sanzo Wada's *A Dictionary of Color Combinations* (1933–1937),
 public domain; data via
 [dictionary-of-colour-combinations](https://github.com/mattdesl/dictionary-of-colour-combinations)
 by Matt DesLauriers (MIT). See [THIRD-PARTY-LICENSES.md](THIRD-PARTY-LICENSES.md).
+
+The code and the generated scales are MIT; see [LICENSE](LICENSE).
