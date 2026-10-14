@@ -20,7 +20,7 @@ pnpm dev
 
 | | |
 | --- | --- |
-| `pnpm test` | unit tests plus the full AA sweep |
+| `pnpm test` | unit tests plus the AA and scale-promise sweeps |
 | `pnpm lint` | |
 | `pnpm build` | type-check and build to `dist/` |
 | `pnpm preview` | serve the build at `/colour-combos/` |
