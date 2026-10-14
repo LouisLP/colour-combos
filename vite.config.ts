@@ -39,6 +39,14 @@ export default defineConfig({
    */
   base: '/colour-combos/',
   plugins: [vue(), githubPagesSpaFallback()],
+  optimizeDeps: {
+    /**
+     * Without this, the dep scanner crawls every `.html` under the root —
+     * including `prototypes/*`, which are frozen as React with React
+     * uninstalled — and aborts pre-bundling on the unresolved imports.
+     */
+    entries: ['index.html'],
+  },
   build: {
     /**
      * `light-dark()` must reach the browser intact. Lightning CSS downlevels it
