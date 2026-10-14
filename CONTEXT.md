@@ -4,7 +4,8 @@ A browser for Sanzo Wada's *A Dictionary of Color Combinations* (348 classic
 combos). Selecting a combo re-themes the entire site through a contrast-safe
 semantic design system.
 
-Stack: React 19, Vite, TypeScript, Antfu ESLint config.
+Stack: Vue 3 (`<script setup>` SFCs, `vue-router`), Vite, TypeScript, Antfu
+ESLint config. See [ADR 0011](docs/adr/0011-vue-migration.md).
 
 ## Glossary
 
@@ -90,9 +91,9 @@ colour's hex, so a colour has the same ramp and anchor in every combo.
 with the combo's canonical mode marked. Exact adapter values, not references to
 steps; the site's re-theming is a live preview of it.
 
-**Module store** — a module-level singleton owning exactly one fact, read
-through `useSyncExternalStore`. Favourites is now the only one; the app ships no
-context providers. (Mode was the second until it became combo-derived —
+**Module store** — a module-level singleton owning exactly one fact, held in a
+`shallowRef` and read through a composable ([ADR 0011](docs/adr/0011-vue-migration.md)).
+Favourites is now the only one; the app ships no provide/inject and no Pinia. (Mode was the second until it became combo-derived —
 [ADR 0008](docs/adr/0008-combo-owned-mode.md).)
 
 **Drift budget** — the lightness a role colour is permitted to move to clear its
@@ -114,4 +115,6 @@ the surface it happens to sit on in one component.
 - [ADR 0007 — Combo card refinements](docs/adr/0007-combo-card-refinements.md)
 - [ADR 0008 — Combo-owned light/dark mode](docs/adr/0008-combo-owned-mode.md)
 - [ADR 0009 — Bolder combo colour across the chrome](docs/adr/0009-bolder-combo-colour-across-chrome.md)
+- [ADR 0010 — Visual language](docs/adr/0010-visual-language.md)
+- [ADR 0011 — Port the site to Vue 3](docs/adr/0011-vue-migration.md)
 - [ADR 0012 — Combo scale model](docs/adr/0012-combo-scale-model.md)

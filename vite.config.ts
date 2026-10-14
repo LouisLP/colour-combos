@@ -1,7 +1,7 @@
 import type { Plugin } from 'vite'
 import { copyFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import react from '@vitejs/plugin-react'
+import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
 
 /**
@@ -34,11 +34,11 @@ export default defineConfig({
   /**
    * A GitHub project page is served from `/<repo>/`, not the domain root, so
    * every asset URL and the router's own base have to agree on one prefix. The
-   * router reads this back as `import.meta.env.BASE_URL`, so changing hosts —
+   * router's history reads this back as `import.meta.env.BASE_URL`, so changing hosts —
    * or moving to a custom domain — is this line and nothing else.
    */
   base: '/colour-combos/',
-  plugins: [react(), githubPagesSpaFallback()],
+  plugins: [vue(), githubPagesSpaFallback()],
   build: {
     /**
      * `light-dark()` must reach the browser intact. Lightning CSS downlevels it

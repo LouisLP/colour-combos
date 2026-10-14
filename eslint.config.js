@@ -1,9 +1,10 @@
 import antfu from '@antfu/eslint-config'
 
 export default antfu({
-  react: true,
+  vue: true,
   // Throwaway prototype code (see prototypes/README.md) — deliberately exempt
-  // from the production ruleset. Nothing here ships.
+  // from the production ruleset, and frozen as React (ADR 0011).
+  // Nothing here ships.
   ignores: [
     'prototypes/**',
     // Source data, not authored code — formatting it is churn on 149 kB of JSON.

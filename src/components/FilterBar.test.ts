@@ -6,80 +6,49 @@
 // together. So this mounts the real route tree on a memory history and counts
 // entries.
 
-import { createMemoryHistory, createRouter, RouterProvider } from '@tanstack/react-router'
-import { act } from 'react'
-import { createRoot } from 'react-dom/client'
+import { flushPromises } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { COMBOS } from '../data/combos'
 import { filterCombos } from '../data/filter'
-import { routeTree } from '../routing/router'
-import { getSnapshot as favorites, toggle as toggleFavorite } from '../state/favorites'
-
-// Tells React that `act` is being driven deliberately, so effects and the
-// router's own state updates flush inside it rather than warning.
-;
-
-(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
+import { favorites, toggle as toggleFavorite } from '../state/favorites'
+import { click, mountHub } from '../test/mountHub'
 
 async function mount(initial: string) {
-  const history = createMemoryHistory({ initialEntries: [initial] })
-  const router = createRouter({ routeTree, history })
-  const container = document.createElement('div')
-  document.body.append(container)
-  const root = createRoot(container)
-
-  await act(async () => {
-    root.render(<RouterProvider router={router} />)
-  })
-
+  const view = await mountHub(initial)
   return {
-    router,
-    container,
-    /** Entries behind us — what Back would have to unwind. */
-    entries: () => history.length,
-    search: () => router.state.location.search,
-    field: () => container.querySelector<HTMLInputElement>('#combo-search')!,
-    cards: () => container.querySelectorAll('.combo-card').length,
-    chip: (label: string) => [...container.querySelectorAll<HTMLButtonElement>('.filter-chip')]
-      .find(chip => chip.textContent?.startsWith(label))!,
-    unmount: async () => {
-      await act(async () => root.unmount())
-      container.remove()
-    },
+    ...view,
+    field: () => view.container.querySelector<HTMLInputElement>('#combo-search')!,
+    cards: () => view.container.querySelectorAll('.combo-card').length,
+    chip: (label: string) => [...view.container.querySelectorAll<HTMLButtonElement>('.filter-chip')]
+      .find(chip => chip.textContent?.trim().startsWith(label))!,
   }
 }
 
-/** What React listens for; assigning `.value` alone does not reach it. */
+/** What `v-model` listens for; assigning `.value` alone does not reach it. */
 async function type(field: HTMLInputElement, value: string) {
-  await act(async () => {
-    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!
-      .set!
-      .call(field, value)
-    field.dispatchEvent(new Event('input', { bubbles: true }))
-  })
+  field.value = value
+  field.dispatchEvent(new Event('input', { bubbles: true }))
+  await flushPromises()
 }
 
-async function click(element: HTMLElement) {
-  await act(async () => {
-    element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, button: 0 }))
-  })
+async function advance(ms: number) {
+  vi.advanceTimersByTime(ms)
+  await flushPromises()
 }
 
-async function settleDebounce() {
-  await act(async () => {
-    vi.advanceTimersByTime(500)
-  })
-}
+const settleDebounce = () => advance(500)
 
 beforeEach(() => {
-  vi.useFakeTimers({ shouldAdvanceTime: true })
+  // Only the debounce's timers: `flushPromises` rides `setImmediate`, which has
+  // to stay real for a navigation to settle.
+  vi.useFakeTimers({ shouldAdvanceTime: true, toFake: ['setTimeout', 'clearTimeout'] })
 })
 
 afterEach(() => {
   vi.useRealTimers()
   document.body.replaceChildren()
   // The favourites store is a module singleton, so it outlives a test.
-  for (const id of [...favorites()])
+  for (const id of [...favorites.value])
     toggleFavorite(id)
 })
 
@@ -93,7 +62,7 @@ describe('a shared link', () => {
     expect(view.field().value).toBe('blue')
     expect(view.chip('3 colours').getAttribute('aria-pressed')).toBe('true')
 
-    await view.unmount()
+    view.unmount()
   })
 
   it('leaves the selected combo alone — filtering is orthogonal to `c`', async () => {
@@ -103,7 +72,7 @@ describe('a shared link', () => {
     expect(view.search().c).toBe(1)
     expect(view.cards()).toBeLessThan(COMBOS.length)
 
-    await view.unmount()
+    view.unmount()
   })
 })
 
@@ -114,16 +83,14 @@ describe('typing in the search field', () => {
 
     for (const value of ['b', 'bl', 'blu', 'blue']) {
       await type(view.field(), value)
-      await act(async () => {
-        vi.advanceTimersByTime(60)
-      })
+      await advance(60)
     }
     await settleDebounce()
 
     expect(view.search().q).toBe('blue')
     expect(view.entries()).toBe(before)
 
-    await view.unmount()
+    view.unmount()
   })
 
   it('does not write to the URL until the typing settles', async () => {
@@ -137,7 +104,7 @@ describe('typing in the search field', () => {
     await settleDebounce()
     expect(view.search().q).toBe('blue')
 
-    await view.unmount()
+    view.unmount()
   })
 
   it('keeps characters typed while its own write is in flight', async () => {
@@ -151,7 +118,7 @@ describe('typing in the search field', () => {
     expect(view.field().value).toBe('blue')
     expect(view.search().q).toBe('blue')
 
-    await view.unmount()
+    view.unmount()
   })
 
   it('drops an empty query from the URL rather than serialising it', async () => {
@@ -161,13 +128,11 @@ describe('typing in the search field', () => {
     await settleDebounce()
 
     expect(view.search().q).toBeUndefined()
+    expect(view.router.currentRoute.value.fullPath).toBe('/?c=1')
 
-    await view.unmount()
+    view.unmount()
   })
 
-  // The URL round-trips a numeric query through a `number`, so the value the
-  // field gets back is not the one it wrote unless the validator restores it.
-  // If it does not, the field sees a foreign `q` and resets itself mid-word.
   it('survives typing a combo number', async () => {
     const view = await mount('/?c=1')
 
@@ -178,19 +143,18 @@ describe('typing in the search field', () => {
     expect(view.field().value).toBe('13')
     expect(view.cards()).toBe(1)
 
-    await view.unmount()
+    view.unmount()
   })
 
   it('adopts a `q` the URL moved to under it', async () => {
     const view = await mount('/?c=1&q=blue')
 
-    await act(async () => {
-      await view.router.navigate({ to: '/', search: { c: 1, q: 'rose' } })
-    })
+    await view.router.push({ path: '/', query: { c: '1', q: 'rose' } })
+    await flushPromises()
 
     expect(view.field().value).toBe('rose')
 
-    await view.unmount()
+    view.unmount()
   })
 })
 
@@ -208,7 +172,7 @@ describe('toggling a size chip', () => {
     expect(view.search().size).toBeUndefined()
     expect(view.entries()).toBe(before + 2)
 
-    await view.unmount()
+    view.unmount()
   })
 
   it('narrows the grid and keeps the query', async () => {
@@ -221,7 +185,7 @@ describe('toggling a size chip', () => {
     expect(view.cards()).toBe(filterCombos(COMBOS, { q: 'blue', size: 3 }).length)
     expect(view.cards()).toBeLessThan(before)
 
-    await view.unmount()
+    view.unmount()
   })
 })
 
@@ -237,7 +201,7 @@ describe('/favorites', () => {
     expect(view.cards()).toBe(1)
     expect(view.field().value).toBe('13')
 
-    await view.unmount()
+    view.unmount()
   })
 
   it('counts facets over the favourites, not the catalogue', async () => {
@@ -246,9 +210,9 @@ describe('/favorites', () => {
 
     const view = await mount('/favorites?c=1')
 
-    expect(view.chip('Any').textContent).toBe('Any (3)')
+    expect(view.chip('Any').textContent!.trim()).toBe('Any (3)')
 
-    await view.unmount()
+    view.unmount()
   })
 
   it('offers no filter bar when there is nothing to narrow', async () => {
@@ -257,7 +221,7 @@ describe('/favorites', () => {
     expect(view.container.querySelector('.filter-bar')).toBeNull()
     expect(view.container.textContent).toContain('No favourites yet')
 
-    await view.unmount()
+    view.unmount()
   })
 
   // Telling someone with favourites that they have none would read as the
@@ -272,7 +236,21 @@ describe('/favorites', () => {
     expect(view.container.textContent).toContain('No favourites match that.')
     expect(view.container.textContent).not.toContain('No favourites yet')
 
-    await view.unmount()
+    view.unmount()
+  })
+
+  it('updates the nav count and the grid as a star toggles', async () => {
+    const view = await mount('/favorites?c=1')
+    const nav = () => view.container.querySelector('header nav')!.textContent
+
+    expect(nav()).not.toContain('(1)')
+    toggleFavorite(12)
+    await flushPromises()
+
+    expect(nav()).toContain('★ Favourites (1)')
+    expect(view.cards()).toBe(1)
+
+    view.unmount()
   })
 })
 
@@ -288,7 +266,9 @@ describe('an empty result', () => {
     expect(view.search().size).toBeUndefined()
     expect(view.search().c).toBe(1)
     expect(view.cards()).toBe(COMBOS.length)
+    // The URL moved under the field, and the field followed it.
+    expect(view.field().value).toBe('')
 
-    await view.unmount()
+    view.unmount()
   })
 })

@@ -1,48 +1,31 @@
 // @vitest-environment jsdom
 //
 // The notice is only meaningful as a property of the redirect that produced it:
-// the root route rejects `c`, replaces the URL, and hands the rejected value
-// forward in location state (ADR 0005 §7). Nothing about that is visible in the
+// the router guard rejects `c`, replaces the URL, and hands the rejected value
+// forward in history state (ADR 0005 §7). Nothing about that is visible in the
 // component alone, so this mounts the real route tree on a memory history and
 // asserts on what a mistyped shared link actually renders.
 
-import { createMemoryHistory, createRouter, RouterProvider } from '@tanstack/react-router'
-import { act } from 'react'
-import { createRoot } from 'react-dom/client'
 import { afterEach, describe, expect, it } from 'vitest'
-import { routeTree } from '../routing/router'
+import { click, mountHub } from '../test/mountHub'
 
-;
-
-(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
-
-const mounted: (() => Promise<void>)[] = []
+const mounted: (() => void)[] = []
 
 async function mount(initial: string) {
-  const history = createMemoryHistory({ initialEntries: [initial] })
-  const router = createRouter({ routeTree, history })
-  const container = document.createElement('div')
-  document.body.append(container)
-  const root = createRoot(container)
-
-  await act(async () => {
-    root.render(<RouterProvider router={router} />)
-  })
-
-  mounted.push(async () => {
-    await act(async () => root.unmount())
-    container.remove()
-  })
+  const view = await mountHub(initial)
+  mounted.push(view.unmount)
 
   return {
-    notice: () => container.querySelector('.notice'),
-    dismiss: () => container.querySelector<HTMLButtonElement>('.notice-dismiss')!,
-    selected: () => router.state.location.search.c,
+    ...view,
+    notice: () => view.container.querySelector('.notice'),
+    dismiss: () => view.container.querySelector<HTMLButtonElement>('.notice-dismiss')!,
+    selected: () => view.search().c,
   }
 }
 
-afterEach(async () => {
-  for (const unmount of mounted.splice(0)) await unmount()
+afterEach(() => {
+  for (const unmount of mounted.splice(0)) unmount()
+  document.body.replaceChildren()
 })
 
 describe('the not-found notice', () => {
@@ -53,6 +36,13 @@ describe('the not-found notice', () => {
     // what they are looking at, and the resolved id alone hides the failure.
     expect(page.notice()?.textContent).toContain('999')
     expect(page.notice()?.textContent).toContain(String(page.selected()))
+  })
+
+  it('pins the resolved combo without leaving a history entry', async () => {
+    const page = await mount('/?c=999')
+
+    expect(page.router.currentRoute.value.query.c).toBe(String(page.selected()))
+    expect(page.entries()).toBe(1)
   })
 
   it('stays silent when the link was fine', async () => {
@@ -67,10 +57,11 @@ describe('the not-found notice', () => {
     // that distinguishes "resolved" from "rejected".
     const page = await mount('/')
 
+    expect(page.router.currentRoute.value.query.c).toBe(String(page.selected()))
     expect(page.notice()).toBeNull()
   })
 
-  it('rides along to the other route, since the redirect happened in the root', async () => {
+  it('rides along to the other route, since the redirect happened in the guard', async () => {
     const page = await mount('/favorites?c=abc')
 
     expect(page.notice()?.textContent).toContain('abc')
@@ -79,7 +70,7 @@ describe('the not-found notice', () => {
   it('dismisses', async () => {
     const page = await mount('/?c=999')
 
-    await act(async () => page.dismiss().click())
+    await click(page.dismiss())
 
     expect(page.notice()).toBeNull()
   })
@@ -88,7 +79,7 @@ describe('the not-found notice', () => {
     // `?c=` accepts anything, so the echoed value is unbounded user input.
     const page = await mount(`/?c=${'combination'.repeat(20)}`)
 
-    expect(page.notice()!.textContent!.length).toBeLessThan(80)
+    expect(page.notice()!.textContent!.trim().length).toBeLessThan(80)
     expect(page.notice()?.textContent).toContain('…')
   })
 })

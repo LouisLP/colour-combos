@@ -25,8 +25,9 @@ pnpm dev
 | `pnpm build` | type-check and build to `dist/` |
 | `pnpm preview` | serve the build at `/colour-combos/` |
 
-Two prototypes are kept in the repo because their ADRs cite them:
-`pnpm prototype:adaptation` and `pnpm prototype:browse`.
+The React prototypes in `prototypes/` are kept because their ADRs cite them.
+They are frozen as React and run from commit `b057a76`; see
+`prototypes/README.md`.
 
 ## Deployment
 
@@ -35,7 +36,7 @@ Pushing to `main` deploys to GitHub Pages via `.github/workflows/deploy.yml`.
 Two things follow from the host and are easy to break:
 
 - **Base path.** A project page is served from `/colour-combos/`, so Vite's
-  `base` and the router's `basepath` must agree. They do — the router reads
+  `base` and the router's history base must agree. They do — `main.ts` reads
   `import.meta.env.BASE_URL`, so `base` in `vite.config.ts` is the single knob.
 - **SPA fallback.** Deep links need `/*` → `/index.html` (ADR 0004 §9). GitHub
   Pages has no rewrite rules, so the build writes a `404.html` copy instead.

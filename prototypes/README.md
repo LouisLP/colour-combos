@@ -1,8 +1,14 @@
 # Prototypes
 
 Throwaway code that answers a question. **Nothing here ships.** It is exempt
-from the ESLint ruleset (`eslint.config.js` ignores `prototypes/**`) and carries
-no tests. Once a prototype's question is settled, the answer is folded into an
+from the ESLint ruleset (`eslint.config.js` ignores `prototypes/**`), from type
+checking, and carries no tests.
+
+> **Frozen as React.** The site moved to Vue 3
+> ([ADR 0011](../docs/adr/0011-vue-migration.md)), but these prototypes stay React
+> because ADRs cite them as primary sources. Their `pnpm prototype:*` scripts
+> and React dependencies are gone. To run one, check out `b057a76`, the last
+> commit with React installed, and use the commands below. Once a prototype's question is settled, the answer is folded into an
 ADR and the prototype stays here as the primary source.
 
 ## `adaptation-model/` — issue #4
@@ -14,7 +20,7 @@ complete, contrast-safe semantic palette?
 the chroma-weighted hybrid.
 
 ```bash
-npm run prototype:adaptation   # http://localhost:5173/prototypes/adaptation-model/
+pnpm prototype:adaptation   # http://localhost:5173/prototypes/adaptation-model/
 node prototypes/adaptation-model/sweep.ts   # headless AA sweep, 348 combos x 2 modes
 ```
 
@@ -44,7 +50,7 @@ the combo card, and how filter/search render into it?
 the framed card grid, with facet counts taken from C. No virtualisation.
 
 ```bash
-npm run prototype:browse   # http://localhost:5173/prototypes/browse-grid/
+pnpm prototype:browse   # http://localhost:5173/prototypes/browse-grid/
 ```
 
 Three browse surfaces on one route, switchable via `?variant=A|B|C` or `←`/`→`.
